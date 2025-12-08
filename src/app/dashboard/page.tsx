@@ -8,6 +8,7 @@ import ProgressCard from '@/components/dashboard/ProgressCard';
 import EvaluationCard from '@/components/dashboard/EvaluationCard';
 import CoachingCTA from '@/components/dashboard/CoachingCTA';
 import { Brain, Users, MessageSquare, Heart } from 'lucide-react';
+import Link from 'next/link';
 
 interface User {
   id: number;
@@ -123,8 +124,9 @@ export default function DashboardPage() {
             <EvaluationCard
               icon={<Heart className="w-6 h-6" />}
               title="Wellness"
-              description="Assess Your Physical Well-being"
+              description="Assess Your Holistic Well-Being"
               status="not_started"
+              onAction={() => router.push('/dashboard/wellness')}
             />
           </div>
         </div>
