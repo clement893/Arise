@@ -40,7 +40,7 @@ export default function Header() {
               Sign in
             </Link>
             <Link 
-              href="/get-started" 
+              href="/signup" 
               className="bg-[#D4A84B] hover:bg-[#C49A3D] text-white px-4 py-2 rounded-full text-sm font-semibold transition-colors"
             >
               Get Started →
@@ -79,7 +79,7 @@ export default function Header() {
                 Sign in
               </Link>
               <Link 
-                href="/get-started" 
+                href="/signup" 
                 className="bg-[#D4A84B] hover:bg-[#C49A3D] text-white px-4 py-2 rounded-full text-sm font-semibold text-center"
               >
                 Get Started →

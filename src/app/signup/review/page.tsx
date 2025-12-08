@@ -7,6 +7,7 @@ import SignupLayout from '@/components/SignupLayout';
 export default function ReviewConfirm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const [signupData, setSignupData] = useState({
     userType: '',
     plan: '',
@@ -34,9 +35,16 @@ export default function ReviewConfirm() {
 
   const handleConfirm = async () => {
     setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    router.push('/signup/profile');
+    setError('');
+    
+    try {
+      // For now, just proceed to profile step
+      // The actual user creation will happen after profile completion
+      router.push('/signup/profile');
+    } catch (err) {
+      setError('An error occurred. Please try again.');
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -50,6 +58,12 @@ export default function ReviewConfirm() {
             Please review your selection before proceeding
           </p>
         </div>
+
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+            {error}
+          </div>
+        )}
 
         {/* Order summary */}
         <div className="space-y-6 mb-8">
@@ -65,7 +79,10 @@ export default function ReviewConfirm() {
                 <p className="text-sm text-[#2D2D2D]/60">/month</p>
               </div>
             </div>
-            <button className="text-sm text-[#0D5C5C] hover:underline">
+            <button 
+              onClick={() => router.push('/signup/choose-plan')}
+              className="text-sm text-[#0D5C5C] hover:underline"
+            >
               Change plan
             </button>
           </div>
@@ -74,7 +91,10 @@ export default function ReviewConfirm() {
           <div className="bg-gray-50 rounded-xl p-6">
             <h3 className="font-semibold text-[#2D2D2D] mb-2">Account</h3>
             <p className="text-[#2D2D2D]/70">{signupData.email}</p>
-            <button className="text-sm text-[#0D5C5C] hover:underline mt-2">
+            <button 
+              onClick={() => router.push('/signup/create-account')}
+              className="text-sm text-[#0D5C5C] hover:underline mt-2"
+            >
               Change email
             </button>
           </div>

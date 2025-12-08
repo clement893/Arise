@@ -14,7 +14,7 @@ export default function CTASection() {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
-              href="/get-started"
+              href="/signup"
               className="inline-flex items-center justify-center bg-[#2D2D2D] hover:bg-[#1D1D1D] text-white px-6 py-3 rounded-full text-sm font-semibold transition-colors"
             >
               Schedule a demo

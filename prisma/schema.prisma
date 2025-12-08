@@ -10,11 +10,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Example User model - customize as needed
+enum UserType {
+  individual
+  coach
+  business
+}
+
+enum PlanType {
+  starter
+  professional
+  enterprise
+}
+
+enum BillingCycle {
+  monthly
+  annual
+}
+
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            Int          @id @default(autoincrement())
+  email         String       @unique
+  password      String
+  firstName     String?
+  lastName      String?
+  company       String?
+  jobTitle      String?
+  phone         String?
+  timezone      String?
+  userType      UserType     @default(individual)
+  plan          PlanType     @default(starter)
+  billingCycle  BillingCycle @default(monthly)
+  isActive      Boolean      @default(true)
+  emailVerified Boolean      @default(false)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 }

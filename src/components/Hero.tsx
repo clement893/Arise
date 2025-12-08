@@ -32,7 +32,7 @@ export default function Hero() {
 
           {/* CTA Button */}
           <Link 
-            href="/get-started"
+            href="/signup"
             className="inline-flex items-center bg-[#2D2D2D] hover:bg-[#1D1D1D] text-white px-6 py-3 rounded-full text-sm font-semibold transition-colors"
           >
             Begin assessment

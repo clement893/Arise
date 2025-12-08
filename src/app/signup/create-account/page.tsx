@@ -39,7 +39,9 @@ export default function CreateAccount() {
 
   const handleContinue = () => {
     if (validateForm()) {
+      // Store in localStorage temporarily (will be sent to API in profile step)
       localStorage.setItem('signupEmail', formData.email);
+      localStorage.setItem('signupPassword', formData.password);
       router.push('/signup/review');
     }
   };

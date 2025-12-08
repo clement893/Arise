@@ -6,6 +6,8 @@ import SignupLayout from '@/components/SignupLayout';
 
 export default function CompleteProfile() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -31,11 +33,62 @@ export default function CompleteProfile() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleContinue = () => {
-    if (validateForm()) {
+  const handleContinue = async () => {
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      // Get all signup data from localStorage
+      const email = localStorage.getItem('signupEmail') || '';
+      const password = localStorage.getItem('signupPassword') || '';
+      const userType = localStorage.getItem('signupUserType') || 'individual';
+      const plan = localStorage.getItem('signupPlan') || 'starter';
+      const billingCycle = localStorage.getItem('signupBillingCycle') || 'monthly';
+
+      // Create user via API
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          company: formData.company || null,
+          jobTitle: formData.jobTitle || null,
+          phone: formData.phone || null,
+          timezone: formData.timezone || null,
+          userType,
+          plan,
+          billingCycle,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create account');
+      }
+
+      // Clear localStorage
+      localStorage.removeItem('signupEmail');
+      localStorage.removeItem('signupPassword');
+      localStorage.removeItem('signupUserType');
+      localStorage.removeItem('signupPlan');
+      localStorage.removeItem('signupBillingCycle');
+      
+      // Store first name for welcome page
       localStorage.setItem('signupFirstName', formData.firstName);
       localStorage.setItem('signupLastName', formData.lastName);
+
       router.push('/signup/welcome');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred. Please try again.');
+      setIsLoading(false);
     }
   };
 
@@ -50,6 +103,12 @@ export default function CompleteProfile() {
             Tell us a bit about yourself
           </p>
         </div>
+
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+            {error}
+          </div>
+        )}
 
         <div className="space-y-6">
           {/* Name row */}
@@ -170,9 +229,10 @@ export default function CompleteProfile() {
           </button>
           <button
             onClick={handleContinue}
-            className="bg-[#D4A84B] hover:bg-[#C49A3D] text-white px-8 py-3 rounded-full font-semibold transition-colors"
+            disabled={isLoading}
+            className="bg-[#D4A84B] hover:bg-[#C49A3D] text-white px-8 py-3 rounded-full font-semibold transition-colors disabled:opacity-50"
           >
-            Continue →
+            {isLoading ? 'Creating account...' : 'Continue →'}
           </button>
         </div>
       </div>
