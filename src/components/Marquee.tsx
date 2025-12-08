@@ -4,7 +4,7 @@ export default function Marquee() {
   const text = "Build self-awareness and holistic well-being through comprehensive personality typing, conflict management, 360° feedback, and wellness assessments.";
   
   return (
-    <section className="bg-[#F5F5F5] py-4 overflow-hidden">
+    <section className="bg-[#F5F5F5] py-4 overflow-hidden border-y border-gray-200">
       <div className="relative">
         <div className="flex animate-marquee whitespace-nowrap">
           {[...Array(4)].map((_, i) => (

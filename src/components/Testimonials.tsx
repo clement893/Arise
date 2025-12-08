@@ -7,13 +7,13 @@ export default function Testimonials() {
     },
     {
       quote: "ARISE transformed how I understand myself as a leader. The integrated approach revealed connections I never would have seen otherwise.",
-      author: "Sarah Miller",
+      author: "Sarah Noel",
       role: "VP Engineering, TechCorp"
     },
     {
       quote: "ARISE transformed how I understand myself as a leader. The integrated approach revealed connections I never would have seen otherwise.",
-      author: "Sarah Miller",
-      role: "VP Engineering, TechCorp"
+      author: "Sarah Chen",
+      role: "VP Ops"
     }
   ];
 

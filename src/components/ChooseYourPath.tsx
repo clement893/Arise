@@ -13,7 +13,7 @@ export default function ChooseYourPath() {
         "Progress tracking dashboard"
       ],
       cta: "Get started",
-      href: "/individual",
+      href: "/signup",
       featured: false
     },
     {
@@ -26,21 +26,21 @@ export default function ChooseYourPath() {
         "Coaching frameworks",
         "Client progress analytics"
       ],
-      cta: "Learn more",
+      cta: "Discover",
       href: "/coach",
-      featured: true
+      featured: false
     },
     {
       tag: "ENTERPRISE",
       title: "BUSINESS",
-      description: "Organizations investing in their leadership pipeline.",
+      description: "Enterprise solutions for teams.",
       features: [
         "Team assessments",
         "Organizational insights",
         "Custom integrations",
         "Dedicated support"
       ],
-      cta: "Contact sales",
+      cta: "Discover",
       href: "/business",
       featured: false
     }
@@ -67,14 +67,10 @@ export default function ChooseYourPath() {
           {paths.map((path, index) => (
             <div 
               key={index}
-              className={`bg-white rounded-2xl p-8 ${
-                path.featured 
-                  ? 'ring-2 ring-[#D4A84B] shadow-xl' 
-                  : 'shadow-lg'
-              }`}
+              className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow"
             >
               {/* Tag */}
-              <span className="text-xs font-semibold text-[#D4A84B] uppercase tracking-wider">
+              <span className="inline-block px-3 py-1 text-xs font-semibold text-[#D4A84B] bg-[#D4A84B]/10 rounded-full uppercase tracking-wider">
                 {path.tag}
               </span>
               
@@ -84,7 +80,7 @@ export default function ChooseYourPath() {
               </h3>
               
               {/* Description */}
-              <p className="mt-4 text-[#2D2D2D]/60 text-sm leading-relaxed">
+              <p className="mt-4 text-[#2D2D2D]/60 text-sm leading-relaxed min-h-[48px]">
                 {path.description}
               </p>
               
@@ -103,11 +99,7 @@ export default function ChooseYourPath() {
               {/* CTA */}
               <Link 
                 href={path.href}
-                className={`mt-8 block text-center py-3 px-6 rounded-full text-sm font-semibold transition-colors ${
-                  path.featured
-                    ? 'bg-[#D4A84B] hover:bg-[#C49A3D] text-white'
-                    : 'bg-[#2D2D2D] hover:bg-[#1D1D1D] text-white'
-                }`}
+                className="mt-8 block text-center py-3 px-6 rounded-full text-sm font-semibold transition-colors bg-[#2D2D2D] hover:bg-[#1D1D1D] text-white"
               >
                 {path.cta} →
               </Link>
