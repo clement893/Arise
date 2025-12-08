@@ -51,8 +51,16 @@ export async function POST(request: NextRequest) {
       existingUser = await prisma.user.findUnique({
         where: { email }
       });
-    } catch (dbError) {
-      console.error('Database connection error:', dbError);
+    } catch (dbError: unknown) {
+      console.error('Database error:', dbError);
+      // Check if it's a "table does not exist" error
+      const errorMessage = dbError instanceof Error ? dbError.message : String(dbError);
+      if (errorMessage.includes('does not exist') || errorMessage.includes('P2021')) {
+        return NextResponse.json(
+          { error: 'Database tables not initialized. Please contact support.' },
+          { status: 503 }
+        );
+      }
       return NextResponse.json(
         { error: 'Database connection error. Please try again later.' },
         { status: 503 }
@@ -126,9 +134,15 @@ export async function POST(request: NextRequest) {
           { status: 409 }
         );
       }
-      if (error.message.includes('connect')) {
+      if (error.message.includes('connect') || error.message.includes('ECONNREFUSED')) {
         return NextResponse.json(
           { error: 'Database connection error. Please try again later.' },
+          { status: 503 }
+        );
+      }
+      if (error.message.includes('does not exist') || error.message.includes('P2021')) {
+        return NextResponse.json(
+          { error: 'Database tables not initialized. Please contact support.' },
           { status: 503 }
         );
       }
