@@ -28,10 +28,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        { error: 'Invalid email format' },
+        { status: 400 }
+      );
+    }
+
+    // Validate password length
+    if (password.length < 8) {
+      return NextResponse.json(
+        { error: 'Password must be at least 8 characters' },
+        { status: 400 }
+      );
+    }
+
     // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email }
-    });
+    let existingUser;
+    try {
+      existingUser = await prisma.user.findUnique({
+        where: { email }
+      });
+    } catch (dbError) {
+      console.error('Database connection error:', dbError);
+      return NextResponse.json(
+        { error: 'Database connection error. Please try again later.' },
+        { status: 503 }
+      );
+    }
 
     if (existingUser) {
       return NextResponse.json(
@@ -42,6 +68,18 @@ export async function POST(request: NextRequest) {
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
+
+    // Map userType to enum value
+    const validUserTypes = ['individual', 'coach', 'business'] as const;
+    const mappedUserType = validUserTypes.includes(userType) ? userType : 'individual';
+
+    // Map plan to enum value
+    const validPlans = ['starter', 'professional', 'enterprise'] as const;
+    const mappedPlan = validPlans.includes(plan) ? plan : 'starter';
+
+    // Map billingCycle to enum value
+    const validBillingCycles = ['monthly', 'annual'] as const;
+    const mappedBillingCycle = validBillingCycles.includes(billingCycle) ? billingCycle : 'monthly';
 
     // Create user
     const user = await prisma.user.create({
@@ -54,9 +92,9 @@ export async function POST(request: NextRequest) {
         jobTitle: jobTitle || null,
         phone: phone || null,
         timezone: timezone || null,
-        userType: userType || 'individual',
-        plan: plan || 'starter',
-        billingCycle: billingCycle || 'monthly',
+        userType: mappedUserType,
+        plan: mappedPlan,
+        billingCycle: mappedBillingCycle,
       },
       select: {
         id: true,
@@ -79,8 +117,25 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Signup error:', error);
+    
+    // Provide more specific error messages
+    if (error instanceof Error) {
+      if (error.message.includes('Unique constraint')) {
+        return NextResponse.json(
+          { error: 'User with this email already exists' },
+          { status: 409 }
+        );
+      }
+      if (error.message.includes('connect')) {
+        return NextResponse.json(
+          { error: 'Database connection error. Please try again later.' },
+          { status: 503 }
+        );
+      }
+    }
+    
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'An error occurred while creating your account. Please try again.' },
       { status: 500 }
     );
   }
