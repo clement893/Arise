@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Sidebar from '@/components/dashboard/Sidebar';
-import { ArrowLeft, Clock, CheckCircle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Clock, CheckCircle, CheckCircle2 } from 'lucide-react';
 
 interface User {
   id: number;
@@ -14,38 +14,59 @@ interface User {
   plan: string;
 }
 
+// Categories from the ARISE assessment
 const categories = [
-  { id: 'physical', name: 'Physical', color: '#0D5C5C' },
-  { id: 'mental', name: 'Mental', color: '#D4A84B' },
-  { id: 'emotional', name: 'Emotional', color: '#8B5CF6' },
-  { id: 'spiritual', name: 'Spiritual', color: '#EC4899' },
+  { id: 'substances', name: 'Substances', icon: '🚫', color: '#e74c3c' },
+  { id: 'exercise', name: 'Exercise', icon: '🏃', color: '#27ae60' },
+  { id: 'nutrition', name: 'Nutrition', icon: '🥗', color: '#f39c12' },
+  { id: 'sleep', name: 'Sleep', icon: '😴', color: '#9b59b6' },
+  { id: 'social', name: 'Social', icon: '👥', color: '#3498db' },
+  { id: 'stress', name: 'Stress', icon: '🧘', color: '#0D5C5C' },
 ];
 
-const questions = [
-  // Physical questions
-  { id: 1, category: 'physical', text: 'I engage in regular physical activity', subtext: 'Exercise at least 3x/week' },
-  { id: 2, category: 'physical', text: 'My sleep is restorative and sufficient', subtext: '7-9 hours of quality sleep' },
-  { id: 3, category: 'physical', text: 'I eat a balanced and healthy diet', subtext: 'Nutritious meals regularly' },
-  { id: 4, category: 'physical', text: 'I maintain a healthy body weight', subtext: 'Within recommended BMI range' },
-  { id: 5, category: 'physical', text: 'I have regular health check-ups', subtext: 'Annual medical examinations' },
-  // Mental questions
-  { id: 6, category: 'mental', text: 'I can focus and concentrate effectively', subtext: 'Sustained attention on tasks' },
-  { id: 7, category: 'mental', text: 'I continuously learn new things', subtext: 'Personal growth and development' },
-  { id: 8, category: 'mental', text: 'I manage stress effectively', subtext: 'Healthy coping mechanisms' },
-  { id: 9, category: 'mental', text: 'I have clear goals and direction', subtext: 'Purpose-driven activities' },
-  { id: 10, category: 'mental', text: 'I practice mindfulness regularly', subtext: 'Present moment awareness' },
-  // Emotional questions
-  { id: 11, category: 'emotional', text: 'I can identify and express my emotions', subtext: 'Emotional awareness' },
-  { id: 12, category: 'emotional', text: 'I maintain healthy relationships', subtext: 'Supportive connections' },
-  { id: 13, category: 'emotional', text: 'I practice self-compassion', subtext: 'Kind to myself in difficulties' },
-  { id: 14, category: 'emotional', text: 'I can manage difficult emotions', subtext: 'Emotional regulation' },
-  { id: 15, category: 'emotional', text: 'I feel a sense of belonging', subtext: 'Connected to community' },
-  // Spiritual questions
-  { id: 16, category: 'spiritual', text: 'I have a sense of purpose in life', subtext: 'Meaning and direction' },
-  { id: 17, category: 'spiritual', text: 'I practice gratitude regularly', subtext: 'Appreciating what I have' },
-  { id: 18, category: 'spiritual', text: 'I feel connected to something greater', subtext: 'Transcendent experiences' },
-  { id: 19, category: 'spiritual', text: 'I live according to my values', subtext: 'Authentic living' },
-  { id: 20, category: 'spiritual', text: 'I take time for reflection', subtext: 'Inner contemplation' },
+// Real questions from the ARISE Excel file
+const wellnessQuestions = [
+  // Substances (5 questions)
+  { id: 1, category: 'substances', text: "I avoid or limit my weekly alcohol consumption to about 2 glasses per week." },
+  { id: 2, category: 'substances', text: "I make healthy choices by avoiding tobacco in all forms, such as smoking, vaping, or chewing tobacco." },
+  { id: 3, category: 'substances', text: "I take prescription and over-the-counter medications responsibly, following dosage instructions and consulting healthcare providers when needed." },
+  { id: 4, category: 'substances', text: "I keep my caffeine consumption within healthy limits, which is no more than 3 cups of coffee or 8 cups of tea per day." },
+  { id: 5, category: 'substances', text: "I do not consume illegal drugs and avoid usage of recreational drugs." },
+  
+  // Exercise (5 questions)
+  { id: 6, category: 'exercise', text: "I am regularly active for at least 150 min (1.5h) per week in ways that get my heart rate up, like fast walking, cycling, or swimming." },
+  { id: 7, category: 'exercise', text: "I do strength or resistance training, such as weightlifting, bodyweight exercises, or resistance bands, at least 2 times per week." },
+  { id: 8, category: 'exercise', text: "I do flexibility or mobility exercises, such as stretching or yoga, at least 2–3 times per week." },
+  { id: 9, category: 'exercise', text: "I avoid sitting for longer than 30–60 minutes at a time by standing, walking, or moving around during the day." },
+  { id: 10, category: 'exercise', text: "I have the physical and mental energy to stay active, focused, and productive throughout the day." },
+  
+  // Nutrition (5 questions)
+  { id: 11, category: 'nutrition', text: "I make it a habit to eat balanced meals — for example, meals that combine protein (like fish, beans, or eggs), healthy fats (like nuts or olive oil), and complex carbs (like whole grains or vegetables)." },
+  { id: 12, category: 'nutrition', text: "Each day, I make sure to eat fruits and vegetables — about 5 or more servings, such as a piece of fruit, a handful of raw veggies, or half a cup of cooked vegetables." },
+  { id: 13, category: 'nutrition', text: "I maintain a healthier lifestyle by focusing on nutritious foods while keeping processed foods, sugary drinks, and sweet snacks to a minimum — treating them as occasional rather than everyday choices." },
+  { id: 14, category: 'nutrition', text: "I make sure to drink enough water throughout the day, aiming for the recommended amount — about 2.7 liters (91 ounces) for women and 3.8 liters (128 ounces) for men." },
+  { id: 15, category: 'nutrition', text: "I consistently follow healthy eating habits (closer to 80%) while allowing some flexibility during the week (closer to 20%)." },
+  
+  // Sleep (5 questions)
+  { id: 16, category: 'sleep', text: "I get 7–9 hours of sleep most nights, supporting my health and daily energy." },
+  { id: 17, category: 'sleep', text: "I maintain a regular sleep schedule by going to bed and waking up at consistent times." },
+  { id: 18, category: 'sleep', text: "Most nights, my sleep feels restful and restorative, leaving me refreshed in the morning." },
+  { id: 19, category: 'sleep', text: "I prepare for restful sleep by limiting caffeine, alcohol, and screen use (such as TV, phone, or computer) in the hours before bed." },
+  { id: 20, category: 'sleep', text: "If my sleep is disrupted by stress, noise, or restlessness, I take healthy steps — such as calming my mind, adjusting my environment, or practicing relaxation techniques — to improve my rest." },
+  
+  // Social (5 questions)
+  { id: 21, category: 'social', text: "I have close personal relationships that are strong, supportive, and nurturing, and I feel I can rely on them in times of need." },
+  { id: 22, category: 'social', text: "I connect with friends, family, or community several times a week in meaningful ways — such as supportive conversations, shared activities, or quality time together." },
+  { id: 23, category: 'social', text: "I feel comfortable seeking support from others when I need it." },
+  { id: 24, category: 'social', text: "I choose positive and uplifting social interactions that support my well-being." },
+  { id: 25, category: 'social', text: "I balance time with others and time alone in a way that supports my health and happiness — making space for meaningful connection while also honoring my need for rest and personal time." },
+  
+  // Stress (5 questions)
+  { id: 26, category: 'stress', text: "I notice when I am feeling stressed and use healthy strategies — such as deep breathing, taking breaks, or talking to someone — to manage it effectively." },
+  { id: 27, category: 'stress', text: "A few times each week, I practice relaxation techniques — such as meditation, stretching, or deep breathing — to help reduce stress and restore calm." },
+  { id: 28, category: 'stress', text: "I make time several times a week for hobbies, fun, or personal enjoyment, which helps me relax, recharge, and maintain balance in my life." },
+  { id: 29, category: 'stress', text: "I manage my workload in a balanced way, setting healthy limits and taking breaks when needed, so I can stay productive without feeling overwhelmed." },
+  { id: 30, category: 'stress', text: "I experience a sense of calm, focus, and emotional balance in my daily life, helping me handle challenges with resilience and clarity." },
 ];
 
 const answerOptions = [
@@ -65,7 +86,6 @@ export default function WellnessTestPage() {
   const [testState, setTestState] = useState<TestState>('intro');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   useEffect(() => {
     const userData = localStorage.getItem('arise_user');
@@ -88,15 +108,14 @@ export default function WellnessTestPage() {
   };
 
   const handleAnswer = (value: number) => {
-    setAnswers({ ...answers, [questions[currentQuestion].id]: value });
+    setAnswers({ ...answers, [wellnessQuestions[currentQuestion].id]: value });
   };
 
   const handleNext = () => {
-    if (currentQuestion < questions.length - 1) {
+    if (currentQuestion < wellnessQuestions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
       setTestState('complete');
-      // Save results to localStorage
       localStorage.setItem('arise_wellness_results', JSON.stringify(answers));
     }
   };
@@ -111,6 +130,28 @@ export default function WellnessTestPage() {
     router.push('/dashboard/wellness/results');
   };
 
+  const calculateScores = () => {
+    const scores: Record<string, { total: number; count: number }> = {};
+    categories.forEach(cat => {
+      scores[cat.id] = { total: 0, count: 0 };
+    });
+
+    Object.entries(answers).forEach(([questionId, value]) => {
+      const question = wellnessQuestions.find(q => q.id === parseInt(questionId));
+      if (question) {
+        scores[question.category].total += value;
+        scores[question.category].count += 1;
+      }
+    });
+
+    return Object.entries(scores).map(([category, data]) => ({
+      category,
+      score: data.count > 0 ? Math.round((data.total / (data.count * 5)) * 100) : 0,
+      name: categories.find(c => c.id === category)?.name || category,
+      color: categories.find(c => c.id === category)?.color || '#0D5C5C',
+    }));
+  };
+
   if (isLoading || !user) {
     return (
       <div className="min-h-screen bg-[#0D5C5C] flex items-center justify-center">
@@ -119,97 +160,106 @@ export default function WellnessTestPage() {
     );
   }
 
-  const progress = ((currentQuestion + 1) / questions.length) * 100;
-  const currentQ = questions[currentQuestion];
-  const currentCategoryColor = categories.find(c => c.id === currentQ?.category)?.color || '#0D5C5C';
+  const progress = ((currentQuestion + 1) / wellnessQuestions.length) * 100;
+  const currentQ = wellnessQuestions[currentQuestion];
+  const currentCategory = categories.find(c => c.id === currentQ?.category);
 
   // Intro Screen
   if (testState === 'intro') {
     return (
-      <div className="min-h-screen bg-[#0D5C5C]">
-        <div className="flex">
-          <Sidebar user={user} activePage="assessments" onLogout={handleLogout} />
-          
-          <main className="flex-1 p-6">
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden max-w-4xl mx-auto">
+      <div className="min-h-screen bg-[#f0f5f5] flex">
+        <Sidebar user={user} activePage="assessments" onLogout={handleLogout} />
+        
+        <main className="flex-1 p-8 overflow-auto">
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
               {/* Header */}
-              <div className="p-6 border-b border-gray-100">
-                <Link href="/dashboard" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4">
-                  <ArrowLeft className="w-4 h-4" />
-                  <span className="text-sm">Back to Dashboard</span>
-                </Link>
-                <h1 className="text-2xl font-bold text-gray-900">Wellness Assessment</h1>
-                <p className="text-gray-500 mt-1">Evaluate your holistic well-being across four key dimensions</p>
+              <div className="flex items-center gap-4 mb-6">
+                <button 
+                  onClick={() => router.push('/dashboard')}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <ArrowLeft className="w-5 h-5 text-gray-600" />
+                </button>
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">Wellness Assessment</h1>
+                  <p className="text-gray-600">Evaluate your holistic well-being</p>
+                </div>
               </div>
 
               {/* Content */}
-              <div className="p-8">
-                <div className="flex gap-8">
-                  {/* Left side - Info */}
-                  <div className="flex-1">
-                    {/* Categories */}
-                    <div className="mb-6">
-                      <h3 className="text-sm font-semibold text-gray-700 mb-3">Assessment Categories</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {categories.map((cat) => (
-                          <button
-                            key={cat.id}
-                            onClick={() => setSelectedCategory(selectedCategory === cat.id ? null : cat.id)}
-                            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                              selectedCategory === cat.id
-                                ? 'bg-[#0D5C5C] text-white'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                            }`}
-                          >
-                            {cat.name}
-                          </button>
-                        ))}
-                      </div>
+              <div className="flex gap-8">
+                {/* Left side - Info */}
+                <div className="flex-1">
+                  {/* Categories */}
+                  <div className="mb-6">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-3">Assessment Categories</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {categories.map((cat) => (
+                        <span
+                          key={cat.id}
+                          className="px-3 py-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700"
+                        >
+                          {cat.icon} {cat.name}
+                        </span>
+                      ))}
                     </div>
-
-                    {/* Time estimate */}
-                    <div className="flex items-center gap-2 mb-6">
-                      <Clock className="w-4 h-4 text-gray-400" />
-                      <span className="text-sm text-gray-600">15-20 minutes</span>
-                    </div>
-
-                    {/* What you'll discover */}
-                    <div className="mb-6">
-                      <h3 className="text-sm font-semibold text-gray-700 mb-3">What you&apos;ll discover</h3>
-                      <ul className="space-y-2">
-                        <li className="flex items-start gap-2">
-                          <CheckCircle className="w-4 h-4 text-[#0D5C5C] mt-0.5" />
-                          <span className="text-sm text-gray-600">Your wellness balance across 4 dimensions</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <CheckCircle className="w-4 h-4 text-[#0D5C5C] mt-0.5" />
-                          <span className="text-sm text-gray-600">Areas of strength and growth opportunities</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <CheckCircle className="w-4 h-4 text-[#0D5C5C] mt-0.5" />
-                          <span className="text-sm text-gray-600">Personalized recommendations</span>
-                        </li>
-                      </ul>
-                    </div>
-
-                    {/* Start button */}
-                    <button
-                      onClick={handleStartTest}
-                      className="w-full py-3 bg-[#D4A84B] text-[#0D5C5C] font-semibold rounded-lg hover:bg-[#c49a42] transition-colors"
-                    >
-                      Start Assessment
-                    </button>
                   </div>
 
-                  {/* Right side - Mandala image */}
-                  <div className="w-64 flex items-center justify-center">
-                    <div className="w-48 h-48 rounded-full bg-gradient-to-br from-purple-400 via-pink-400 to-orange-400 flex items-center justify-center relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/50 via-pink-500/50 to-orange-500/50"></div>
-                      <div className="w-40 h-40 rounded-full bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 flex items-center justify-center">
-                        <div className="w-32 h-32 rounded-full bg-gradient-to-br from-teal-400 via-blue-400 to-purple-400 flex items-center justify-center">
-                          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-yellow-400 via-orange-400 to-red-400 flex items-center justify-center">
-                            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-pink-400 via-purple-400 to-indigo-400"></div>
-                          </div>
+                  {/* Stats */}
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-lg">📊</span>
+                        <span className="font-semibold text-gray-900">30 Questions</span>
+                      </div>
+                      <p className="text-sm text-gray-600">5 per category</p>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Clock className="w-5 h-5 text-gray-600" />
+                        <span className="font-semibold text-gray-900">10-15 Minutes</span>
+                      </div>
+                      <p className="text-sm text-gray-600">Estimated time</p>
+                    </div>
+                  </div>
+
+                  {/* What you'll discover */}
+                  <div className="mb-6">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-3">What you&apos;ll discover</h3>
+                    <ul className="space-y-2">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-4 h-4 text-[#0D5C5C] mt-0.5" />
+                        <span className="text-sm text-gray-600">Your wellness balance across 6 dimensions</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-4 h-4 text-[#0D5C5C] mt-0.5" />
+                        <span className="text-sm text-gray-600">Areas of strength and growth opportunities</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-4 h-4 text-[#0D5C5C] mt-0.5" />
+                        <span className="text-sm text-gray-600">Personalized recommendations based on research</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* Start button */}
+                  <button
+                    onClick={handleStartTest}
+                    className="w-full py-4 bg-[#0D5C5C] text-white font-semibold rounded-xl hover:bg-[#0a4a4a] transition-colors text-lg"
+                  >
+                    Start Assessment
+                  </button>
+                </div>
+
+                {/* Right side - Mandala image */}
+                <div className="w-64 flex items-center justify-center">
+                  <div className="w-48 h-48 rounded-full bg-gradient-to-br from-purple-400 via-pink-400 to-orange-400 flex items-center justify-center relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/50 via-pink-500/50 to-orange-500/50"></div>
+                    <div className="w-40 h-40 rounded-full bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 flex items-center justify-center">
+                      <div className="w-32 h-32 rounded-full bg-gradient-to-br from-teal-400 via-blue-400 to-purple-400 flex items-center justify-center">
+                        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-yellow-400 via-orange-400 to-red-400 flex items-center justify-center">
+                          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-pink-400 via-purple-400 to-indigo-400"></div>
                         </div>
                       </div>
                     </div>
@@ -217,8 +267,8 @@ export default function WellnessTestPage() {
                 </div>
               </div>
             </div>
-          </main>
-        </div>
+          </div>
+        </main>
       </div>
     );
   }
@@ -226,134 +276,184 @@ export default function WellnessTestPage() {
   // Questions Screen
   if (testState === 'questions') {
     return (
-      <div className="min-h-screen bg-[#0D5C5C]">
-        <div className="flex">
-          <Sidebar user={user} activePage="assessments" onLogout={handleLogout} />
-          
-          <main className="flex-1 p-6">
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden max-w-4xl mx-auto">
-              {/* Progress bar */}
-              <div className="h-2 bg-gray-100">
-                <div 
-                  className="h-full bg-[#D4A84B] transition-all duration-300"
-                  style={{ width: `${progress}%` }}
-                ></div>
+      <div className="min-h-screen bg-[#f0f5f5] flex">
+        <Sidebar user={user} activePage="assessments" onLogout={handleLogout} />
+        
+        <main className="flex-1 p-8 overflow-auto">
+          <div className="max-w-3xl mx-auto">
+            {/* Progress Bar */}
+            <div className="mb-6">
+              <div className="flex justify-between text-sm text-gray-600 mb-2">
+                <span>Question {currentQuestion + 1} of {wellnessQuestions.length}</span>
+                <span>{Math.round(progress)}% Complete</span>
               </div>
+              <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div 
+                  className="h-full transition-all duration-300"
+                  style={{ width: `${progress}%`, backgroundColor: currentCategory?.color || '#0D5C5C' }}
+                />
+              </div>
+            </div>
 
-              {/* Header */}
-              <div className="p-6 border-b border-gray-100">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div 
-                      className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
-                      style={{ backgroundColor: currentCategoryColor }}
-                    >
-                      {currentQuestion + 1}
-                    </div>
-                    <div>
-                      <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        {currentQ.category}
-                      </span>
-                      <p className="text-sm text-gray-600">Question {currentQuestion + 1} of {questions.length}</p>
-                    </div>
-                  </div>
-                  <Link href="/dashboard" className="text-sm text-gray-500 hover:text-gray-700">
-                    Save & Exit
-                  </Link>
-                </div>
+            <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
+              {/* Category Badge */}
+              <div className="flex items-center gap-2 mb-6">
+                <span 
+                  className="px-3 py-1 rounded-full text-sm font-medium text-white"
+                  style={{ backgroundColor: currentCategory?.color }}
+                >
+                  {currentCategory?.icon} {currentCategory?.name}
+                </span>
               </div>
 
               {/* Question */}
-              <div className="p-8">
-                <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">{currentQ.text}</h2>
-                  <p className="text-gray-500">{currentQ.subtext}</p>
-                </div>
+              <h2 className="text-xl font-semibold text-gray-900 mb-8">
+                {currentQ.text}
+              </h2>
 
-                {/* Answer options */}
-                <div className="flex justify-center gap-4 mb-8">
-                  {answerOptions.map((option) => (
-                    <button
-                      key={option.value}
-                      onClick={() => handleAnswer(option.value)}
-                      className={`flex flex-col items-center p-4 rounded-xl border-2 transition-all min-w-[100px] ${
-                        answers[currentQ.id] === option.value
-                          ? 'border-[#0D5C5C] bg-[#0D5C5C]/5'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <span className={`text-lg font-bold mb-1 ${
-                        answers[currentQ.id] === option.value ? 'text-[#0D5C5C]' : 'text-gray-700'
-                      }`}>
-                        {option.shortLabel}
-                      </span>
-                      <span className="text-xs text-gray-500 text-center">{option.label}</span>
-                    </button>
-                  ))}
-                </div>
-
-                {/* Navigation */}
-                <div className="flex justify-between">
+              {/* Answer Options */}
+              <div className="grid grid-cols-5 gap-3 mb-8">
+                {answerOptions.map((option) => (
                   <button
-                    onClick={handleBack}
-                    disabled={currentQuestion === 0}
-                    className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-                      currentQuestion === 0
-                        ? 'text-gray-300 cursor-not-allowed'
-                        : 'text-gray-600 hover:bg-gray-100'
+                    key={option.value}
+                    onClick={() => handleAnswer(option.value)}
+                    className={`flex flex-col items-center p-4 rounded-xl border-2 transition-all ${
+                      answers[currentQ.id] === option.value
+                        ? 'border-[#0D5C5C] bg-[#e8f4f4]'
+                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                     }`}
                   >
-                    Back
+                    <span className={`text-2xl font-bold mb-1 ${
+                      answers[currentQ.id] === option.value ? 'text-[#0D5C5C]' : 'text-gray-400'
+                    }`}>
+                      {option.value}
+                    </span>
+                    <span className={`text-xs text-center ${
+                      answers[currentQ.id] === option.value ? 'text-[#0D5C5C] font-medium' : 'text-gray-500'
+                    }`}>
+                      {option.shortLabel}
+                    </span>
                   </button>
-                  <button
-                    onClick={handleNext}
-                    disabled={!answers[currentQ.id]}
-                    className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-                      answers[currentQ.id]
-                        ? 'bg-[#0D5C5C] text-white hover:bg-[#0a4a4a]'
-                        : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    }`}
-                  >
-                    {currentQuestion === questions.length - 1 ? 'Complete' : 'Next'}
-                  </button>
-                </div>
+                ))}
+              </div>
+
+              {/* Scale Labels */}
+              <div className="flex justify-between text-xs text-gray-500 mb-8 px-2">
+                <span>Strongly Disagree</span>
+                <span>Strongly Agree</span>
+              </div>
+
+              {/* Navigation */}
+              <div className="flex justify-between">
+                <button
+                  onClick={handleBack}
+                  disabled={currentQuestion === 0}
+                  className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors ${
+                    currentQuestion === 0
+                      ? 'text-gray-400 cursor-not-allowed'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                  Back
+                </button>
+
+                <button
+                  onClick={handleNext}
+                  disabled={!answers[currentQ.id]}
+                  className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors ${
+                    !answers[currentQ.id]
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      : 'bg-[#0D5C5C] text-white hover:bg-[#0a4a4a]'
+                  }`}
+                >
+                  {currentQuestion === wellnessQuestions.length - 1 ? 'Complete' : 'Next'}
+                  <ArrowRight className="w-5 h-5" />
+                </button>
               </div>
             </div>
-          </main>
-        </div>
+          </div>
+        </main>
       </div>
     );
   }
 
   // Complete Screen
+  const scores = calculateScores();
+  const overallScore = Math.round(scores.reduce((acc, s) => acc + s.score, 0) / scores.length);
+
   return (
-    <div className="min-h-screen bg-[#0D5C5C]">
-      <div className="flex">
-        <Sidebar user={user} activePage="assessments" onLogout={handleLogout} />
-        
-        <main className="flex-1 p-6">
-          <div className="bg-[#2D2D2D] rounded-2xl shadow-lg overflow-hidden max-w-4xl mx-auto">
-            <div className="p-12 text-center">
-              {/* Checkmark */}
-              <div className="w-20 h-20 rounded-full bg-[#D4A84B] flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="w-10 h-10 text-white" />
+    <div className="min-h-screen bg-[#f0f5f5] flex">
+      <Sidebar user={user} activePage="assessments" onLogout={handleLogout} />
+      
+      <main className="flex-1 p-8 overflow-auto">
+        <div className="max-w-3xl mx-auto">
+          {/* Congratulations Banner */}
+          <div className="bg-[#2D2D2D] rounded-xl p-8 text-center mb-6">
+            <CheckCircle2 className="w-16 h-16 text-[#D4A84B] mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-white mb-2">Congratulations!</h2>
+            <p className="text-gray-300">You have completed the Wellness Assessment</p>
+          </div>
+
+          {/* Overall Score */}
+          <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Overall Wellness Score</h3>
+            <div className="flex items-center gap-6">
+              <div className="w-24 h-24 rounded-full bg-[#0D5C5C] flex items-center justify-center">
+                <span className="text-3xl font-bold text-white">{overallScore}%</span>
               </div>
-
-              <h1 className="text-3xl font-bold text-white mb-4">Congratulations!</h1>
-              <p className="text-white/70 mb-8 max-w-md mx-auto">
-                You have successfully completed the Wellness Assessment. Your results are ready to view.
-              </p>
-
-              <button
-                onClick={handleViewResults}
-                className="px-8 py-3 bg-[#D4A84B] text-[#0D5C5C] font-semibold rounded-lg hover:bg-[#c49a42] transition-colors"
-              >
-                View my results
-              </button>
+              <div>
+                <p className="text-gray-600">
+                  {overallScore >= 80 ? "Excellent! You're maintaining great wellness habits." :
+                   overallScore >= 60 ? "Good progress! There's room for improvement in some areas." :
+                   "Consider focusing on building healthier habits across categories."}
+                </p>
+              </div>
             </div>
           </div>
-        </main>
-      </div>
+
+          {/* Category Scores */}
+          <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">Scores by Category</h3>
+            <div className="space-y-4">
+              {scores.sort((a, b) => b.score - a.score).map((item) => (
+                <div key={item.category}>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-medium text-gray-700">
+                      {categories.find(c => c.id === item.category)?.icon} {item.name}
+                    </span>
+                    <span className="font-bold" style={{ color: item.color }}>
+                      {item.score}%
+                    </span>
+                  </div>
+                  <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{ width: `${item.score}%`, backgroundColor: item.color }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-4">
+            <button
+              onClick={handleViewResults}
+              className="flex-1 bg-[#0D5C5C] hover:bg-[#0a4a4a] text-white py-4 rounded-xl font-semibold transition-colors"
+            >
+              View Detailed Results
+            </button>
+            <button
+              onClick={() => router.push('/dashboard')}
+              className="flex-1 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 py-4 rounded-xl font-semibold transition-colors"
+            >
+              Back to Dashboard
+            </button>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }
