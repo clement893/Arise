@@ -341,7 +341,7 @@ export default function AddEvaluatorsPage() {
                       </div>
                       <div className="flex items-center gap-3">
                         {getStatusBadge(evaluator.status)}
-                        {evaluator.status === 'pending' && (
+                        {evaluator.status !== 'completed' && (
                           <button
                             onClick={() => handleRemoveEvaluator(evaluator.id)}
                             className="p-2 text-gray-400 hover:text-red-500 transition-colors"
