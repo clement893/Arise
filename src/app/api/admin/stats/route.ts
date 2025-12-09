@@ -36,9 +36,8 @@ export async function GET() {
     const activeRate = totalUsers > 0 ? Math.round((activeUsers / totalUsers) * 100) : 0;
 
     // Get assessments count
-    const assessments = await prisma.assessment.findMany({
+    const assessments = await prisma.assessmentResult.findMany({
       where: {
-        status: 'completed',
         completedAt: { gte: thirtyDaysAgo }
       }
     });
