@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { prisma } from '@/lib/prisma';
+import { PlanType } from '@prisma/client';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-11-17.clover',
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
           await prisma.user.update({
             where: { id: parseInt(userId) },
             data: {
-              plan: planId,
+              plan: planId as PlanType,
               stripeCustomerId: session.customer as string,
               stripeSubscriptionId: session.subscription as string,
             },
@@ -65,7 +66,7 @@ export async function POST(request: NextRequest) {
             // Downgrade user to free plan
             await prisma.user.update({
               where: { id: parseInt(userId) },
-              data: { plan: 'free' },
+              data: { plan: 'starter' as PlanType },
             });
             console.log(`User ${userId} downgraded to free plan`);
           }
@@ -82,7 +83,7 @@ export async function POST(request: NextRequest) {
           await prisma.user.update({
             where: { id: parseInt(userId) },
             data: {
-              plan: 'free',
+              plan: 'starter' as PlanType,
               stripeSubscriptionId: null,
             },
           });
