@@ -118,9 +118,10 @@ export default function DashboardPage() {
               icon={<Users className="w-6 h-6" />}
               title="360° Feedback"
               description="Multi-Faceted Leadership Perspectives"
-              status="in_progress"
+              status="not_started"
               badge="ARISE Platform"
               badgeColor="bg-[#0D5C5C]/10 text-[#0D5C5C]"
+              onAction={() => router.push('/dashboard/360-self')}
             />
             <EvaluationCard
               icon={<Heart className="w-6 h-6" />}
