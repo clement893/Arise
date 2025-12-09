@@ -5,10 +5,7 @@ import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Check, Loader2 } from 'lucide-react';
-import { loadStripe } from '@stripe/stripe-js';
 
-// Initialize Stripe
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 const plans = [
   {
@@ -115,16 +112,8 @@ export default function PricingPage() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        const stripe = await stripePromise;
-        if (stripe) {
-          const { error } = await stripe.redirectToCheckout({
-            sessionId: data.sessionId,
-          });
-          if (error) {
-            console.error('Stripe redirect error:', error);
-            alert('Failed to redirect to checkout. Please try again.');
-          }
-        }
+        console.error('No checkout URL returned');
+        alert('Failed to start checkout. Please try again.');
       }
     } catch (error) {
       console.error('Subscription error:', error);
