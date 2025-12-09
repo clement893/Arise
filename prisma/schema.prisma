@@ -31,6 +31,10 @@ model User {
   plan          PlanType     @default(starter)
   billingCycle  BillingCycle @default(monthly)
   
+  // Stripe integration
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  
   // Account status
   isActive      Boolean      @default(true)
   emailVerified Boolean      @default(false)
