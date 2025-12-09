@@ -74,9 +74,15 @@ export async function GET(request: NextRequest) {
         // Get upcoming invoice
         if (user.stripeSubscriptionId) {
           try {
-            upcomingInvoice = await stripe.invoices.retrieveUpcoming({
-              customer: user.stripeCustomerId,
-            });
+            // Use subscription to get next billing info instead of deprecated retrieveUpcoming
+            const subscription = await stripe.subscriptions.retrieve(user.stripeSubscriptionId);
+            if (subscription.current_period_end) {
+              upcomingInvoice = {
+                amount_due: subscription.items.data[0]?.price?.unit_amount || 0,
+                currency: subscription.currency,
+                next_payment_attempt: subscription.current_period_end,
+              } as Stripe.UpcomingInvoice;
+            }
           } catch {
             // No upcoming invoice
           }
