@@ -38,7 +38,7 @@ export async function PUT(request: NextRequest) {
 
       case 'delete':
         // Delete related data first
-        await prisma.assessment.deleteMany({ where: { userId } });
+        await prisma.assessmentResult.deleteMany({ where: { userId } });
         await prisma.evaluator.deleteMany({ where: { userId } });
         await prisma.subscription.deleteMany({ where: { userId } });
         await prisma.user.delete({ where: { id: userId } });
