@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/dashboard/Sidebar';
-import { ArrowLeft, CheckCircle, Circle, BookOpen, Target, TrendingUp, Calendar, ChevronRight, ExternalLink } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Circle, BookOpen, Target, TrendingUp, Calendar, ChevronRight, ExternalLink, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
 
 interface User {
@@ -14,35 +14,14 @@ interface User {
   plan: string;
 }
 
-// Development objectives
-const developmentObjectives = [
-  {
-    id: 1,
-    title: 'Improve active listening skills',
-    description: 'Practice reflective listening in meetings and one-on-ones. Summarize what others say before responding to ensure understanding.',
-    status: 'in_progress',
-    dueDate: '2024-03-15',
-    category: 'Communication',
-  },
-  {
-    id: 2,
-    title: 'Develop conflict resolution approach',
-    description: 'Apply TKI insights to adapt conflict style based on situation. Practice collaborative problem-solving techniques.',
-    status: 'not_started',
-    dueDate: '2024-04-01',
-    category: 'Leadership',
-  },
-  {
-    id: 3,
-    title: 'Build team psychological safety',
-    description: 'Create an environment where team members feel safe to take risks and voice concerns without fear of negative consequences.',
-    status: 'completed',
-    dueDate: '2024-02-28',
-    category: 'Team Culture',
-  },
-];
+interface AssessmentResults {
+  mbti?: { dominantResult: string; completedAt?: string };
+  tki?: { dominantResult: string; completedAt?: string };
+  self_360?: { dominantResult: string; completedAt?: string };
+  wellness?: { overallScore: number; completedAt?: string };
+}
 
-// Recommended books
+// Recommended books (these are static resources, not user data)
 const recommendedBooks = [
   {
     id: 1,
@@ -74,60 +53,11 @@ const recommendedBooks = [
   },
 ];
 
-// Growth activities
-const growthActivities = [
-  { id: 1, text: 'Set up weekly one-on-one meetings with direct reports', completed: true },
-  { id: 2, text: 'Practice active listening in next 3 meetings', completed: true },
-  { id: 3, text: 'Complete online course on conflict resolution', completed: false },
-  { id: 4, text: 'Schedule feedback session with manager', completed: false },
-  { id: 5, text: 'Join leadership peer coaching group', completed: false },
-];
-
-// Key updates / milestones
-const keyUpdates = [
-  {
-    id: 1,
-    date: '2024-01-15',
-    title: 'Completed MBTI Assessment',
-    description: 'Identified as ENFJ - The Protagonist',
-    type: 'achievement',
-  },
-  {
-    id: 2,
-    date: '2024-01-20',
-    title: 'TKI Results Available',
-    description: 'Dominant style: Collaborating (8/12)',
-    type: 'result',
-  },
-  {
-    id: 3,
-    date: '2024-02-01',
-    title: 'Started Development Plan',
-    description: '3 objectives defined with coach',
-    type: 'milestone',
-  },
-  {
-    id: 4,
-    date: '2024-02-15',
-    title: 'First Objective Completed',
-    description: 'Team psychological safety improved',
-    type: 'achievement',
-  },
-];
-
-// Profile scores
-const profileScores = [
-  { label: 'MBTI', value: 'ENFJ', color: '#0D5C5C' },
-  { label: 'TKI Dominant', value: 'Collaborating', color: '#27ae60' },
-  { label: '360° Score', value: '4.2/5', color: '#9b59b6' },
-  { label: 'Light score', value: '78%', color: '#D4A84B' },
-];
-
 export default function DevelopmentPlanPage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [activities, setActivities] = useState(growthActivities);
+  const [assessmentResults, setAssessmentResults] = useState<AssessmentResults | null>(null);
 
   useEffect(() => {
     const userData = localStorage.getItem('arise_user');
@@ -135,20 +65,32 @@ export default function DevelopmentPlanPage() {
       router.push('/login');
       return;
     }
-    setUser(JSON.parse(userData));
+    const parsedUser = JSON.parse(userData);
+    setUser(parsedUser);
+    fetchAssessmentResults(parsedUser.id);
     setIsLoading(false);
   }, [router]);
+
+  const fetchAssessmentResults = async (userId: number) => {
+    try {
+      const response = await fetch('/api/assessments', {
+        headers: {
+          'x-user-id': userId.toString(),
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setAssessmentResults(data.summary);
+      }
+    } catch (error) {
+      console.error('Failed to fetch assessment results:', error);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('arise_user');
     localStorage.removeItem('arise_signup_data');
     router.push('/');
-  };
-
-  const toggleActivity = (id: number) => {
-    setActivities(activities.map(a => 
-      a.id === id ? { ...a, completed: !a.completed } : a
-    ));
   };
 
   if (isLoading || !user) {
@@ -159,12 +101,95 @@ export default function DevelopmentPlanPage() {
     );
   }
 
-  const completedObjectives = developmentObjectives.filter(o => o.status === 'completed').length;
-  const completedActivities = activities.filter(a => a.completed).length;
+  // Check if user has completed any assessments
+  const hasMBTI = assessmentResults?.mbti?.dominantResult;
+  const hasTKI = assessmentResults?.tki?.dominantResult;
+  const has360 = assessmentResults?.self_360?.dominantResult;
+  const hasWellness = assessmentResults?.wellness?.overallScore !== undefined;
+  const hasAnyAssessment = hasMBTI || hasTKI || has360 || hasWellness;
+  const completedAssessmentsCount = [hasMBTI, hasTKI, has360, hasWellness].filter(Boolean).length;
+
+  // Build profile scores dynamically based on actual results
+  const profileScores = [
+    { 
+      label: 'MBTI', 
+      value: hasMBTI || 'Not completed', 
+      color: '#0D5C5C',
+      completed: !!hasMBTI 
+    },
+    { 
+      label: 'TKI Dominant', 
+      value: hasTKI || 'Not completed', 
+      color: '#27ae60',
+      completed: !!hasTKI 
+    },
+    { 
+      label: '360° Score', 
+      value: has360 || 'Not completed', 
+      color: '#9b59b6',
+      completed: !!has360 
+    },
+    { 
+      label: 'Light score', 
+      value: hasWellness ? `${assessmentResults?.wellness?.overallScore}%` : 'Not completed', 
+      color: '#D4A84B',
+      completed: !!hasWellness 
+    },
+  ];
+
+  // Build key updates dynamically based on completed assessments
+  const buildKeyUpdates = () => {
+    const updates: { id: number; date: string; title: string; description: string; type: string }[] = [];
+    let id = 1;
+
+    if (hasMBTI && assessmentResults?.mbti?.completedAt) {
+      updates.push({
+        id: id++,
+        date: assessmentResults.mbti.completedAt,
+        title: 'Completed MBTI Assessment',
+        description: `Identified as ${hasMBTI}`,
+        type: 'achievement',
+      });
+    }
+
+    if (hasTKI && assessmentResults?.tki?.completedAt) {
+      updates.push({
+        id: id++,
+        date: assessmentResults.tki.completedAt,
+        title: 'TKI Results Available',
+        description: `Dominant style: ${hasTKI}`,
+        type: 'result',
+      });
+    }
+
+    if (has360 && assessmentResults?.self_360?.completedAt) {
+      updates.push({
+        id: id++,
+        date: assessmentResults.self_360.completedAt,
+        title: '360° Feedback Completed',
+        description: `Score: ${has360}`,
+        type: 'achievement',
+      });
+    }
+
+    if (hasWellness && assessmentResults?.wellness?.completedAt) {
+      updates.push({
+        id: id++,
+        date: assessmentResults.wellness.completedAt,
+        title: 'Wellness Assessment Completed',
+        description: `Overall score: ${assessmentResults.wellness.overallScore}%`,
+        type: 'achievement',
+      });
+    }
+
+    return updates;
+  };
+
+  const keyUpdates = buildKeyUpdates();
 
   return (
     <div className="min-h-screen bg-[#f0f5f5] flex">
-      <Sidebar user={user} activePage="development" onLogout={handleLogout} />
+      <Sidebar user={user} onLogout={handleLogout} />
       
       <main className="flex-1 p-8 overflow-auto">
         <div className="max-w-5xl mx-auto">
@@ -182,9 +207,11 @@ export default function DevelopmentPlanPage() {
                 <p className="text-gray-600">Track your growth journey and access learning materials</p>
               </div>
             </div>
-            <button className="px-4 py-2 bg-[#0D5C5C] text-white rounded-lg hover:bg-[#0a4a4a] transition-colors text-sm font-medium">
-              + Add objective
-            </button>
+            {hasAnyAssessment && (
+              <button className="px-4 py-2 bg-[#0D5C5C] text-white rounded-lg hover:bg-[#0a4a4a] transition-colors text-sm font-medium">
+                + Add objective
+              </button>
+            )}
           </div>
 
           {/* Main Content Grid */}
@@ -198,55 +225,34 @@ export default function DevelopmentPlanPage() {
                     <Target className="w-5 h-5 text-[#0D5C5C]" />
                     Development Objectives
                   </h2>
-                  <span className="text-sm text-gray-500">{completedObjectives}/{developmentObjectives.length} completed</span>
                 </div>
 
-                <div className="space-y-4">
-                  {developmentObjectives.map((objective) => (
-                    <div 
-                      key={objective.id}
-                      className={`p-4 rounded-lg border-2 transition-all ${
-                        objective.status === 'completed' 
-                          ? 'border-green-200 bg-green-50' 
-                          : objective.status === 'in_progress'
-                          ? 'border-[#D4A84B]/30 bg-[#D4A84B]/5'
-                          : 'border-gray-200 bg-gray-50'
-                      }`}
+                {hasAnyAssessment ? (
+                  <div className="text-center py-8">
+                    <AlertCircle className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-500 mb-2">No objectives defined yet</p>
+                    <p className="text-sm text-gray-400 mb-4">
+                      Based on your assessment results, we recommend defining development objectives with a coach.
+                    </p>
+                    <button className="px-4 py-2 bg-[#0D5C5C] text-white rounded-lg hover:bg-[#0a4a4a] transition-colors text-sm font-medium">
+                      + Add your first objective
+                    </button>
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <AlertCircle className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-500 mb-2">Complete your assessments first</p>
+                    <p className="text-sm text-gray-400 mb-4">
+                      Your development objectives will be personalized based on your assessment results.
+                    </p>
+                    <button 
+                      onClick={() => router.push('/dashboard/assessments')}
+                      className="text-[#0D5C5C] text-sm font-medium hover:underline"
                     >
-                      <div className="flex items-start gap-3">
-                        {objective.status === 'completed' ? (
-                          <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                        ) : (
-                          <Circle className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
-                        )}
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between mb-1">
-                            <h3 className={`font-medium ${objective.status === 'completed' ? 'text-green-700 line-through' : 'text-gray-900'}`}>
-                              {objective.title}
-                            </h3>
-                            <span className={`text-xs px-2 py-1 rounded-full ${
-                              objective.status === 'completed' 
-                                ? 'bg-green-100 text-green-700'
-                                : objective.status === 'in_progress'
-                                ? 'bg-[#D4A84B]/20 text-[#D4A84B]'
-                                : 'bg-gray-100 text-gray-600'
-                            }`}>
-                              {objective.status === 'completed' ? 'Completed' : objective.status === 'in_progress' ? 'In Progress' : 'Not Started'}
-                            </span>
-                          </div>
-                          <p className="text-sm text-gray-600 mb-2">{objective.description}</p>
-                          <div className="flex items-center gap-4 text-xs text-gray-500">
-                            <span className="flex items-center gap-1">
-                              <Calendar className="w-3 h-3" />
-                              Due: {new Date(objective.dueDate).toLocaleDateString()}
-                            </span>
-                            <span className="px-2 py-0.5 bg-gray-100 rounded">{objective.category}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                      Start an assessment →
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Recommended Books */}
@@ -289,41 +295,25 @@ export default function DevelopmentPlanPage() {
                     <TrendingUp className="w-5 h-5 text-[#0D5C5C]" />
                     Growth Activities
                   </h2>
-                  <span className="text-sm text-gray-500">{completedActivities}/{activities.length} completed</span>
                 </div>
 
-                <div className="space-y-3">
-                  {activities.map((activity) => (
-                    <label 
-                      key={activity.id}
-                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={activity.completed}
-                        onChange={() => toggleActivity(activity.id)}
-                        className="w-5 h-5 rounded border-gray-300 text-[#0D5C5C] focus:ring-[#0D5C5C]"
-                      />
-                      <span className={`text-sm ${activity.completed ? 'text-gray-500 line-through' : 'text-gray-700'}`}>
-                        {activity.text}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-
-                {/* Progress bar */}
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="text-gray-600">Progress</span>
-                    <span className="font-medium text-[#0D5C5C]">{Math.round((completedActivities / activities.length) * 100)}%</span>
+                {hasAnyAssessment ? (
+                  <div className="text-center py-8">
+                    <AlertCircle className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-500 mb-2">No activities defined yet</p>
+                    <p className="text-sm text-gray-400">
+                      Activities will be suggested based on your development objectives.
+                    </p>
                   </div>
-                  <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-[#0D5C5C] rounded-full transition-all duration-300"
-                      style={{ width: `${(completedActivities / activities.length) * 100}%` }}
-                    />
+                ) : (
+                  <div className="text-center py-8">
+                    <AlertCircle className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-500 mb-2">Complete your assessments first</p>
+                    <p className="text-sm text-gray-400">
+                      Growth activities will be personalized based on your results.
+                    </p>
                   </div>
-                </div>
+                )}
               </div>
             </div>
 
@@ -332,15 +322,21 @@ export default function DevelopmentPlanPage() {
               {/* Your Global Profile */}
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Your global profile</h2>
+                <p className="text-sm text-gray-500 mb-4">{completedAssessmentsCount}/4 assessments completed</p>
                 <div className="grid grid-cols-2 gap-3">
                   {profileScores.map((score, index) => (
                     <div 
                       key={index}
                       className="p-3 rounded-lg text-center"
-                      style={{ backgroundColor: `${score.color}10` }}
+                      style={{ backgroundColor: score.completed ? `${score.color}10` : '#f3f4f6' }}
                     >
                       <p className="text-xs text-gray-600 mb-1">{score.label}</p>
-                      <p className="font-bold" style={{ color: score.color }}>{score.value}</p>
+                      <p 
+                        className="font-bold text-sm"
+                        style={{ color: score.completed ? score.color : '#9ca3af' }}
+                      >
+                        {score.value}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -355,28 +351,39 @@ export default function DevelopmentPlanPage() {
               {/* Key Updates */}
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Key updates</h2>
-                <div className="space-y-4">
-                  {keyUpdates.map((update, index) => (
-                    <div key={update.id} className="flex gap-3">
-                      <div className="flex flex-col items-center">
-                        <div className={`w-3 h-3 rounded-full ${
-                          update.type === 'achievement' ? 'bg-green-500' :
-                          update.type === 'result' ? 'bg-[#D4A84B]' : 'bg-[#0D5C5C]'
-                        }`} />
-                        {index < keyUpdates.length - 1 && (
-                          <div className="w-0.5 h-full bg-gray-200 mt-1" />
-                        )}
+                
+                {keyUpdates.length > 0 ? (
+                  <div className="space-y-4">
+                    {keyUpdates.map((update, index) => (
+                      <div key={update.id} className="flex gap-3">
+                        <div className="flex flex-col items-center">
+                          <div className={`w-3 h-3 rounded-full ${
+                            update.type === 'achievement' ? 'bg-green-500' :
+                            update.type === 'result' ? 'bg-[#D4A84B]' : 'bg-[#0D5C5C]'
+                          }`} />
+                          {index < keyUpdates.length - 1 && (
+                            <div className="w-0.5 h-full bg-gray-200 mt-1" />
+                          )}
+                        </div>
+                        <div className="flex-1 pb-4">
+                          <p className="text-xs text-gray-500 mb-1">
+                            {new Date(update.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          </p>
+                          <h3 className="text-sm font-medium text-gray-900">{update.title}</h3>
+                          <p className="text-xs text-gray-600">{update.description}</p>
+                        </div>
                       </div>
-                      <div className="flex-1 pb-4">
-                        <p className="text-xs text-gray-500 mb-1">
-                          {new Date(update.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                        </p>
-                        <h3 className="text-sm font-medium text-gray-900">{update.title}</h3>
-                        <p className="text-xs text-gray-600">{update.description}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-6">
+                    <AlertCircle className="w-10 h-10 text-gray-300 mx-auto mb-2" />
+                    <p className="text-gray-500 text-sm">No updates yet</p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Complete assessments to see your progress
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* CTA Card */}
