@@ -109,9 +109,10 @@ export default function DashboardPage() {
               icon={<MessageSquare className="w-6 h-6" />}
               title="TKI Conflict Style"
               description="Explore Your Conflict Management Approach"
-              status="completed"
-              badge="Label"
-              badgeColor="bg-[#D4A84B]/20 text-[#D4A84B]"
+              status="not_started"
+              badge="ARISE Platform"
+              badgeColor="bg-[#0D5C5C]/10 text-[#0D5C5C]"
+              onAction={() => router.push('/dashboard/tki')}
             />
             <EvaluationCard
               icon={<Users className="w-6 h-6" />}
