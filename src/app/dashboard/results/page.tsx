@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/dashboard/Sidebar';
-import { Share2, MessageCircle, ChevronRight, Download, FileText } from 'lucide-react';
+import { Share2, MessageCircle, ChevronRight, Download, FileText, AlertCircle } from 'lucide-react';
 import { generateLeadershipReport } from '@/lib/generateReport';
 
 interface User {
@@ -59,7 +59,6 @@ export default function ResultsPage() {
     
     setGeneratingPDF(true);
     try {
-      // Fetch full assessment data for the report
       const response = await fetch('/api/assessments', {
         headers: {
           'x-user-id': user.id.toString(),
@@ -98,19 +97,27 @@ export default function ResultsPage() {
     return null;
   }
 
+  // Check if user has completed any assessments
+  const hasMBTI = assessmentResults?.mbti?.dominantResult;
+  const hasTKI = assessmentResults?.tki?.dominantResult;
+  const has360 = assessmentResults?.self_360?.dominantResult;
+  const hasWellness = assessmentResults?.wellness?.overallScore !== undefined;
+  const hasAnyAssessment = hasMBTI || hasTKI || has360 || hasWellness;
+
   // Dynamic leader profile based on assessment results
   const leaderProfile = [
-    { label: 'MBTI', value: assessmentResults?.mbti?.dominantResult || 'Not completed', color: 'bg-[#2D2D2D]' },
-    { label: 'TKI Dominant', value: assessmentResults?.tki?.dominantResult || 'Not completed', color: 'bg-[#2D2D2D]' },
-    { label: '360°', value: assessmentResults?.self_360?.dominantResult || 'Not completed', color: 'bg-[#0D5C5C]' },
-    { label: 'Light score', value: assessmentResults?.wellness ? `${assessmentResults.wellness.overallScore}%` : 'Not completed', color: 'bg-[#D4A84B]' },
+    { label: 'MBTI', value: hasMBTI || 'Not completed', color: 'bg-[#2D2D2D]' },
+    { label: 'TKI Dominant', value: hasTKI || 'Not completed', color: 'bg-[#2D2D2D]' },
+    { label: '360°', value: has360 || 'Not completed', color: 'bg-[#0D5C5C]' },
+    { label: 'Light score', value: hasWellness ? `${assessmentResults.wellness.overallScore}%` : 'Not completed', color: 'bg-[#D4A84B]' },
   ];
 
-  const developmentGoals = [
-    { id: 1, title: 'Improve active listening', status: 'in_progress' },
-    { id: 2, title: 'Develop conflict resolution skills', status: 'completed' },
+  // Development goals - only show if user has completed assessments
+  const developmentGoals = hasAnyAssessment ? [
+    { id: 1, title: 'Improve active listening', status: 'not_started' },
+    { id: 2, title: 'Develop conflict resolution skills', status: 'not_started' },
     { id: 3, title: 'Enhance emotional intelligence', status: 'not_started' },
-  ];
+  ] : [];
 
   // Dynamic radar data based on wellness scores
   const wellnessScores = assessmentResults?.wellness?.scores || {};
@@ -121,6 +128,9 @@ export default function ResultsPage() {
     { label: 'Spiritual', value: wellnessScores.substances || 0 },
     { label: 'Social', value: wellnessScores.nutrition || 0 },
   ];
+
+  // MBTI data - only if completed
+  const mbtiData = hasMBTI ? assessmentResults.mbti : null;
 
   return (
     <div className="min-h-screen bg-[#f0f5f5] flex">
@@ -136,7 +146,7 @@ export default function ResultsPage() {
           <div className="flex gap-3">
             <button
               onClick={handleDownloadReport}
-              disabled={generatingPDF || !assessmentResults}
+              disabled={generatingPDF || !hasAnyAssessment}
               className="flex items-center gap-2 px-4 py-2 bg-[#0D5C5C] text-white rounded-lg text-sm font-medium hover:bg-[#0a4a4a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FileText className="w-4 h-4" />
@@ -179,25 +189,40 @@ export default function ResultsPage() {
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-900">Your development goals</h2>
-              <button className="text-[#0D5C5C] text-sm font-medium hover:underline">
-                View all
-              </button>
+              {developmentGoals.length > 0 && (
+                <button className="text-[#0D5C5C] text-sm font-medium hover:underline">
+                  View all
+                </button>
+              )}
             </div>
             
-            <div className="space-y-3">
-              {developmentGoals.map((goal) => (
-                <div key={goal.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-3 h-3 rounded-full ${
-                      goal.status === 'completed' ? 'bg-green-500' :
-                      goal.status === 'in_progress' ? 'bg-[#D4A84B]' : 'bg-gray-300'
-                    }`} />
-                    <span className="text-sm text-gray-700">{goal.title}</span>
+            {developmentGoals.length > 0 ? (
+              <div className="space-y-3">
+                {developmentGoals.map((goal) => (
+                  <div key={goal.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-3 h-3 rounded-full ${
+                        goal.status === 'completed' ? 'bg-green-500' :
+                        goal.status === 'in_progress' ? 'bg-[#D4A84B]' : 'bg-gray-300'
+                      }`} />
+                      <span className="text-sm text-gray-700">{goal.title}</span>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-gray-400" />
                   </div>
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-8 text-center">
+                <AlertCircle className="w-12 h-12 text-gray-300 mb-3" />
+                <p className="text-gray-500 text-sm">Complete your assessments to see development goals</p>
+                <button 
+                  onClick={() => router.push('/dashboard/assessments')}
+                  className="mt-3 text-[#0D5C5C] text-sm font-medium hover:underline"
+                >
+                  Start an assessment →
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Your global profile - Radar Chart */}
@@ -232,19 +257,21 @@ export default function ResultsPage() {
                   strokeWidth="1"
                 />
                 
-                {/* Data polygon */}
-                <polygon
-                  points={`
-                    ${100 + (radarData[0].value / 100) * 0 * 80},${100 - (radarData[0].value / 100) * 80}
-                    ${100 + (radarData[1].value / 100) * 76 * Math.cos(Math.PI / 10)},${100 - (radarData[1].value / 100) * 76 * Math.sin(Math.PI / 10) + 50}
-                    ${100 + (radarData[2].value / 100) * 47 * Math.cos(Math.PI / 5)},${100 + (radarData[2].value / 100) * 47 + 20}
-                    ${100 - (radarData[3].value / 100) * 47 * Math.cos(Math.PI / 5)},${100 + (radarData[3].value / 100) * 47 + 20}
-                    ${100 - (radarData[4].value / 100) * 76 * Math.cos(Math.PI / 10)},${100 - (radarData[4].value / 100) * 76 * Math.sin(Math.PI / 10) + 50}
-                  `}
-                  fill="rgba(13, 92, 92, 0.2)"
-                  stroke="#0D5C5C"
-                  strokeWidth="2"
-                />
+                {/* Data polygon - only show if has wellness data */}
+                {hasWellness && (
+                  <polygon
+                    points={`
+                      ${100 + (radarData[0].value / 100) * 0 * 80},${100 - (radarData[0].value / 100) * 80}
+                      ${100 + (radarData[1].value / 100) * 76 * Math.cos(Math.PI / 10)},${100 - (radarData[1].value / 100) * 76 * Math.sin(Math.PI / 10) + 50}
+                      ${100 + (radarData[2].value / 100) * 47 * Math.cos(Math.PI / 5)},${100 + (radarData[2].value / 100) * 47 + 20}
+                      ${100 - (radarData[3].value / 100) * 47 * Math.cos(Math.PI / 5)},${100 + (radarData[3].value / 100) * 47 + 20}
+                      ${100 - (radarData[4].value / 100) * 76 * Math.cos(Math.PI / 10)},${100 - (radarData[4].value / 100) * 76 * Math.sin(Math.PI / 10) + 50}
+                    `}
+                    fill="rgba(13, 92, 92, 0.2)"
+                    stroke="#0D5C5C"
+                    strokeWidth="2"
+                  />
+                )}
                 
                 {/* Labels */}
                 <text x="100" y="10" textAnchor="middle" className="text-xs fill-gray-600">Physical</text>
@@ -262,61 +289,52 @@ export default function ResultsPage() {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Life cards</h2>
           
           <div className="grid md:grid-cols-2 gap-4">
-            {/* MBTI Personality Card */}
+            {/* MBTI Personality Card - Only show data if MBTI is completed */}
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h3 className="font-semibold text-gray-900">MBTI Personality</h3>
                   <p className="text-sm text-gray-500">Your personality type breakdown</p>
                 </div>
-                <span className="px-2 py-1 bg-[#0D5C5C] text-white text-xs rounded font-medium">ENFJ</span>
+                {hasMBTI && (
+                  <span className="px-2 py-1 bg-[#0D5C5C] text-white text-xs rounded font-medium">{hasMBTI}</span>
+                )}
               </div>
               
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Extraversion</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div className="h-full bg-[#0D5C5C] rounded-full" style={{ width: '75%' }} />
-                    </div>
-                    <span className="text-sm font-medium">75%</span>
+              {hasMBTI ? (
+                <>
+                  <div className="space-y-3">
+                    {mbtiData?.scores && Object.entries(mbtiData.scores).map(([key, value]: [string, any]) => (
+                      <div key={key} className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600 capitalize">{key}</span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div className="h-full bg-[#0D5C5C] rounded-full" style={{ width: `${value}%` }} />
+                          </div>
+                          <span className="text-sm font-medium">{value}%</span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
+                  <button className="mt-4 text-[#0D5C5C] text-sm font-medium hover:underline flex items-center gap-1">
+                    View full report <ChevronRight className="w-4 h-4" />
+                  </button>
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-8 text-center">
+                  <AlertCircle className="w-10 h-10 text-gray-300 mb-2" />
+                  <p className="text-gray-500 text-sm">Complete the MBTI assessment to see your results</p>
+                  <button 
+                    onClick={() => router.push('/dashboard/assessments')}
+                    className="mt-2 text-[#0D5C5C] text-sm font-medium hover:underline"
+                  >
+                    Take MBTI assessment →
+                  </button>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Intuition</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div className="h-full bg-[#0D5C5C] rounded-full" style={{ width: '68%' }} />
-                    </div>
-                    <span className="text-sm font-medium">68%</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Feeling</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div className="h-full bg-[#0D5C5C] rounded-full" style={{ width: '82%' }} />
-                    </div>
-                    <span className="text-sm font-medium">82%</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Judging</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div className="h-full bg-[#0D5C5C] rounded-full" style={{ width: '71%' }} />
-                    </div>
-                    <span className="text-sm font-medium">71%</span>
-                  </div>
-                </div>
-              </div>
-              
-              <button className="mt-4 text-[#0D5C5C] text-sm font-medium hover:underline flex items-center gap-1">
-                View full report <ChevronRight className="w-4 h-4" />
-              </button>
+              )}
             </div>
 
-            {/* Life Cards Summary */}
+            {/* Life Cards Summary - Only show if user has completed assessments */}
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
               <div className="flex items-start justify-between mb-4">
                 <div>
@@ -325,28 +343,62 @@ export default function ResultsPage() {
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-[#e8f4f4] rounded-lg p-3">
-                  <p className="text-xs text-gray-500 mb-1">Strength</p>
-                  <p className="text-sm font-medium text-[#0D5C5C]">Empathy</p>
+              {hasAnyAssessment ? (
+                <>
+                  <div className="grid grid-cols-2 gap-3">
+                    {hasTKI && assessmentResults.tki.dominantResult === 'Collaborating' && (
+                      <div className="bg-[#e8f4f4] rounded-lg p-3">
+                        <p className="text-xs text-gray-500 mb-1">Strength</p>
+                        <p className="text-sm font-medium text-[#0D5C5C]">Collaboration</p>
+                      </div>
+                    )}
+                    {hasTKI && assessmentResults.tki.dominantResult === 'Compromising' && (
+                      <div className="bg-[#e8f4f4] rounded-lg p-3">
+                        <p className="text-xs text-gray-500 mb-1">Strength</p>
+                        <p className="text-sm font-medium text-[#0D5C5C]">Flexibility</p>
+                      </div>
+                    )}
+                    {has360 && (
+                      <div className="bg-[#e8f4f4] rounded-lg p-3">
+                        <p className="text-xs text-gray-500 mb-1">Strength</p>
+                        <p className="text-sm font-medium text-[#0D5C5C]">Self-awareness</p>
+                      </div>
+                    )}
+                    {hasWellness && assessmentResults.wellness.overallScore >= 70 && (
+                      <div className="bg-[#e8f4f4] rounded-lg p-3">
+                        <p className="text-xs text-gray-500 mb-1">Strength</p>
+                        <p className="text-sm font-medium text-[#0D5C5C]">Well-being</p>
+                      </div>
+                    )}
+                    {hasTKI && assessmentResults.tki.dominantResult === 'Avoiding' && (
+                      <div className="bg-[#fef3cd] rounded-lg p-3">
+                        <p className="text-xs text-gray-500 mb-1">Growth area</p>
+                        <p className="text-sm font-medium text-[#D4A84B]">Assertiveness</p>
+                      </div>
+                    )}
+                    {hasWellness && assessmentResults.wellness.overallScore < 50 && (
+                      <div className="bg-[#fef3cd] rounded-lg p-3">
+                        <p className="text-xs text-gray-500 mb-1">Growth area</p>
+                        <p className="text-sm font-medium text-[#D4A84B]">Self-care</p>
+                      </div>
+                    )}
+                  </div>
+                  <button className="mt-4 text-[#0D5C5C] text-sm font-medium hover:underline flex items-center gap-1">
+                    View all cards <ChevronRight className="w-4 h-4" />
+                  </button>
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-8 text-center">
+                  <AlertCircle className="w-10 h-10 text-gray-300 mb-2" />
+                  <p className="text-gray-500 text-sm">Complete your assessments to discover your strengths</p>
+                  <button 
+                    onClick={() => router.push('/dashboard/assessments')}
+                    className="mt-2 text-[#0D5C5C] text-sm font-medium hover:underline"
+                  >
+                    Start an assessment →
+                  </button>
                 </div>
-                <div className="bg-[#e8f4f4] rounded-lg p-3">
-                  <p className="text-xs text-gray-500 mb-1">Strength</p>
-                  <p className="text-sm font-medium text-[#0D5C5C]">Communication</p>
-                </div>
-                <div className="bg-[#fef3cd] rounded-lg p-3">
-                  <p className="text-xs text-gray-500 mb-1">Growth area</p>
-                  <p className="text-sm font-medium text-[#D4A84B]">Delegation</p>
-                </div>
-                <div className="bg-[#fef3cd] rounded-lg p-3">
-                  <p className="text-xs text-gray-500 mb-1">Growth area</p>
-                  <p className="text-sm font-medium text-[#D4A84B]">Patience</p>
-                </div>
-              </div>
-              
-              <button className="mt-4 text-[#0D5C5C] text-sm font-medium hover:underline flex items-center gap-1">
-                View all cards <ChevronRight className="w-4 h-4" />
-              </button>
+              )}
             </div>
           </div>
         </div>
@@ -449,7 +501,7 @@ export default function ResultsPage() {
               >
                 Cancel
               </button>
-              <button className="flex-1 bg-[#0D5C5C] hover:bg-[#0a4a4a] text-white py-2 rounded-lg font-medium transition-colors">
+              <button className="flex-1 py-2 bg-[#0D5C5C] text-white rounded-lg font-medium hover:bg-[#0a4a4a] transition-colors">
                 Send invite
               </button>
             </div>
