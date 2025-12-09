@@ -7,7 +7,12 @@ import {
   Trash2, 
   GripVertical,
   Save,
-  X
+  X,
+  Edit2,
+  ChevronUp,
+  ChevronDown,
+  Check,
+  AlertCircle
 } from 'lucide-react';
 
 interface Assessment {
@@ -57,6 +62,21 @@ const defaultAssessments: Assessment[] = [
   }
 ];
 
+const categoryOptions = [
+  'Communication',
+  'Leadership',
+  'Team Culture',
+  'Change Management',
+  'Problem Solving',
+  'Stress Management',
+  'Work-Life Balance',
+  'Physical Health',
+  'Mental Health',
+  'Social Connections',
+  'Personal Growth',
+  'Conflict Resolution'
+];
+
 export default function AdminAssessments() {
   const [assessments, setAssessments] = useState<Assessment[]>(defaultAssessments);
   const [selectedAssessment, setSelectedAssessment] = useState<Assessment | null>(defaultAssessments[2]);
@@ -72,6 +92,10 @@ export default function AdminAssessments() {
   const [showAddQuestion, setShowAddQuestion] = useState(false);
   const [newQuestion, setNewQuestion] = useState({ text: '', category: '' });
   const [isSaving, setIsSaving] = useState(false);
+  const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
+  const [editingQuestionData, setEditingQuestionData] = useState({ text: '', category: '' });
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (selectedAssessment) {
@@ -87,6 +111,7 @@ export default function AdminAssessments() {
   }, [selectedAssessment]);
 
   const loadQuestions = async (assessmentId: string) => {
+    setIsLoading(true);
     try {
       const response = await fetch(`/api/admin/assessments/${assessmentId}/questions`);
       if (response.ok) {
@@ -97,12 +122,14 @@ export default function AdminAssessments() {
       console.error('Error loading questions:', error);
       setQuestions([]);
     }
+    setIsLoading(false);
   };
 
   const handleSaveSettings = async () => {
     if (!selectedAssessment) return;
     
     setIsSaving(true);
+    setSaveStatus('saving');
     try {
       const response = await fetch(`/api/admin/assessments/${selectedAssessment.id}`, {
         method: 'PUT',
@@ -111,7 +138,6 @@ export default function AdminAssessments() {
       });
       
       if (response.ok) {
-        // Update local state
         setAssessments(prev => prev.map(a => 
           a.id === selectedAssessment.id 
             ? { ...a, ...editForm }
@@ -119,9 +145,14 @@ export default function AdminAssessments() {
         ));
         setSelectedAssessment(prev => prev ? { ...prev, ...editForm } : null);
         setIsEditing(false);
+        setSaveStatus('saved');
+        setTimeout(() => setSaveStatus('idle'), 2000);
+      } else {
+        setSaveStatus('error');
       }
     } catch (error) {
       console.error('Error saving settings:', error);
+      setSaveStatus('error');
     }
     setIsSaving(false);
   };
@@ -129,6 +160,7 @@ export default function AdminAssessments() {
   const handleAddQuestion = async () => {
     if (!selectedAssessment || !newQuestion.text) return;
     
+    setSaveStatus('saving');
     try {
       const response = await fetch(`/api/admin/assessments/${selectedAssessment.id}/questions`, {
         method: 'POST',
@@ -145,15 +177,62 @@ export default function AdminAssessments() {
         setQuestions(prev => [...prev, data.question]);
         setNewQuestion({ text: '', category: '' });
         setShowAddQuestion(false);
+        setSaveStatus('saved');
+        setTimeout(() => setSaveStatus('idle'), 2000);
+      } else {
+        setSaveStatus('error');
       }
     } catch (error) {
       console.error('Error adding question:', error);
+      setSaveStatus('error');
     }
+  };
+
+  const handleEditQuestion = (question: Question) => {
+    setEditingQuestionId(question.id);
+    setEditingQuestionData({ text: question.text, category: question.category });
+  };
+
+  const handleSaveQuestion = async () => {
+    if (!selectedAssessment || !editingQuestionId) return;
+    
+    setSaveStatus('saving');
+    try {
+      const response = await fetch(`/api/admin/assessments/${selectedAssessment.id}/questions/${editingQuestionId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingQuestionData),
+      });
+      
+      if (response.ok) {
+        setQuestions(prev => prev.map(q => 
+          q.id === editingQuestionId 
+            ? { ...q, ...editingQuestionData }
+            : q
+        ));
+        setEditingQuestionId(null);
+        setEditingQuestionData({ text: '', category: '' });
+        setSaveStatus('saved');
+        setTimeout(() => setSaveStatus('idle'), 2000);
+      } else {
+        setSaveStatus('error');
+      }
+    } catch (error) {
+      console.error('Error updating question:', error);
+      setSaveStatus('error');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingQuestionId(null);
+    setEditingQuestionData({ text: '', category: '' });
   };
 
   const handleDeleteQuestion = async (questionId: string) => {
     if (!selectedAssessment) return;
+    if (!confirm('Are you sure you want to delete this question?')) return;
     
+    setSaveStatus('saving');
     try {
       const response = await fetch(`/api/admin/assessments/${selectedAssessment.id}/questions/${questionId}`, {
         method: 'DELETE',
@@ -161,18 +240,85 @@ export default function AdminAssessments() {
       
       if (response.ok) {
         setQuestions(prev => prev.filter(q => q.id !== questionId));
+        setSaveStatus('saved');
+        setTimeout(() => setSaveStatus('idle'), 2000);
+      } else {
+        setSaveStatus('error');
       }
     } catch (error) {
       console.error('Error deleting question:', error);
+      setSaveStatus('error');
+    }
+  };
+
+  const handleMoveQuestion = async (questionId: string, direction: 'up' | 'down') => {
+    const currentIndex = questions.findIndex(q => q.id === questionId);
+    if (currentIndex === -1) return;
+    
+    const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (newIndex < 0 || newIndex >= questions.length) return;
+    
+    // Swap questions locally
+    const newQuestions = [...questions];
+    [newQuestions[currentIndex], newQuestions[newIndex]] = [newQuestions[newIndex], newQuestions[currentIndex]];
+    
+    // Update order values
+    newQuestions.forEach((q, idx) => {
+      q.order = idx + 1;
+    });
+    
+    setQuestions(newQuestions);
+    
+    // Save new order to backend
+    setSaveStatus('saving');
+    try {
+      // Update both questions' order
+      await Promise.all([
+        fetch(`/api/admin/assessments/${selectedAssessment?.id}/questions/${newQuestions[currentIndex].id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ order: newQuestions[currentIndex].order }),
+        }),
+        fetch(`/api/admin/assessments/${selectedAssessment?.id}/questions/${newQuestions[newIndex].id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ order: newQuestions[newIndex].order }),
+        })
+      ]);
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus('idle'), 2000);
+    } catch (error) {
+      console.error('Error reordering questions:', error);
+      setSaveStatus('error');
     }
   };
 
   return (
     <div className="p-8">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Assessment Configuration</h1>
-        <p className="text-gray-500">Configure questions for all assessments</p>
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Assessment Configuration</h1>
+          <p className="text-gray-500">Configure questions for all assessments</p>
+        </div>
+        
+        {/* Save Status Indicator */}
+        {saveStatus !== 'idle' && (
+          <div className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+            saveStatus === 'saving' ? 'bg-blue-100 text-blue-700' :
+            saveStatus === 'saved' ? 'bg-green-100 text-green-700' :
+            'bg-red-100 text-red-700'
+          }`}>
+            {saveStatus === 'saving' && <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />}
+            {saveStatus === 'saved' && <Check className="w-4 h-4" />}
+            {saveStatus === 'error' && <AlertCircle className="w-4 h-4" />}
+            <span className="text-sm font-medium">
+              {saveStatus === 'saving' ? 'Saving...' :
+               saveStatus === 'saved' ? 'Saved!' :
+               'Error saving'}
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="flex gap-8">
@@ -205,15 +351,21 @@ export default function AdminAssessments() {
                   <p className={`text-sm ${
                     selectedAssessment?.id === assessment.id ? 'text-white/70' : 'text-gray-500'
                   }`}>
-                    {assessment.questionCount} questions
+                    {questions.length > 0 && selectedAssessment?.id === assessment.id 
+                      ? `${questions.length} questions` 
+                      : `${assessment.questionCount} questions`}
                   </p>
                 </div>
                 <span className={`px-2 py-1 rounded text-xs font-medium ${
-                  selectedAssessment?.id === assessment.id
-                    ? 'bg-white/20 text-white'
-                    : 'bg-[#0D5C5C] text-white'
+                  assessment.isActive
+                    ? selectedAssessment?.id === assessment.id
+                      ? 'bg-green-400/30 text-green-100'
+                      : 'bg-green-100 text-green-700'
+                    : selectedAssessment?.id === assessment.id
+                      ? 'bg-gray-400/30 text-gray-200'
+                      : 'bg-gray-100 text-gray-500'
                 }`}>
-                  MBTI
+                  {assessment.isActive ? 'Active' : 'Inactive'}
                 </span>
               </button>
             ))}
@@ -303,7 +455,9 @@ export default function AdminAssessments() {
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">Questions</h3>
-                    <p className="text-sm text-gray-500">Manage assessment questions and their properties</p>
+                    <p className="text-sm text-gray-500">
+                      {questions.length} questions configured • Click to edit, drag to reorder
+                    </p>
                   </div>
                   <button
                     onClick={() => setShowAddQuestion(true)}
@@ -316,72 +470,180 @@ export default function AdminAssessments() {
 
                 {/* Add Question Form */}
                 {showAddQuestion && (
-                  <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+                  <div className="mb-4 p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="font-medium text-gray-900">New Question</h4>
                       <button onClick={() => setShowAddQuestion(false)}>
-                        <X className="w-4 h-4 text-gray-500" />
+                        <X className="w-4 h-4 text-gray-500 hover:text-gray-700" />
                       </button>
                     </div>
                     <div className="space-y-3">
-                      <input
-                        type="text"
-                        placeholder="Question text..."
-                        value={newQuestion.text}
-                        onChange={(e) => setNewQuestion(prev => ({ ...prev, text: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D5C5C]"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Category (e.g., Communication, Leadership)"
-                        value={newQuestion.category}
-                        onChange={(e) => setNewQuestion(prev => ({ ...prev, category: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D5C5C]"
-                      />
-                      <button
-                        onClick={handleAddQuestion}
-                        className="w-full px-4 py-2 bg-[#0D5C5C] text-white rounded-lg hover:bg-[#0a4a4a]"
-                      >
-                        Add Question
-                      </button>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Question Text</label>
+                        <textarea
+                          placeholder="Enter the question text..."
+                          value={newQuestion.text}
+                          onChange={(e) => setNewQuestion(prev => ({ ...prev, text: e.target.value }))}
+                          rows={3}
+                          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D5C5C] resize-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                        <select
+                          value={newQuestion.category}
+                          onChange={(e) => setNewQuestion(prev => ({ ...prev, category: e.target.value }))}
+                          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D5C5C]"
+                        >
+                          <option value="">Select a category...</option>
+                          {categoryOptions.map(cat => (
+                            <option key={cat} value={cat}>{cat}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => setShowAddQuestion(false)}
+                          className="flex-1 px-4 py-2 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-100"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleAddQuestion}
+                          disabled={!newQuestion.text}
+                          className="flex-1 px-4 py-2 bg-[#0D5C5C] text-white rounded-lg hover:bg-[#0a4a4a] disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          Add Question
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
 
                 {/* Questions List */}
-                {questions.length > 0 ? (
+                {isLoading ? (
+                  <div className="text-center py-12">
+                    <div className="w-8 h-8 border-2 border-[#0D5C5C] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                    <p className="text-gray-500">Loading questions...</p>
+                  </div>
+                ) : questions.length > 0 ? (
                   <div className="space-y-2">
-                    {questions.map((question, index) => (
+                    {questions.sort((a, b) => a.order - b.order).map((question, index) => (
                       <div
                         key={question.id}
-                        className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg group"
+                        className={`flex items-start gap-3 p-4 rounded-lg group transition-colors ${
+                          editingQuestionId === question.id 
+                            ? 'bg-blue-50 border-2 border-blue-200' 
+                            : 'bg-gray-50 hover:bg-gray-100'
+                        }`}
                       >
-                        <GripVertical className="w-4 h-4 text-gray-400 cursor-grab" />
-                        <span className="w-8 h-8 rounded-full bg-[#0D5C5C] text-white flex items-center justify-center text-sm font-medium">
+                        {/* Reorder Controls */}
+                        <div className="flex flex-col gap-1">
+                          <button
+                            onClick={() => handleMoveQuestion(question.id, 'up')}
+                            disabled={index === 0}
+                            className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed"
+                          >
+                            <ChevronUp className="w-4 h-4" />
+                          </button>
+                          <GripVertical className="w-4 h-4 text-gray-400" />
+                          <button
+                            onClick={() => handleMoveQuestion(question.id, 'down')}
+                            disabled={index === questions.length - 1}
+                            className="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed"
+                          >
+                            <ChevronDown className="w-4 h-4" />
+                          </button>
+                        </div>
+                        
+                        {/* Question Number */}
+                        <span className="w-8 h-8 rounded-full bg-[#0D5C5C] text-white flex items-center justify-center text-sm font-medium flex-shrink-0">
                           {index + 1}
                         </span>
-                        <div className="flex-1">
-                          <p className="text-gray-900">{question.text}</p>
-                          {question.category && (
-                            <p className="text-sm text-gray-500">{question.category}</p>
+                        
+                        {/* Question Content */}
+                        <div className="flex-1 min-w-0">
+                          {editingQuestionId === question.id ? (
+                            <div className="space-y-3">
+                              <textarea
+                                value={editingQuestionData.text}
+                                onChange={(e) => setEditingQuestionData(prev => ({ ...prev, text: e.target.value }))}
+                                rows={3}
+                                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D5C5C] resize-none"
+                              />
+                              <select
+                                value={editingQuestionData.category}
+                                onChange={(e) => setEditingQuestionData(prev => ({ ...prev, category: e.target.value }))}
+                                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D5C5C]"
+                              >
+                                <option value="">Select a category...</option>
+                                {categoryOptions.map(cat => (
+                                  <option key={cat} value={cat}>{cat}</option>
+                                ))}
+                              </select>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={handleCancelEdit}
+                                  className="px-3 py-1.5 text-sm border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-100"
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  onClick={handleSaveQuestion}
+                                  className="px-3 py-1.5 text-sm bg-[#0D5C5C] text-white rounded-lg hover:bg-[#0a4a4a]"
+                                >
+                                  Save Changes
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <>
+                              <p className="text-gray-900">{question.text}</p>
+                              {question.category && (
+                                <span className="inline-block mt-1 px-2 py-0.5 bg-gray-200 text-gray-600 text-xs rounded">
+                                  {question.category}
+                                </span>
+                              )}
+                            </>
                           )}
                         </div>
-                        <button
-                          onClick={() => handleDeleteQuestion(question.id)}
-                          className="p-2 text-gray-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                        
+                        {/* Action Buttons */}
+                        {editingQuestionId !== question.id && (
+                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                              onClick={() => handleEditQuestion(question)}
+                              className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"
+                              title="Edit question"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteQuestion(question.id)}
+                              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                              title="Delete question"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-12">
+                  <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
                     <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
                       <Plus className="w-8 h-8 text-gray-400" />
                     </div>
-                    <p className="text-gray-500">No questions configured.</p>
-                    <p className="text-sm text-gray-400">Click &apos;Add Question&apos; to get started</p>
+                    <p className="text-gray-500 font-medium">No questions configured</p>
+                    <p className="text-sm text-gray-400 mb-4">Click &apos;Add Question&apos; to get started</p>
+                    <button
+                      onClick={() => setShowAddQuestion(true)}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-[#0D5C5C] text-white rounded-lg hover:bg-[#0a4a4a]"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Add your first question
+                    </button>
                   </div>
                 )}
               </div>

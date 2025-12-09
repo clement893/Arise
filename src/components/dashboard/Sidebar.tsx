@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, ClipboardList, BarChart3, Target, LogOut, ChevronDown, Settings, User } from 'lucide-react';
+import { LayoutDashboard, ClipboardList, BarChart3, Target, LogOut, ChevronDown, Settings, User, Shield } from 'lucide-react';
 
 interface SidebarProps {
   user: {
     firstName?: string | null;
     lastName?: string | null;
     plan?: string;
+    role?: string;
   };
   activePage?: string;
   onLogout?: () => void;
@@ -27,6 +28,7 @@ export default function Sidebar({ user, activePage, onLogout }: SidebarProps) {
   const pathname = usePathname();
   const displayName = user.firstName || 'User';
   const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'User';
+  const isAdmin = user.role === 'admin';
 
   return (
     <aside className="w-[240px] min-h-screen bg-[#0D5C5C] flex flex-col">
@@ -55,9 +57,16 @@ export default function Sidebar({ user, activePage, onLogout }: SidebarProps) {
               <span className="text-white text-sm font-medium">{fullName}</span>
               <ChevronDown className="w-4 h-4 text-white/70" />
             </div>
-            <span className="inline-block px-2 py-0.5 bg-[#D4A84B] text-[#0D5C5C] text-xs font-semibold rounded mt-1">
-              {user.plan || 'Starter'} plan
-            </span>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="inline-block px-2 py-0.5 bg-[#D4A84B] text-[#0D5C5C] text-xs font-semibold rounded">
+                {user.plan || 'Starter'} plan
+              </span>
+              {isAdmin && (
+                <span className="inline-block px-2 py-0.5 bg-red-500 text-white text-xs font-semibold rounded">
+                  Admin
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -84,6 +93,19 @@ export default function Sidebar({ user, activePage, onLogout }: SidebarProps) {
               </li>
             );
           })}
+          
+          {/* Admin Link - Only visible for admins */}
+          {isAdmin && (
+            <li className="mt-4 pt-4 border-t border-white/20">
+              <Link
+                href="/admin"
+                className="flex items-center gap-3 px-4 py-3 rounded-lg transition-colors bg-red-500/20 text-red-300 hover:bg-red-500/30"
+              >
+                <Shield className="w-5 h-5" />
+                <span className="text-sm font-semibold">Admin Panel</span>
+              </Link>
+            </li>
+          )}
         </ul>
       </nav>
 
