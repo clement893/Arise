@@ -26,7 +26,7 @@ export default function Welcome() {
     <SignupLayout currentStep={7} showProgress={false}>
       <div className="text-center py-12">
         {/* Success icon */}
-        <div className="w-20 h-20 bg-[#D4A84B] rounded-full flex items-center justify-center mx-auto mb-8">
+        <div className="w-20 h-20 bg-secondary-500 rounded-full flex items-center justify-center mx-auto mb-8">
           <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
@@ -44,7 +44,7 @@ export default function Welcome() {
           <h2 className="text-white font-semibold mb-6">What&apos;s next?</h2>
           <div className="space-y-4 text-left">
             <div className="flex items-start gap-4">
-              <div className="w-8 h-8 bg-[#D4A84B] rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 bg-secondary-500 rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-white font-bold text-sm">1</span>
               </div>
               <div>
@@ -77,7 +77,7 @@ export default function Welcome() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/dashboard"
-            className="inline-flex items-center justify-center bg-[#D4A84B] hover:bg-[#C49A3D] text-white px-8 py-3 rounded-full font-semibold transition-colors"
+            className="inline-flex items-center justify-center bg-secondary-500 hover:bg-[#C49A3D] text-white px-8 py-3 rounded-full font-semibold transition-colors"
           >
             Start assessment →
           </Link>

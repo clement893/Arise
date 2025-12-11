@@ -220,7 +220,7 @@ function ProfilePageContent() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0D5C5C]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
       </div>
     );
   }
@@ -230,9 +230,9 @@ function ProfilePageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0D5C5C]">
+    <div className="min-h-screen bg-primary-500">
       {/* Top Bar */}
-      <div className="bg-[#0D5C5C] text-white px-6 py-3">
+      <div className="bg-primary-500 text-white px-6 py-3">
         <span className="text-sm font-medium tracking-wider">PROFILE</span>
       </div>
 
@@ -241,7 +241,7 @@ function ProfilePageContent() {
         <Sidebar user={user} activePage="profile" onLogout={handleLogout} />
 
         {/* Main Content */}
-        <main className="flex-1 p-8 bg-[#0D5C5C]/30 min-h-[calc(100vh-48px)]">
+        <main className="flex-1 p-8 bg-primary-500/30 min-h-[calc(100vh-48px)]">
           <div className="max-w-4xl mx-auto">
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
@@ -267,7 +267,7 @@ function ProfilePageContent() {
                   onClick={() => setActiveTab('profile')}
                   className={`px-8 py-4 text-sm font-medium transition-colors ${
                     activeTab === 'profile'
-                      ? 'text-[#0D5C5C] border-b-2 border-[#0D5C5C]'
+                      ? 'text-primary-500 border-b-2 border-primary-500'
                       : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
@@ -277,7 +277,7 @@ function ProfilePageContent() {
                   onClick={() => setActiveTab('subscription')}
                   className={`px-8 py-4 text-sm font-medium transition-colors ${
                     activeTab === 'subscription'
-                      ? 'text-[#0D5C5C] border-b-2 border-[#0D5C5C]'
+                      ? 'text-primary-500 border-b-2 border-primary-500'
                       : 'text-gray-500 hover:text-gray-700'
                   }`}
                 >
@@ -288,7 +288,7 @@ function ProfilePageContent() {
                     <button
                       onClick={handleSave}
                       disabled={isSaving}
-                      className="px-6 py-2 bg-[#0D5C5C] text-white rounded-lg font-medium hover:bg-[#0a4a4a] transition-colors disabled:opacity-50 flex items-center gap-2"
+                      className="px-6 py-2 bg-primary-500 text-white rounded-lg font-medium hover:bg-primary-600 transition-colors disabled:opacity-50 flex items-center gap-2"
                     >
                       {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
                       {isSaving ? 'Saving...' : 'Save changes'}
@@ -303,26 +303,26 @@ function ProfilePageContent() {
               {activeTab === 'profile' ? (
                 <div className="p-8">
                   {/* Profile Photo */}
-                  <div className="flex items-center gap-4 mb-8 p-4 bg-[#0D5C5C] rounded-lg">
+                  <div className="flex items-center gap-4 mb-8 p-4 bg-primary-500 rounded-lg">
                     <div className="relative">
                       <div className="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden">
-                        <span className="text-[#0D5C5C] font-bold text-2xl">
+                        <span className="text-primary-500 font-bold text-2xl">
                           {profileData.firstName?.charAt(0).toUpperCase() || 'U'}
                         </span>
                       </div>
-                      <button className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#D4A84B] rounded-full flex items-center justify-center">
+                      <button className="absolute -bottom-1 -right-1 w-6 h-6 bg-secondary-500 rounded-full flex items-center justify-center">
                         <Camera className="w-3 h-3 text-white" />
                       </button>
                     </div>
                     <div>
                       <h3 className="text-white font-semibold">{profileData.firstName} {profileData.lastName}</h3>
-                      <button className="text-[#D4A84B] text-sm hover:underline">Change photo</button>
+                      <button className="text-secondary-500 text-sm hover:underline">Change photo</button>
                     </div>
                   </div>
 
                   {/* Personal Information */}
                   <section className="mb-8">
-                    <h2 className="text-[#0D5C5C] font-semibold mb-4">Personal Information</h2>
+                    <h2 className="text-primary-500 font-semibold mb-4">Personal Information</h2>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm text-gray-600 mb-1">First name</label>
@@ -330,7 +330,7 @@ function ProfilePageContent() {
                           type="text"
                           value={profileData.firstName}
                           onChange={(e) => handleInputChange('firstName', e.target.value)}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D5C5C]"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
@@ -339,7 +339,7 @@ function ProfilePageContent() {
                           type="text"
                           value={profileData.lastName}
                           onChange={(e) => handleInputChange('lastName', e.target.value)}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D5C5C]"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
@@ -348,7 +348,7 @@ function ProfilePageContent() {
                           type="email"
                           value={profileData.email}
                           onChange={(e) => handleInputChange('email', e.target.value)}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D5C5C]"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
@@ -366,7 +366,7 @@ function ProfilePageContent() {
                           <select
                             value={profileData.timezone}
                             onChange={(e) => handleInputChange('timezone', e.target.value)}
-                            className="w-full appearance-none px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D5C5C]"
+                            className="w-full appearance-none px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                           >
                             <option value="America/New_York">Eastern Time (ET)</option>
                             <option value="America/Chicago">Central Time (CT)</option>
@@ -383,7 +383,7 @@ function ProfilePageContent() {
 
                   {/* Additional Information */}
                   <section className="mb-8">
-                    <h2 className="text-[#0D5C5C] font-semibold mb-4">Additional Information</h2>
+                    <h2 className="text-primary-500 font-semibold mb-4">Additional Information</h2>
                     
                     <div className="mb-4">
                       <label className="block text-sm text-gray-600 mb-2">Gender</label>
@@ -396,7 +396,7 @@ function ProfilePageContent() {
                               value={option}
                               checked={profileData.gender === option}
                               onChange={(e) => handleInputChange('gender', e.target.value)}
-                              className="w-4 h-4 text-[#0D5C5C] focus:ring-[#0D5C5C]"
+                              className="w-4 h-4 text-primary-500 focus:ring-primary-500"
                             />
                             <span className="text-sm text-gray-700">{option}</span>
                           </label>
@@ -412,7 +412,7 @@ function ProfilePageContent() {
                           placeholder="Enter your age"
                           value={profileData.age}
                           onChange={(e) => handleInputChange('age', e.target.value)}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D5C5C]"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
@@ -421,7 +421,7 @@ function ProfilePageContent() {
                           <select
                             value={profileData.highestDegree}
                             onChange={(e) => handleInputChange('highestDegree', e.target.value)}
-                            className="w-full appearance-none px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D5C5C]"
+                            className="w-full appearance-none px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                           >
                             <option value="">Select...</option>
                             <option value="high_school">High School</option>
@@ -443,7 +443,7 @@ function ProfilePageContent() {
                         placeholder="Write..."
                         value={profileData.mainGoal}
                         onChange={(e) => handleInputChange('mainGoal', e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D5C5C]"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                       />
                     </div>
 
@@ -460,7 +460,7 @@ function ProfilePageContent() {
                               value={option}
                               checked={profileData.hasCoach === option}
                               onChange={(e) => handleInputChange('hasCoach', e.target.value)}
-                              className="w-4 h-4 text-[#0D5C5C] focus:ring-[#0D5C5C]"
+                              className="w-4 h-4 text-primary-500 focus:ring-primary-500"
                             />
                             <span className="text-sm text-gray-700">{option}</span>
                           </label>
@@ -471,7 +471,7 @@ function ProfilePageContent() {
 
                   {/* Company Information */}
                   <section>
-                    <h2 className="text-[#0D5C5C] font-semibold mb-4">Company Information</h2>
+                    <h2 className="text-primary-500 font-semibold mb-4">Company Information</h2>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm text-gray-600 mb-1">Organization name</label>
@@ -480,7 +480,7 @@ function ProfilePageContent() {
                           placeholder="Organization"
                           value={profileData.organizationName}
                           onChange={(e) => handleInputChange('organizationName', e.target.value)}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D5C5C]"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
@@ -490,7 +490,7 @@ function ProfilePageContent() {
                           placeholder="Number"
                           value={profileData.employeeCount}
                           onChange={(e) => handleInputChange('employeeCount', e.target.value)}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D5C5C]"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                     </div>
@@ -514,7 +514,7 @@ export default function ProfilePage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0D5C5C]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
       </div>
     }>
       <ProfilePageContent />

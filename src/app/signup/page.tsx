@@ -70,16 +70,16 @@ export default function SignupStep1() {
             variant={selectedType === type.id ? 'elevated' : 'default'}
             className={`p-6 text-center cursor-pointer transition-all ${
               selectedType === type.id
-                ? 'bg-white text-[#0D5C5C] ring-4 ring-[#D4A84B]'
+                ? 'bg-white text-primary-500 ring-4 ring-secondary-500'
                 : 'bg-white/10 text-white hover:bg-white/20'
             }`}
             onClick={() => setSelectedType(type.id)}
           >
-            <div className={`mx-auto mb-4 ${selectedType === type.id ? 'text-[#0D5C5C]' : 'text-white'}`}>
+            <div className={`mx-auto mb-4 ${selectedType === type.id ? 'text-primary-500' : 'text-white'}`}>
               {type.icon}
             </div>
             <h3 className="font-semibold text-lg mb-2">{type.title}</h3>
-            <p className={`text-sm ${selectedType === type.id ? 'text-[#0D5C5C]/70' : 'text-white/60'}`}>
+            <p className={`text-sm ${selectedType === type.id ? 'text-primary-500/70' : 'text-white/60'}`}>
               {type.description}
             </p>
           </Card>

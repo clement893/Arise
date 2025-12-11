@@ -143,7 +143,7 @@ export default function PricingPage() {
                 variant={plan.popular ? 'gradient' : 'bordered'}
                 className={`relative p-8 ${
                   plan.popular
-                    ? 'bg-[#0D5C5C] text-white ring-4 ring-[#D4A84B]'
+                    ? 'bg-primary-500 text-white ring-4 ring-secondary-500'
                     : ''
                 }`}
               >
@@ -174,7 +174,7 @@ export default function PricingPage() {
                 <ul className="space-y-4 mb-8">
                   {plan.features.map((feature, index) => (
                     <li key={index} className="flex items-start gap-3">
-                      <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${plan.popular ? 'text-[#D4A84B]' : 'text-[#0D5C5C]'}`} />
+                      <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${plan.popular ? 'text-secondary-500' : 'text-primary-500'}`} />
                       <span className={plan.popular ? 'text-white/90' : 'text-gray-700'}>
                         {feature}
                       </span>

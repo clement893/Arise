@@ -117,7 +117,7 @@ export default function AssessmentsPage() {
         id: 'mbti',
         name: 'MBTI Personality',
         description: 'Understanding your natural preferences',
-        icon: <Brain className="w-6 h-6 text-[#0D5C5C]" />,
+        icon: <Brain className="w-6 h-6 text-primary-500" />,
         status: mbtiStatus,
         tags: [{ label: 'External link', type: 'external' }],
         actionLabel: getActionLabel('mbti', mbtiStatus),
@@ -128,7 +128,7 @@ export default function AssessmentsPage() {
         id: 'tki',
         name: 'TKI Conflict Style',
         description: 'Explore your conflict management approach',
-        icon: <MessageSquare className="w-6 h-6 text-[#0D5C5C]" />,
+        icon: <MessageSquare className="w-6 h-6 text-primary-500" />,
         status: tkiStatus,
         tags: [{ label: 'ARISE Platform', type: 'platform' }],
         actionLabel: getActionLabel('tki', tkiStatus),
@@ -139,7 +139,7 @@ export default function AssessmentsPage() {
         id: '360-feedback',
         name: '360° Feedback',
         description: 'Multi-faceted leadership perspectives',
-        icon: <Users className="w-6 h-6 text-[#0D5C5C]" />,
+        icon: <Users className="w-6 h-6 text-primary-500" />,
         status: feedbackStatus,
         tags: [{ label: 'ARISE Platform', type: 'platform' }],
         actionLabel: getActionLabel('360-feedback', feedbackStatus),
@@ -151,7 +151,7 @@ export default function AssessmentsPage() {
         id: 'wellness',
         name: 'Wellness',
         description: 'Assess your holistic Well-Being',
-        icon: <Heart className="w-6 h-6 text-[#0D5C5C]" />,
+        icon: <Heart className="w-6 h-6 text-primary-500" />,
         status: wellnessStatus,
         tags: [{ label: 'ARISE Platform', type: 'platform' }],
         actionLabel: getActionLabel('wellness', wellnessStatus),
@@ -170,7 +170,7 @@ export default function AssessmentsPage() {
       case 'in-progress':
         return <Badge variant="warning">In progress</Badge>;
       case 'not-started':
-        return <Badge variant="default">Not Started</Badge>;
+        return <Badge variant="neutral">Not Started</Badge>;
     }
   };
 
@@ -178,7 +178,7 @@ export default function AssessmentsPage() {
     switch (tag.type) {
       case 'external':
         return (
-          <Badge key={tag.label} variant="default" className="flex items-center gap-1">
+          <Badge key={tag.label} variant="neutral" className="flex items-center gap-1">
             <ExternalLink className="w-3 h-3" />
             {tag.label}
           </Badge>
@@ -186,7 +186,7 @@ export default function AssessmentsPage() {
       case 'platform':
         return <Badge key={tag.label} variant="primary">{tag.label}</Badge>;
       default:
-        return <Badge key={tag.label} variant="default">{tag.label}</Badge>;
+        return <Badge key={tag.label} variant="neutral">{tag.label}</Badge>;
     }
   };
 
@@ -249,7 +249,7 @@ export default function AssessmentsPage() {
         <div className="max-w-4xl">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-[#0D5C5C]">Your assessments</h1>
+            <h1 className="text-2xl font-bold text-primary-500">Your assessments</h1>
             <p className="text-gray-600">Track and manage your leadership assessments</p>
             <p className="text-sm text-gray-500 mt-2">
               {completedCount} of {assessments.length} assessments completed

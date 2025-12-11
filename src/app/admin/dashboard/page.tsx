@@ -158,11 +158,11 @@ export default function AdminDashboard() {
     }
   };
 
-  const getStatusBadgeVariant = (status: string): 'success' | 'danger' | 'default' => {
+  const getStatusBadgeVariant = (status: string): 'success' | 'error' | 'neutral' => {
     switch (status) {
       case 'active': return 'success';
-      case 'at_risk': return 'danger';
-      default: return 'default';
+      case 'at_risk': return 'error';
+      default: return 'neutral';
     }
   };
 
@@ -304,7 +304,7 @@ export default function AdminDashboard() {
                   <div className="flex items-center gap-2">
                     <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-[#0D5C5C] rounded-full"
+                        className="h-full bg-primary-500 rounded-full"
                         style={{ width: `${user.progress}%` }}
                       />
                     </div>

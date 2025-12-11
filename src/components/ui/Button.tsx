@@ -2,8 +2,8 @@
 
 import { forwardRef, ButtonHTMLAttributes, ReactNode } from 'react';
 
-type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success';
-type ButtonSize = 'sm' | 'md' | 'lg';
+type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success' | 'white' | 'dark';
+type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -15,21 +15,10 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
 }
 
-const variantStyles: Record<ButtonVariant, string> = {
-  primary: 'bg-[#D4A84B] text-[#0D5C5C] hover:bg-[#c49a42] focus:ring-[#D4A84B]',
-  secondary: 'bg-[#0D5C5C] text-white hover:bg-[#0a4a4a] focus:ring-[#0D5C5C]',
-  outline: 'border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-gray-300',
-  ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-gray-200',
-  danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
-  success: 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500',
-};
-
-const sizeStyles: Record<ButtonSize, string> = {
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-4 py-2 text-sm',
-  lg: 'px-6 py-3 text-base',
-};
-
+/**
+ * Button component using ARISE Design System tokens
+ * Styles are defined in src/styles/buttons.css
+ */
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
@@ -46,18 +35,22 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
-    const baseStyles = 'inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+    // Map variant to CSS class
+    const variantClass = `btn-${variant}`;
+    
+    // Map size to CSS class
+    const sizeClass = `btn-${size}`;
 
     return (
       <button
         ref={ref}
         className={`
-          ${baseStyles}
-          ${variantStyles[variant]}
-          ${sizeStyles[size]}
-          ${fullWidth ? 'w-full' : ''}
+          ${sizeClass}
+          ${variantClass}
+          ${fullWidth ? 'btn-full' : ''}
+          ${isLoading ? 'btn-loading' : ''}
           ${className}
-        `}
+        `.trim().replace(/\s+/g, ' ')}
         disabled={disabled || isLoading}
         {...props}
       >

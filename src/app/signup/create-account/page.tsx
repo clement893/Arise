@@ -50,10 +50,10 @@ export default function CreateAccount() {
     <SignupLayout currentStep={4}>
       <div className="bg-white rounded-2xl p-8 md:p-12 max-w-md mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-[#2D2D2D] mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-neutral-800 mb-4">
             Create your account
           </h1>
-          <p className="text-[#2D2D2D]/60">
+          <p className="text-neutral-800/60">
             Enter your credentials to get started
           </p>
         </div>
@@ -61,7 +61,7 @@ export default function CreateAccount() {
         <div className="space-y-6">
           {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-[#2D2D2D] mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-neutral-800 mb-2">
               Email address
             </label>
             <input
@@ -71,7 +71,7 @@ export default function CreateAccount() {
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               className={`w-full px-4 py-3 rounded-lg border ${
                 errors.email ? 'border-red-500' : 'border-gray-300'
-              } focus:outline-none focus:ring-2 focus:ring-[#0D5C5C] focus:border-transparent`}
+              } focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent`}
               placeholder="you@example.com"
             />
             {errors.email && (
@@ -81,7 +81,7 @@ export default function CreateAccount() {
 
           {/* Password */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-[#2D2D2D] mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-neutral-800 mb-2">
               Password
             </label>
             <div className="relative">
@@ -92,7 +92,7 @@ export default function CreateAccount() {
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className={`w-full px-4 py-3 rounded-lg border ${
                   errors.password ? 'border-red-500' : 'border-gray-300'
-                } focus:outline-none focus:ring-2 focus:ring-[#0D5C5C] focus:border-transparent pr-12`}
+                } focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent pr-12`}
                 placeholder="At least 8 characters"
               />
               <button
@@ -119,7 +119,7 @@ export default function CreateAccount() {
 
           {/* Confirm Password */}
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#2D2D2D] mb-2">
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-neutral-800 mb-2">
               Confirm password
             </label>
             <input
@@ -129,7 +129,7 @@ export default function CreateAccount() {
               onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
               className={`w-full px-4 py-3 rounded-lg border ${
                 errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
-              } focus:outline-none focus:ring-2 focus:ring-[#0D5C5C] focus:border-transparent`}
+              } focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent`}
               placeholder="Confirm your password"
             />
             {errors.confirmPassword && (
@@ -141,13 +141,13 @@ export default function CreateAccount() {
         <div className="flex justify-between items-center pt-8 mt-8 border-t border-gray-200">
           <button
             onClick={() => router.back()}
-            className="text-[#2D2D2D]/60 hover:text-[#2D2D2D] font-medium transition-colors"
+            className="text-neutral-800/60 hover:text-neutral-800 font-medium transition-colors"
           >
             ← Back
           </button>
           <button
             onClick={handleContinue}
-            className="bg-[#D4A84B] hover:bg-[#C49A3D] text-white px-8 py-3 rounded-full font-semibold transition-colors"
+            className="bg-secondary-500 hover:bg-[#C49A3D] text-white px-8 py-3 rounded-full font-semibold transition-colors"
           >
             Continue →
           </button>

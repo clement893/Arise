@@ -167,7 +167,7 @@ export default function FeedbackPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#f0f5f5] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0D5C5C]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
       </div>
     );
   }
@@ -208,12 +208,12 @@ export default function FeedbackPage() {
   return (
     <div className="min-h-screen bg-[#f0f5f5]">
       {/* Header */}
-      <header className="bg-[#0D5C5C] text-white py-6 px-4">
+      <header className="bg-primary-500 text-white py-6 px-4">
         <div className="max-w-3xl mx-auto">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold">ARISE</h1>
-              <p className="text-[#D4A84B] text-sm">360° Feedback</p>
+              <p className="text-secondary-500 text-sm">360° Feedback</p>
             </div>
             <div className="text-right">
               <p className="text-sm opacity-80">Feedback for</p>
@@ -229,7 +229,7 @@ export default function FeedbackPage() {
             </div>
             <div className="h-2 bg-white/20 rounded-full overflow-hidden">
               <div 
-                className="h-full bg-[#D4A84B] transition-all duration-300"
+                className="h-full bg-secondary-500 transition-all duration-300"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -252,7 +252,7 @@ export default function FeedbackPage() {
                 onClick={() => setCurrentCategoryIndex(index)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
                   index === currentCategoryIndex
-                    ? 'bg-[#0D5C5C] text-white'
+                    ? 'bg-primary-500 text-white'
                     : isComplete
                     ? 'bg-green-100 text-green-700'
                     : 'bg-white text-gray-600 hover:bg-gray-100'
@@ -267,13 +267,13 @@ export default function FeedbackPage() {
 
         {/* Questions */}
         <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-          <h2 className="text-xl font-bold text-[#0D5C5C] mb-6">{currentCategory}</h2>
+          <h2 className="text-xl font-bold text-primary-500 mb-6">{currentCategory}</h2>
           
           <div className="space-y-8">
             {currentQuestions.map((question, qIndex) => (
               <div key={question.id} className="border-b border-gray-100 pb-6 last:border-0 last:pb-0">
                 <p className="text-gray-800 mb-4">
-                  <span className="text-[#0D5C5C] font-medium mr-2">{qIndex + 1}.</span>
+                  <span className="text-primary-500 font-medium mr-2">{qIndex + 1}.</span>
                   {question.text}
                 </p>
                 
@@ -284,7 +284,7 @@ export default function FeedbackPage() {
                       onClick={() => handleAnswer(question.id, rating.value)}
                       className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                         answers[question.id] === rating.value
-                          ? 'bg-[#0D5C5C] text-white'
+                          ? 'bg-primary-500 text-white'
                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                       }`}
                     >
@@ -312,7 +312,7 @@ export default function FeedbackPage() {
             <button
               onClick={handleSubmit}
               disabled={totalAnswered < feedbackQuestions.length || isSubmitting}
-              className="flex items-center gap-2 px-6 py-3 bg-[#D4A84B] text-white rounded-lg font-semibold hover:bg-[#c49a42] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-2 px-6 py-3 bg-secondary-500 text-white rounded-lg font-semibold hover:bg-secondary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isSubmitting ? (
                 <>
@@ -329,7 +329,7 @@ export default function FeedbackPage() {
           ) : (
             <button
               onClick={handleNext}
-              className="flex items-center gap-2 px-4 py-2 bg-[#0D5C5C] text-white rounded-lg font-medium hover:bg-[#0a4a4a] transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg font-medium hover:bg-primary-600 transition-colors"
             >
               Next
               <ChevronRight className="w-5 h-5" />
@@ -338,7 +338,7 @@ export default function FeedbackPage() {
         </div>
 
         {/* Anonymous Notice */}
-        <div className="mt-8 p-4 bg-[#0D5C5C]/5 rounded-xl text-center">
+        <div className="mt-8 p-4 bg-primary-500/5 rounded-xl text-center">
           <p className="text-sm text-gray-600">
             <strong>Your responses are anonymous.</strong> Individual feedback will be aggregated with other evaluators' responses.
           </p>

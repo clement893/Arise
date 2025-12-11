@@ -218,7 +218,7 @@ export default function SettingsPage() {
       onClick={onChange}
       disabled={disabled}
       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-        enabled ? 'bg-[#0D5C5C]' : 'bg-gray-300'
+        enabled ? 'bg-primary-500' : 'bg-gray-300'
       } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
     >
       <span
@@ -232,7 +232,7 @@ export default function SettingsPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0D5C5C]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
       </div>
     );
   }
@@ -242,9 +242,9 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0D5C5C]">
+    <div className="min-h-screen bg-primary-500">
       {/* Top Bar */}
-      <div className="bg-[#0D5C5C] text-white px-6 py-3">
+      <div className="bg-primary-500 text-white px-6 py-3">
         <span className="text-sm font-medium tracking-wider">SETTINGS</span>
       </div>
 
@@ -253,19 +253,19 @@ export default function SettingsPage() {
         <Sidebar user={user} activePage="settings" />
 
         {/* Main Content */}
-        <main className="flex-1 ml-64 p-8 bg-[#0D5C5C]/30 min-h-[calc(100vh-48px)]">
+        <main className="flex-1 ml-64 p-8 bg-primary-500/30 min-h-[calc(100vh-48px)]">
           <div className="max-w-3xl mx-auto">
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h1 className="text-2xl font-bold text-[#0D5C5C]">Settings</h1>
+                <h1 className="text-2xl font-bold text-primary-500">Settings</h1>
                 <p className="text-gray-600">Manage your account settings</p>
               </div>
               <div className="flex items-center gap-4">
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="px-6 py-2 bg-[#0D5C5C] text-white rounded-lg font-medium hover:bg-[#0a4a4a] transition-colors disabled:opacity-50 flex items-center gap-2"
+                  className="px-6 py-2 bg-primary-500 text-white rounded-lg font-medium hover:bg-primary-600 transition-colors disabled:opacity-50 flex items-center gap-2"
                 >
                   {isSaving ? (
                     <>
@@ -287,7 +287,7 @@ export default function SettingsPage() {
                   )}
                 </button>
                 <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden">
-                  <span className="text-[#0D5C5C] font-semibold text-sm">
+                  <span className="text-primary-500 font-semibold text-sm">
                     {user.firstName?.charAt(0).toUpperCase() || 'U'}
                   </span>
                 </div>
@@ -298,7 +298,7 @@ export default function SettingsPage() {
             <div className="bg-white rounded-xl shadow-sm p-8">
               {/* Notifications */}
               <section className="mb-8">
-                <h2 className="text-[#0D5C5C] font-semibold mb-4">Notifications</h2>
+                <h2 className="text-primary-500 font-semibold mb-4">Notifications</h2>
                 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
@@ -327,7 +327,7 @@ export default function SettingsPage() {
 
               {/* Appearance */}
               <section className="mb-8">
-                <h2 className="text-[#0D5C5C] font-semibold mb-4">Appearance</h2>
+                <h2 className="text-primary-500 font-semibold mb-4">Appearance</h2>
                 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
@@ -367,7 +367,7 @@ export default function SettingsPage() {
 
               {/* Privacy */}
               <section className="mb-8">
-                <h2 className="text-[#0D5C5C] font-semibold mb-4">Privacy</h2>
+                <h2 className="text-primary-500 font-semibold mb-4">Privacy</h2>
                 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
@@ -396,7 +396,7 @@ export default function SettingsPage() {
 
               {/* Security */}
               <section className="mb-8">
-                <h2 className="text-[#0D5C5C] font-semibold mb-4">Security</h2>
+                <h2 className="text-primary-500 font-semibold mb-4">Security</h2>
                 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">

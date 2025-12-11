@@ -67,10 +67,10 @@ export default function ChoosePlan() {
     <SignupLayout currentStep={3}>
       <div className="bg-white rounded-2xl p-8 md:p-12">
         <div className="text-center mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-[#2D2D2D] mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-neutral-800 mb-4">
             Choose your plan
           </h1>
-          <p className="text-[#2D2D2D]/60">
+          <p className="text-neutral-800/60">
             Select the plan that fits your needs
           </p>
         </div>
@@ -82,8 +82,8 @@ export default function ChoosePlan() {
               onClick={() => setBillingCycle('monthly')}
               className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${
                 billingCycle === 'monthly'
-                  ? 'bg-[#0D5C5C] text-white'
-                  : 'text-[#2D2D2D]/60 hover:text-[#2D2D2D]'
+                  ? 'bg-primary-500 text-white'
+                  : 'text-neutral-800/60 hover:text-neutral-800'
               }`}
             >
               Monthly
@@ -92,11 +92,11 @@ export default function ChoosePlan() {
               onClick={() => setBillingCycle('annual')}
               className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${
                 billingCycle === 'annual'
-                  ? 'bg-[#0D5C5C] text-white'
-                  : 'text-[#2D2D2D]/60 hover:text-[#2D2D2D]'
+                  ? 'bg-primary-500 text-white'
+                  : 'text-neutral-800/60 hover:text-neutral-800'
               }`}
             >
-              Annual <span className="text-[#D4A84B]">Save 20%</span>
+              Annual <span className="text-secondary-500">Save 20%</span>
             </button>
           </div>
         </div>
@@ -109,12 +109,12 @@ export default function ChoosePlan() {
               onClick={() => setSelectedPlan(plan.id)}
               className={`p-6 rounded-xl text-left transition-all relative ${
                 selectedPlan === plan.id
-                  ? 'bg-[#0D5C5C] text-white ring-4 ring-[#D4A84B]'
-                  : 'bg-gray-50 text-[#2D2D2D] hover:bg-gray-100'
+                  ? 'bg-primary-500 text-white ring-4 ring-secondary-500'
+                  : 'bg-gray-50 text-neutral-800 hover:bg-gray-100'
               }`}
             >
               {plan.popular && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#D4A84B] text-white text-xs font-semibold px-3 py-1 rounded-full">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-secondary-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
                   Most Popular
                 </span>
               )}
@@ -124,20 +124,20 @@ export default function ChoosePlan() {
                 <span className="text-3xl font-bold">
                   ${billingCycle === 'monthly' ? plan.monthlyPrice : plan.annualPrice}
                 </span>
-                <span className={selectedPlan === plan.id ? 'text-white/60' : 'text-[#2D2D2D]/60'}>
+                <span className={selectedPlan === plan.id ? 'text-white/60' : 'text-neutral-800/60'}>
                   /month
                 </span>
               </div>
-              <p className={`text-sm mb-4 ${selectedPlan === plan.id ? 'text-white/70' : 'text-[#2D2D2D]/60'}`}>
+              <p className={`text-sm mb-4 ${selectedPlan === plan.id ? 'text-white/70' : 'text-neutral-800/60'}`}>
                 {plan.description}
               </p>
               <ul className="space-y-2">
                 {plan.features.map((feature, i) => (
                   <li key={i} className={`text-sm flex items-center gap-2 ${
-                    selectedPlan === plan.id ? 'text-white/80' : 'text-[#2D2D2D]/70'
+                    selectedPlan === plan.id ? 'text-white/80' : 'text-neutral-800/70'
                   }`}>
                     <svg className={`w-4 h-4 flex-shrink-0 ${
-                      selectedPlan === plan.id ? 'text-[#D4A84B]' : 'text-[#0D5C5C]'
+                      selectedPlan === plan.id ? 'text-secondary-500' : 'text-primary-500'
                     }`} fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
@@ -152,7 +152,7 @@ export default function ChoosePlan() {
         <div className="flex justify-between items-center pt-6 border-t border-gray-200">
           <button
             onClick={() => router.back()}
-            className="text-[#2D2D2D]/60 hover:text-[#2D2D2D] font-medium transition-colors"
+            className="text-neutral-800/60 hover:text-neutral-800 font-medium transition-colors"
           >
             ← Back
           </button>
@@ -161,7 +161,7 @@ export default function ChoosePlan() {
             disabled={!selectedPlan}
             className={`px-8 py-3 rounded-full font-semibold transition-all ${
               selectedPlan
-                ? 'bg-[#D4A84B] hover:bg-[#C49A3D] text-white cursor-pointer'
+                ? 'bg-secondary-500 hover:bg-[#C49A3D] text-white cursor-pointer'
                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'
             }`}
           >

@@ -20,7 +20,7 @@ const categories = [
   { id: 'leadership', name: 'Leadership Style', icon: Award, color: '#9b59b6' },
   { id: 'change', name: 'Change Management', icon: Lightbulb, color: '#f39c12' },
   { id: 'problem_solving', name: 'Problem Solving', icon: Brain, color: '#e74c3c' },
-  { id: 'stress', name: 'Stress Management', icon: Heart, color: '#0D5C5C' },
+  { id: 'stress', name: 'Stress Management', icon: Heart, color: 'var(--color-primary-500)' },
 ];
 
 // Real questions from the ARISE Excel file - 360° Self Assessment
@@ -189,14 +189,14 @@ export default function SelfAssessment360Page() {
       score: data.count > 0 ? Math.round((data.total / (data.count * 5)) * 100) : 0,
       average: data.count > 0 ? (data.total / data.count).toFixed(1) : '0',
       name: categories.find(c => c.id === category)?.name || category,
-      color: categories.find(c => c.id === category)?.color || '#0D5C5C',
+      color: categories.find(c => c.id === category)?.color || 'var(--color-primary-500)',
     }));
   };
 
   if (isLoading || !user) {
     return (
-      <div className="min-h-screen bg-[#0D5C5C] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#D4A84B]"></div>
+      <div className="min-h-screen bg-primary-500 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-secondary-500"></div>
       </div>
     );
   }
@@ -275,23 +275,23 @@ export default function SelfAssessment360Page() {
                     <h3 className="text-sm font-semibold text-gray-700 mb-3">What you&apos;ll discover</h3>
                     <ul className="space-y-2">
                       <li className="flex items-start gap-2">
-                        <CheckCircle className="w-4 h-4 text-[#0D5C5C] mt-0.5" />
+                        <CheckCircle className="w-4 h-4 text-primary-500 mt-0.5" />
                         <span className="text-sm text-gray-600">Your self-perception across 6 leadership competencies</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <CheckCircle className="w-4 h-4 text-[#0D5C5C] mt-0.5" />
+                        <CheckCircle className="w-4 h-4 text-primary-500 mt-0.5" />
                         <span className="text-sm text-gray-600">Strengths and areas for development</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <CheckCircle className="w-4 h-4 text-[#0D5C5C] mt-0.5" />
+                        <CheckCircle className="w-4 h-4 text-primary-500 mt-0.5" />
                         <span className="text-sm text-gray-600">Foundation for 360° feedback comparison</span>
                       </li>
                     </ul>
                   </div>
 
                   {/* Instructions */}
-                  <div className="mb-6 p-4 bg-[#0D5C5C]/5 rounded-lg border border-[#0D5C5C]/10">
-                    <h3 className="text-sm font-semibold text-[#0D5C5C] mb-2">Instructions</h3>
+                  <div className="mb-6 p-4 bg-primary-500/5 rounded-lg border border-primary-500/10">
+                    <h3 className="text-sm font-semibold text-primary-500 mb-2">Instructions</h3>
                     <p className="text-sm text-gray-600">
                       Rate yourself honestly on each statement using the scale from 1 (Never/Rarely) to 5 (Almost Always). 
                       There are no right or wrong answers — this is about understanding your current leadership behaviors.
@@ -301,7 +301,7 @@ export default function SelfAssessment360Page() {
                   {/* Start button */}
                   <button
                     onClick={handleStartTest}
-                    className="w-full py-4 bg-[#0D5C5C] text-white font-semibold rounded-xl hover:bg-[#0a4a4a] transition-colors text-lg"
+                    className="w-full py-4 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-colors text-lg"
                   >
                     Start Self Assessment
                   </button>
@@ -310,7 +310,7 @@ export default function SelfAssessment360Page() {
                 {/* Right side - Visual */}
                 <div className="w-64 flex items-center justify-center">
                   <div className="relative">
-                    <div className="w-48 h-48 rounded-full bg-gradient-to-br from-[#0D5C5C] to-[#0a4a4a] flex items-center justify-center">
+                    <div className="w-48 h-48 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
                       <div className="text-center">
                         <Users className="w-16 h-16 text-white mx-auto mb-2" />
                         <span className="text-white font-bold text-lg">360°</span>
@@ -364,7 +364,7 @@ export default function SelfAssessment360Page() {
               <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                 <div 
                   className="h-full transition-all duration-300"
-                  style={{ width: `${progress}%`, backgroundColor: currentCategory?.color || '#0D5C5C' }}
+                  style={{ width: `${progress}%`, backgroundColor: currentCategory?.color || 'var(--color-primary-500)' }}
                 />
               </div>
             </div>
@@ -394,12 +394,12 @@ export default function SelfAssessment360Page() {
                     onClick={() => handleAnswer(option.value)}
                     className={`flex flex-col items-center p-4 rounded-xl border-2 transition-all ${
                       answers[currentQ.id] === option.value
-                        ? 'border-[#0D5C5C] bg-[#e8f4f4]'
+                        ? 'border-primary-500 bg-[#e8f4f4]'
                         : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                     }`}
                   >
                     <span className={`text-2xl font-bold mb-1 ${
-                      answers[currentQ.id] === option.value ? 'text-[#0D5C5C]' : 'text-gray-400'
+                      answers[currentQ.id] === option.value ? 'text-primary-500' : 'text-gray-400'
                     }`}>
                       {option.value}
                     </span>
@@ -434,7 +434,7 @@ export default function SelfAssessment360Page() {
                   className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors ${
                     !answers[currentQ.id]
                       ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                      : 'bg-[#0D5C5C] text-white hover:bg-[#0a4a4a]'
+                      : 'bg-primary-500 text-white hover:bg-primary-600'
                   }`}
                 >
                   {currentQuestion === selfAssessmentQuestions.length - 1 ? 'Complete' : 'Next'}
@@ -460,8 +460,8 @@ export default function SelfAssessment360Page() {
       <main className="flex-1 p-8 overflow-auto">
         <div className="max-w-3xl mx-auto">
           {/* Congratulations Banner */}
-          <div className="bg-[#2D2D2D] rounded-xl p-8 text-center mb-6">
-            <CheckCircle2 className="w-16 h-16 text-[#D4A84B] mx-auto mb-4" />
+          <div className="bg-neutral-800 rounded-xl p-8 text-center mb-6">
+            <CheckCircle2 className="w-16 h-16 text-secondary-500 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-white mb-2">Self Assessment Complete!</h2>
             <p className="text-gray-300">Your 360° self-evaluation has been recorded</p>
           </div>
@@ -470,7 +470,7 @@ export default function SelfAssessment360Page() {
           <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 mb-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Overall Self-Rating</h3>
             <div className="flex items-center gap-6">
-              <div className="w-24 h-24 rounded-full bg-[#0D5C5C] flex items-center justify-center">
+              <div className="w-24 h-24 rounded-full bg-primary-500 flex items-center justify-center">
                 <div className="text-center">
                   <span className="text-2xl font-bold text-white">{overallAverage}</span>
                   <span className="text-white/80 text-sm">/5</span>
@@ -520,19 +520,19 @@ export default function SelfAssessment360Page() {
           </div>
 
           {/* Next Steps */}
-          <div className="bg-[#0D5C5C]/5 rounded-xl p-6 border border-[#0D5C5C]/10 mb-6">
-            <h3 className="text-lg font-semibold text-[#0D5C5C] mb-3">Next Steps</h3>
+          <div className="bg-primary-500/5 rounded-xl p-6 border border-primary-500/10 mb-6">
+            <h3 className="text-lg font-semibold text-primary-500 mb-3">Next Steps</h3>
             <ul className="space-y-2 text-gray-600">
               <li className="flex items-start gap-2">
-                <span className="text-[#0D5C5C]">1.</span>
+                <span className="text-primary-500">1.</span>
                 <span>Invite colleagues, managers, and direct reports to provide their feedback</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#0D5C5C]">2.</span>
+                <span className="text-primary-500">2.</span>
                 <span>Compare your self-perception with others&apos; perspectives</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#0D5C5C]">3.</span>
+                <span className="text-primary-500">3.</span>
                 <span>Identify blind spots and hidden strengths</span>
               </li>
             </ul>
@@ -542,7 +542,7 @@ export default function SelfAssessment360Page() {
           <div className="flex gap-4">
             <button
               onClick={() => router.push('/dashboard/results')}
-              className="flex-1 bg-[#0D5C5C] hover:bg-[#0a4a4a] text-white py-4 rounded-xl font-semibold transition-colors"
+              className="flex-1 bg-primary-500 hover:bg-primary-600 text-white py-4 rounded-xl font-semibold transition-colors"
             >
               View Results & Reports
             </button>

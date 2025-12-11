@@ -146,7 +146,7 @@ export default function DashboardPage() {
         {/* Welcome Header */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900">
-            Welcome <span className="text-[#0D5C5C]">{user.firstName || 'User'}</span>
+            Welcome <span className="text-primary-500">{user.firstName || 'User'}</span>
           </h1>
           <p className="text-gray-600">Continue your journey to authentic leadership</p>
         </div>
@@ -179,7 +179,7 @@ export default function DashboardPage() {
               description={getTKIResult()}
               status={getAssessmentStatus('tki')}
               badge="ARISE Platform"
-              badgeColor="bg-[#0D5C5C]/10 text-[#0D5C5C]"
+              badgeColor="bg-primary-500/10 text-primary-500"
               onAction={() => router.push('/dashboard/tki')}
             />
             <EvaluationCard
@@ -188,7 +188,7 @@ export default function DashboardPage() {
               description={get360Result()}
               status={getAssessmentStatus('self_360')}
               badge="ARISE Platform"
-              badgeColor="bg-[#0D5C5C]/10 text-[#0D5C5C]"
+              badgeColor="bg-primary-500/10 text-primary-500"
               onAction={() => router.push('/dashboard/360-self')}
             />
             <EvaluationCard

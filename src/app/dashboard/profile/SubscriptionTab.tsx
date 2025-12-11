@@ -256,7 +256,7 @@ export default function SubscriptionTab({ user }: { user: User }) {
   if (isLoading) {
     return (
       <div className="p-8 flex justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[#0D5C5C]" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
       </div>
     );
   }
@@ -279,7 +279,7 @@ export default function SubscriptionTab({ user }: { user: User }) {
         <div className="border border-gray-200 rounded-lg p-6">
           <div className="flex items-start justify-between mb-4">
             <div>
-              <h3 className="text-[#0D5C5C] font-bold text-xl">{currentPlan.toUpperCase()}</h3>
+              <h3 className="text-primary-500 font-bold text-xl">{currentPlan.toUpperCase()}</h3>
               <p className="text-sm text-gray-500">
                 {subscription?.status === 'cancelled' 
                   ? 'Subscription cancelled - access until end of billing period'
@@ -307,7 +307,7 @@ export default function SubscriptionTab({ user }: { user: User }) {
             <span className="px-3 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">Wellness Plan</span>
             <span className="px-3 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">Development Plan</span>
             {subscription?.hasCoaching && (
-              <span className="px-3 py-1 bg-[#D4A84B] text-white text-xs rounded-full">
+              <span className="px-3 py-1 bg-secondary-500 text-white text-xs rounded-full">
                 {subscription.coachingSessions} Coaching Sessions
               </span>
             )}
@@ -319,7 +319,7 @@ export default function SubscriptionTab({ user }: { user: User }) {
               <button
                 onClick={handleManageSubscription}
                 disabled={isManaging}
-                className="px-4 py-2 border border-[#0D5C5C] text-[#0D5C5C] rounded-lg font-medium hover:bg-[#0D5C5C]/5 transition-colors disabled:opacity-50 flex items-center gap-2"
+                className="px-4 py-2 border border-primary-500 text-primary-500 rounded-lg font-medium hover:bg-primary-500/5 transition-colors disabled:opacity-50 flex items-center gap-2"
               >
                 {isManaging ? <Loader2 className="w-4 h-4 animate-spin" /> : <CreditCard className="w-4 h-4" />}
                 Manage Billing
@@ -375,19 +375,19 @@ export default function SubscriptionTab({ user }: { user: User }) {
               key={plan.id}
               className={`border rounded-lg p-5 ${
                 plan.id === currentPlan 
-                  ? 'border-[#0D5C5C] bg-[#0D5C5C]/5' 
+                  ? 'border-primary-500 bg-primary-500/5' 
                   : plan.popular 
-                    ? 'border-[#D4A84B]' 
+                    ? 'border-secondary-500' 
                     : 'border-gray-200'
               }`}
             >
               {plan.popular && (
-                <span className="inline-block px-2 py-1 bg-[#D4A84B] text-white text-xs rounded mb-2">
+                <span className="inline-block px-2 py-1 bg-secondary-500 text-white text-xs rounded mb-2">
                   Most Popular
                 </span>
               )}
               <h3 className="font-bold text-gray-900">{plan.name}</h3>
-              <p className="text-2xl font-bold text-[#0D5C5C] my-2">
+              <p className="text-2xl font-bold text-primary-500 my-2">
                 {formatPrice(plan.price)}
                 <span className="text-sm font-normal text-gray-500">/mo</span>
               </p>
@@ -406,7 +406,7 @@ export default function SubscriptionTab({ user }: { user: User }) {
                 className={`w-full py-2 rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2 ${
                   plan.id === currentPlan
                     ? 'bg-gray-100 text-gray-500 cursor-default'
-                    : 'bg-[#0D5C5C] text-white hover:bg-[#0a4a4a]'
+                    : 'bg-primary-500 text-white hover:bg-primary-600'
                 }`}
               >
                 {isUpgrading && <Loader2 className="w-4 h-4 animate-spin" />}
@@ -424,12 +424,12 @@ export default function SubscriptionTab({ user }: { user: User }) {
           {coachingPackages.map((pkg) => (
             <div key={pkg.id} className="border border-gray-200 rounded-lg p-5">
               <h3 className="font-bold text-gray-900">{pkg.name}</h3>
-              <p className="text-2xl font-bold text-[#D4A84B] my-2">{pkg.priceFormatted}</p>
+              <p className="text-2xl font-bold text-secondary-500 my-2">{pkg.priceFormatted}</p>
               <p className="text-sm text-gray-500 mb-4">{pkg.description}</p>
               <button
                 onClick={() => handleBuyCoaching(pkg.id)}
                 disabled={selectedCoaching === pkg.id}
-                className="w-full py-2 bg-[#D4A84B] text-white rounded-lg font-medium hover:bg-[#c49a42] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-2 bg-secondary-500 text-white rounded-lg font-medium hover:bg-secondary-600 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {selectedCoaching === pkg.id && <Loader2 className="w-4 h-4 animate-spin" />}
                 Purchase
@@ -537,7 +537,7 @@ export default function SubscriptionTab({ user }: { user: User }) {
       </section>
 
       {/* Coaching CTA */}
-      <section className="bg-[#0D5C5C] rounded-xl p-8 text-white">
+      <section className="bg-primary-500 rounded-xl p-8 text-white">
         <div className="flex items-center justify-between">
           <div className="max-w-lg">
             <h2 className="text-2xl font-bold mb-2">Ready to accelerate your growth?</h2>
@@ -547,14 +547,14 @@ export default function SubscriptionTab({ user }: { user: User }) {
             </p>
             <Link
               href="/coaching"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-[#D4A84B] text-[#0D5C5C] rounded-lg font-semibold hover:bg-[#c49a42] transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-secondary-500 text-primary-500 rounded-lg font-semibold hover:bg-secondary-600 transition-colors"
             >
               Explore coaching options →
             </Link>
           </div>
           <div className="hidden lg:flex items-center gap-4">
-            <div className="w-24 h-24 rounded-full bg-[#D4A84B] flex items-center justify-center">
-              <span className="text-[#0D5C5C] text-2xl">👤</span>
+            <div className="w-24 h-24 rounded-full bg-secondary-500 flex items-center justify-center">
+              <span className="text-primary-500 text-2xl">👤</span>
             </div>
           </div>
         </div>

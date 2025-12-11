@@ -202,8 +202,8 @@ export default function AddEvaluatorsPage() {
 
   if (isLoading || !user) {
     return (
-      <div className="min-h-screen bg-[#0D5C5C] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#D4A84B]"></div>
+      <div className="min-h-screen bg-primary-500 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-secondary-500"></div>
       </div>
     );
   }
@@ -250,8 +250,8 @@ export default function AddEvaluatorsPage() {
           {/* Info Card */}
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-[#0D5C5C]/10 rounded-full flex items-center justify-center flex-shrink-0">
-                <Users className="w-6 h-6 text-[#0D5C5C]" />
+              <div className="w-12 h-12 bg-primary-500/10 rounded-full flex items-center justify-center flex-shrink-0">
+                <Users className="w-6 h-6 text-primary-500" />
               </div>
               <div>
                 <h2 className="font-semibold text-gray-900 mb-2">Why 360° Feedback?</h2>
@@ -260,15 +260,15 @@ export default function AddEvaluatorsPage() {
                 </p>
                 <div className="flex flex-wrap gap-4 text-sm">
                   <div className="flex items-center gap-2">
-                    <Briefcase className="w-4 h-4 text-[#0D5C5C]" />
+                    <Briefcase className="w-4 h-4 text-primary-500" />
                     <span className="text-gray-600">1-2 Managers</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-[#0D5C5C]" />
+                    <Users className="w-4 h-4 text-primary-500" />
                     <span className="text-gray-600">3-5 Peers</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <UserCheck className="w-4 h-4 text-[#0D5C5C]" />
+                    <UserCheck className="w-4 h-4 text-primary-500" />
                     <span className="text-gray-600">2-4 Direct Reports</span>
                   </div>
                 </div>
@@ -300,7 +300,7 @@ export default function AddEvaluatorsPage() {
               <h3 className="font-semibold text-gray-900">Your Evaluators ({evaluators.length})</h3>
               <button
                 onClick={() => setShowAddForm(true)}
-                className="px-4 py-2 bg-[#0D5C5C] text-white rounded-lg text-sm font-medium hover:bg-[#0a4a4a] transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-primary-500 text-white rounded-lg text-sm font-medium hover:bg-primary-600 transition-colors flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
                 Add Evaluator
@@ -318,7 +318,7 @@ export default function AddEvaluatorsPage() {
                 </p>
                 <button
                   onClick={() => setShowAddForm(true)}
-                  className="px-4 py-2 bg-[#0D5C5C] text-white rounded-lg text-sm font-medium hover:bg-[#0a4a4a] transition-colors"
+                  className="px-4 py-2 bg-primary-500 text-white rounded-lg text-sm font-medium hover:bg-primary-600 transition-colors"
                 >
                   Add your first evaluator
                 </button>
@@ -330,8 +330,8 @@ export default function AddEvaluatorsPage() {
                   return (
                     <div key={evaluator.id} className="p-4 flex items-center justify-between hover:bg-gray-50">
                       <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-[#0D5C5C]/10 rounded-full flex items-center justify-center">
-                          <Icon className="w-5 h-5 text-[#0D5C5C]" />
+                        <div className="w-10 h-10 bg-primary-500/10 rounded-full flex items-center justify-center">
+                          <Icon className="w-5 h-5 text-primary-500" />
                         </div>
                         <div>
                           <p className="font-medium text-gray-900">{evaluator.name}</p>
@@ -363,7 +363,7 @@ export default function AddEvaluatorsPage() {
             <button
               onClick={handleSendInvites}
               disabled={sendingInvites}
-              className="w-full py-3 bg-[#D4A84B] text-white rounded-xl font-semibold hover:bg-[#c49a42] transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full py-3 bg-secondary-500 text-white rounded-xl font-semibold hover:bg-secondary-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {sendingInvites ? (
                 <>
@@ -380,8 +380,8 @@ export default function AddEvaluatorsPage() {
           )}
 
           {/* Note */}
-          <div className="mt-6 p-4 bg-[#0D5C5C]/5 rounded-xl flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-[#0D5C5C] flex-shrink-0 mt-0.5" />
+          <div className="mt-6 p-4 bg-primary-500/5 rounded-xl flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-gray-600">
               <p className="font-medium text-gray-900 mb-1">How it works</p>
               <ul className="list-disc list-inside space-y-1">
@@ -393,7 +393,7 @@ export default function AddEvaluatorsPage() {
               </ul>
               <button
                 onClick={() => router.push('/dashboard/360-self')}
-                className="mt-3 text-[#0D5C5C] font-medium hover:underline"
+                className="mt-3 text-primary-500 font-medium hover:underline"
               >
                 Complete your self-assessment first →
               </button>
@@ -426,7 +426,7 @@ export default function AddEvaluatorsPage() {
                     value={newEvaluator.name}
                     onChange={(e) => setNewEvaluator({ ...newEvaluator, name: e.target.value })}
                     placeholder="John Doe"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0D5C5C] focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   />
                 </div>
 
@@ -437,7 +437,7 @@ export default function AddEvaluatorsPage() {
                     value={newEvaluator.email}
                     onChange={(e) => setNewEvaluator({ ...newEvaluator, email: e.target.value })}
                     placeholder="john.doe@company.com"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0D5C5C] focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   />
                 </div>
 
@@ -452,15 +452,15 @@ export default function AddEvaluatorsPage() {
                           onClick={() => setNewEvaluator({ ...newEvaluator, relationship: option.value as any })}
                           className={`p-3 rounded-lg border-2 text-left transition-all ${
                             newEvaluator.relationship === option.value
-                              ? 'border-[#0D5C5C] bg-[#0D5C5C]/5'
+                              ? 'border-primary-500 bg-primary-500/5'
                               : 'border-gray-200 hover:border-gray-300'
                           }`}
                         >
                           <Icon className={`w-5 h-5 mb-1 ${
-                            newEvaluator.relationship === option.value ? 'text-[#0D5C5C]' : 'text-gray-400'
+                            newEvaluator.relationship === option.value ? 'text-primary-500' : 'text-gray-400'
                           }`} />
                           <p className={`text-sm font-medium ${
-                            newEvaluator.relationship === option.value ? 'text-[#0D5C5C]' : 'text-gray-700'
+                            newEvaluator.relationship === option.value ? 'text-primary-500' : 'text-gray-700'
                           }`}>
                             {option.label}
                           </p>
@@ -484,7 +484,7 @@ export default function AddEvaluatorsPage() {
                 <button
                   onClick={handleAddEvaluator}
                   disabled={!newEvaluator.name || !newEvaluator.email || addingEvaluator}
-                  className="flex-1 py-2 bg-[#0D5C5C] text-white rounded-lg font-medium hover:bg-[#0a4a4a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 py-2 bg-primary-500 text-white rounded-lg font-medium hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {addingEvaluator ? (
                     <>

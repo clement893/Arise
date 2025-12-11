@@ -2,7 +2,7 @@
 
 import { ReactNode, HTMLAttributes } from 'react';
 
-type CardVariant = 'default' | 'elevated' | 'bordered' | 'gradient';
+type CardVariant = 'default' | 'elevated' | 'bordered' | 'flat' | 'gradient' | 'dark' | 'hover';
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
   variant?: CardVariant;
@@ -32,11 +32,20 @@ interface CardFooterProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
 }
 
-const variantStyles: Record<CardVariant, string> = {
-  default: 'bg-white border border-gray-100',
-  elevated: 'bg-white shadow-lg',
-  bordered: 'bg-white border-2 border-gray-200',
-  gradient: 'bg-gradient-to-br from-[#0D5C5C] to-[#0a4a4a] text-white',
+/**
+ * Card component using ARISE Design System tokens
+ * Base styles are defined in src/styles/cards.css
+ */
+
+// Map variant to CSS class
+const variantClasses: Record<CardVariant, string> = {
+  default: 'card',
+  elevated: 'card-elevated',
+  bordered: 'card-bordered',
+  flat: 'card-flat',
+  gradient: 'card-gradient',
+  dark: 'card-dark',
+  hover: 'card-hover',
 };
 
 const paddingStyles: Record<string, string> = {
@@ -55,12 +64,7 @@ export function Card({
 }: CardProps) {
   return (
     <div
-      className={`
-        rounded-xl shadow-sm
-        ${variantStyles[variant]}
-        ${paddingStyles[padding]}
-        ${className}
-      `}
+      className={`${variantClasses[variant]} ${paddingStyles[padding]} ${className}`.trim()}
       {...props}
     >
       {children}
@@ -93,7 +97,7 @@ export function CardTitle({
 }: CardTitleProps) {
   return (
     <Component
-      className={`font-semibold text-gray-900 ${className}`}
+      className={`card-title ${className}`}
       {...props}
     >
       {children}
@@ -107,7 +111,7 @@ export function CardDescription({
   ...props
 }: CardDescriptionProps) {
   return (
-    <p className={`text-sm text-gray-500 mt-1 ${className}`} {...props}>
+    <p className={`card-subtitle ${className}`} {...props}>
       {children}
     </p>
   );
@@ -132,7 +136,7 @@ export function CardFooter({
 }: CardFooterProps) {
   return (
     <div
-      className={`mt-4 pt-4 border-t border-gray-100 ${className}`}
+      className={`card-footer -mx-6 -mb-6 mt-4 ${className}`}
       {...props}
     >
       {children}

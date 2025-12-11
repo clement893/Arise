@@ -1,0 +1,247 @@
+/**
+ * ARISE Design System - Modal Components
+ * Reusable modal and dialog styles
+ */
+
+/* ============================================
+   MODAL OVERLAY
+   ============================================ */
+
+.modal-overlay {
+  
+  background-color: var(--color-surface-overlay);
+  z-index: var(--z-modal-backdrop);
+  animation: fadeIn var(--transition-fast);
+}
+
+/* ============================================
+   MODAL CONTAINER
+   ============================================ */
+
+.modal {
+  
+  border-radius: var(--radius-modal);
+  box-shadow: var(--shadow-modal);
+  animation: slideUp var(--transition-default);
+  z-index: var(--z-modal);
+}
+
+/* ============================================
+   MODAL SIZES
+   ============================================ */
+
+.modal-sm {
+  
+}
+
+.modal-md {
+  
+}
+
+.modal-lg {
+  
+}
+
+.modal-xl {
+  
+}
+
+.modal-2xl {
+  
+}
+
+.modal-full {
+  
+}
+
+/* ============================================
+   MODAL SECTIONS
+   ============================================ */
+
+.modal-header {
+  
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.modal-title {
+  
+  color: var(--color-text-primary);
+}
+
+.modal-close {
+  
+  color: var(--color-text-tertiary);
+}
+
+.modal-close:hover {
+  background-color: var(--color-neutral-100);
+  color: var(--color-text-primary);
+}
+
+.modal-body {
+  
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.modal-body-no-padding {
+  
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  
+  border-top: 1px solid var(--color-border-light);
+}
+
+.modal-footer-left {
+  
+}
+
+.modal-footer-between {
+  
+}
+
+/* ============================================
+   CONFIRM MODAL
+   ============================================ */
+
+.confirm-modal {
+  
+}
+
+.confirm-modal-icon {
+  
+}
+
+.confirm-modal-icon-danger {
+  
+  color: var(--color-error-500);
+}
+
+.confirm-modal-icon-warning {
+  
+  color: var(--color-warning-500);
+}
+
+.confirm-modal-icon-success {
+  
+  color: var(--color-success-500);
+}
+
+.confirm-modal-icon-info {
+  
+  color: var(--color-info-500);
+}
+
+.confirm-modal-title {
+  
+  color: var(--color-text-primary);
+}
+
+.confirm-modal-message {
+  
+  color: var(--color-text-secondary);
+}
+
+.confirm-modal-actions {
+  
+}
+
+/* ============================================
+   ALERT MODAL
+   ============================================ */
+
+.alert-modal {
+  
+}
+
+.alert-modal-success {
+  border-top: 4px solid var(--color-success-500);
+}
+
+.alert-modal-error {
+  border-top: 4px solid var(--color-error-500);
+}
+
+.alert-modal-warning {
+  border-top: 4px solid var(--color-warning-500);
+}
+
+.alert-modal-info {
+  border-top: 4px solid var(--color-info-500);
+}
+
+/* ============================================
+   DRAWER (SIDE MODAL)
+   ============================================ */
+
+.drawer-overlay {
+  
+}
+
+.drawer {
+  
+  box-shadow: var(--shadow-modal);
+  animation: slideInRight var(--transition-default);
+}
+
+.drawer-sm {
+  
+}
+
+.drawer-md {
+  
+}
+
+.drawer-lg {
+  
+}
+
+.drawer-header {
+  
+}
+
+.drawer-body {
+  
+}
+
+.drawer-footer {
+  
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* ============================================
+   BOTTOM SHEET (MOBILE)
+   ============================================ */
+
+.bottom-sheet-overlay {
+  
+}
+
+.bottom-sheet {
+  
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  box-shadow: var(--shadow-modal);
+  animation: slideUp var(--transition-default);
+  max-height: 90vh;
+}
+
+.bottom-sheet-handle {
+  
+  background-color: var(--color-neutral-300);
+}
+
+.bottom-sheet-body {
+  
+  max-height: calc(90vh - 60px);
+}

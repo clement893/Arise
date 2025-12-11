@@ -37,7 +37,7 @@ function SuccessContent() {
     return (
       <main className="pt-24 pb-16 flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-[#0D5C5C] mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 animate-spin text-primary-500 mx-auto mb-4" />
           <p className="text-gray-600">Verifying your payment...</p>
         </div>
       </main>
@@ -67,19 +67,19 @@ function SuccessContent() {
           <h2 className="font-semibold text-gray-900 mb-4">What&apos;s next?</h2>
           <ul className="space-y-3 text-gray-600">
             <li className="flex items-start gap-3">
-              <CheckCircle className="w-5 h-5 text-[#0D5C5C] flex-shrink-0 mt-0.5" />
+              <CheckCircle className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
               <span>You&apos;ll receive a confirmation email with your receipt</span>
             </li>
             <li className="flex items-start gap-3">
-              <CheckCircle className="w-5 h-5 text-[#0D5C5C] flex-shrink-0 mt-0.5" />
+              <CheckCircle className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
               <span>Access all 4 leadership assessments (MBTI, TKI, 360°, Wellness)</span>
             </li>
             <li className="flex items-start gap-3">
-              <CheckCircle className="w-5 h-5 text-[#0D5C5C] flex-shrink-0 mt-0.5" />
+              <CheckCircle className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
               <span>Generate comprehensive leadership reports</span>
             </li>
             <li className="flex items-start gap-3">
-              <CheckCircle className="w-5 h-5 text-[#0D5C5C] flex-shrink-0 mt-0.5" />
+              <CheckCircle className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
               <span>Track your progress with the development dashboard</span>
             </li>
           </ul>
@@ -89,13 +89,13 @@ function SuccessContent() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/dashboard"
-            className="inline-flex items-center justify-center bg-[#0D5C5C] hover:bg-[#0a4a4a] text-white px-8 py-3 rounded-lg font-semibold transition-colors"
+            className="inline-flex items-center justify-center bg-primary-500 hover:bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
           >
             Go to Dashboard
           </Link>
           <Link
             href="/dashboard/results"
-            className="inline-flex items-center justify-center bg-white border-2 border-[#0D5C5C] text-[#0D5C5C] hover:bg-gray-50 px-8 py-3 rounded-lg font-semibold transition-colors"
+            className="inline-flex items-center justify-center bg-white border-2 border-primary-500 text-primary-500 hover:bg-gray-50 px-8 py-3 rounded-lg font-semibold transition-colors"
           >
             View My Profile
           </Link>
@@ -103,7 +103,7 @@ function SuccessContent() {
 
         {/* Support Link */}
         <p className="mt-8 text-sm text-gray-500">
-          Have questions? <Link href="/about" className="text-[#0D5C5C] hover:underline">Contact our support team</Link>
+          Have questions? <Link href="/about" className="text-primary-500 hover:underline">Contact our support team</Link>
         </p>
       </div>
     </main>
@@ -114,7 +114,7 @@ function LoadingFallback() {
   return (
     <main className="pt-24 pb-16 flex items-center justify-center min-h-[60vh]">
       <div className="text-center">
-        <Loader2 className="w-12 h-12 animate-spin text-[#0D5C5C] mx-auto mb-4" />
+        <Loader2 className="w-12 h-12 animate-spin text-primary-500 mx-auto mb-4" />
         <p className="text-gray-600">Loading...</p>
       </div>
     </main>

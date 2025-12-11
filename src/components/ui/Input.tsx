@@ -9,8 +9,13 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
   fullWidth?: boolean;
+  required?: boolean;
 }
 
+/**
+ * Input component using ARISE Design System tokens
+ * Styles are defined in src/styles/forms.css
+ */
 const Input = forwardRef<HTMLInputElement, InputProps>(
   (
     {
@@ -20,6 +25,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       leftIcon,
       rightIcon,
       fullWidth = true,
+      required = false,
       className = '',
       id,
       ...props
@@ -28,45 +34,43 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
   ) => {
     const inputId = id || label?.toLowerCase().replace(/\s+/g, '-');
 
+    // Determine input class based on state and icons
+    let inputClass = 'input';
+    if (error) inputClass = 'input-error';
+    if (leftIcon) inputClass += ' input-icon-left';
+    if (rightIcon) inputClass += ' input-icon-right';
+
     return (
-      <div className={fullWidth ? 'w-full' : ''}>
+      <div className={`form-group ${fullWidth ? 'w-full' : ''}`}>
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className={`label ${required ? 'label-required' : ''}`}
           >
             {label}
           </label>
         )}
-        <div className="relative">
+        <div className="input-group">
           {leftIcon && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <div className="input-icon input-icon-left-pos">
               {leftIcon}
             </div>
           )}
           <input
             ref={ref}
             id={inputId}
-            className={`
-              w-full px-4 py-2.5 border rounded-lg
-              focus:outline-none focus:ring-2 focus:ring-[#0D5C5C] focus:border-transparent
-              disabled:bg-gray-100 disabled:cursor-not-allowed
-              ${leftIcon ? 'pl-10' : ''}
-              ${rightIcon ? 'pr-10' : ''}
-              ${error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300'}
-              ${className}
-            `}
+            className={`${inputClass} ${className}`.trim()}
             {...props}
           />
           {rightIcon && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <div className="input-icon input-icon-right-pos">
               {rightIcon}
             </div>
           )}
         </div>
-        {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+        {error && <p className="helper-text-error">{error}</p>}
         {helperText && !error && (
-          <p className="mt-1 text-sm text-gray-500">{helperText}</p>
+          <p className="helper-text">{helperText}</p>
         )}
       </div>
     );

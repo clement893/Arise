@@ -331,7 +331,7 @@ export default function AdminAssessments() {
                 onClick={() => setSelectedAssessment(assessment)}
                 className={`w-full p-4 flex items-center gap-4 border-b border-gray-100 last:border-b-0 transition-colors ${
                   selectedAssessment?.id === assessment.id
-                    ? 'bg-[#0D5C5C] text-white'
+                    ? 'bg-primary-500 text-white'
                     : 'hover:bg-gray-50'
                 }`}
               >
@@ -404,7 +404,7 @@ export default function AdminAssessments() {
                           type="number"
                           value={editForm.duration}
                           onChange={(e) => setEditForm(prev => ({ ...prev, duration: parseInt(e.target.value) }))}
-                          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D5C5C]"
+                          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                       <div>
@@ -415,7 +415,7 @@ export default function AdminAssessments() {
                           type="number"
                           value={editForm.questionCount}
                           onChange={(e) => setEditForm(prev => ({ ...prev, questionCount: parseInt(e.target.value) }))}
-                          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D5C5C]"
+                          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         />
                       </div>
                     </div>
@@ -425,7 +425,7 @@ export default function AdminAssessments() {
                           type="checkbox"
                           checked={editForm.isActive}
                           onChange={(e) => setEditForm(prev => ({ ...prev, isActive: e.target.checked }))}
-                          className="w-4 h-4 text-[#0D5C5C] rounded focus:ring-[#0D5C5C]"
+                          className="w-4 h-4 text-primary-500 rounded focus:ring-primary-500"
                         />
                         <span className="text-sm text-gray-700">Active</span>
                       </label>
@@ -439,7 +439,7 @@ export default function AdminAssessments() {
                         <button
                           onClick={handleSaveSettings}
                           disabled={isSaving}
-                          className="flex items-center gap-2 px-4 py-2 bg-[#0D5C5C] text-white rounded-lg hover:bg-[#0a4a4a] disabled:opacity-50"
+                          className="flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50"
                         >
                           <Save className="w-4 h-4" />
                           {isSaving ? 'Saving...' : 'Save'}
@@ -461,7 +461,7 @@ export default function AdminAssessments() {
                   </div>
                   <button
                     onClick={() => setShowAddQuestion(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-[#D4A84B] text-white rounded-lg hover:bg-[#c49a42]"
+                    className="flex items-center gap-2 px-4 py-2 bg-secondary-500 text-white rounded-lg hover:bg-secondary-600"
                   >
                     <Plus className="w-4 h-4" />
                     Add question
@@ -485,7 +485,7 @@ export default function AdminAssessments() {
                           value={newQuestion.text}
                           onChange={(e) => setNewQuestion(prev => ({ ...prev, text: e.target.value }))}
                           rows={3}
-                          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D5C5C] resize-none"
+                          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
                         />
                       </div>
                       <div>
@@ -493,7 +493,7 @@ export default function AdminAssessments() {
                         <select
                           value={newQuestion.category}
                           onChange={(e) => setNewQuestion(prev => ({ ...prev, category: e.target.value }))}
-                          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D5C5C]"
+                          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         >
                           <option value="">Select a category...</option>
                           {categoryOptions.map(cat => (
@@ -511,7 +511,7 @@ export default function AdminAssessments() {
                         <button
                           onClick={handleAddQuestion}
                           disabled={!newQuestion.text}
-                          className="flex-1 px-4 py-2 bg-[#0D5C5C] text-white rounded-lg hover:bg-[#0a4a4a] disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Add Question
                         </button>
@@ -523,7 +523,7 @@ export default function AdminAssessments() {
                 {/* Questions List */}
                 {isLoading ? (
                   <div className="text-center py-12">
-                    <div className="w-8 h-8 border-2 border-[#0D5C5C] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                    <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
                     <p className="text-gray-500">Loading questions...</p>
                   </div>
                 ) : questions.length > 0 ? (
@@ -557,7 +557,7 @@ export default function AdminAssessments() {
                         </div>
                         
                         {/* Question Number */}
-                        <span className="w-8 h-8 rounded-full bg-[#0D5C5C] text-white flex items-center justify-center text-sm font-medium flex-shrink-0">
+                        <span className="w-8 h-8 rounded-full bg-primary-500 text-white flex items-center justify-center text-sm font-medium flex-shrink-0">
                           {index + 1}
                         </span>
                         
@@ -569,12 +569,12 @@ export default function AdminAssessments() {
                                 value={editingQuestionData.text}
                                 onChange={(e) => setEditingQuestionData(prev => ({ ...prev, text: e.target.value }))}
                                 rows={3}
-                                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D5C5C] resize-none"
+                                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
                               />
                               <select
                                 value={editingQuestionData.category}
                                 onChange={(e) => setEditingQuestionData(prev => ({ ...prev, category: e.target.value }))}
-                                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0D5C5C]"
+                                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                               >
                                 <option value="">Select a category...</option>
                                 {categoryOptions.map(cat => (
@@ -590,7 +590,7 @@ export default function AdminAssessments() {
                                 </button>
                                 <button
                                   onClick={handleSaveQuestion}
-                                  className="px-3 py-1.5 text-sm bg-[#0D5C5C] text-white rounded-lg hover:bg-[#0a4a4a]"
+                                  className="px-3 py-1.5 text-sm bg-primary-500 text-white rounded-lg hover:bg-primary-600"
                                 >
                                   Save Changes
                                 </button>
@@ -639,7 +639,7 @@ export default function AdminAssessments() {
                     <p className="text-sm text-gray-400 mb-4">Click &apos;Add Question&apos; to get started</p>
                     <button
                       onClick={() => setShowAddQuestion(true)}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-[#0D5C5C] text-white rounded-lg hover:bg-[#0a4a4a]"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
                     >
                       <Plus className="w-4 h-4" />
                       Add your first question

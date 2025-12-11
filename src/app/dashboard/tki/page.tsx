@@ -218,7 +218,7 @@ export default function TKITestPage() {
           <div className="max-w-3xl mx-auto">
             <Card className="p-8">
               <div className="text-center mb-8">
-                <div className="w-20 h-20 bg-[#0D5C5C] rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-20 h-20 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="text-3xl">⚖️</span>
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">Conflict Style Assessment</h2>
@@ -257,7 +257,7 @@ export default function TKITestPage() {
               </div>
 
               <div className="bg-[#e8f4f4] rounded-lg p-4 mb-8">
-                <h3 className="font-semibold text-[#0D5C5C] mb-2">Instructions</h3>
+                <h3 className="font-semibold text-primary-500 mb-2">Instructions</h3>
                 <p className="text-sm text-gray-700">
                   For each pair of statements, choose the one (A or B) that best describes your typical behavior in conflict situations. 
                   There are no right or wrong answers - respond based on how you actually behave, not how you think you should behave.
@@ -287,7 +287,7 @@ export default function TKITestPage() {
               </div>
               <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-[#0D5C5C] transition-all duration-300"
+                  className="h-full bg-primary-500 transition-all duration-300"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -304,14 +304,14 @@ export default function TKITestPage() {
                   onClick={() => handleAnswer('A')}
                   className={`w-full p-6 rounded-xl border-2 text-left transition-all ${
                     answers[currentQuestion] === 'A'
-                      ? 'border-[#0D5C5C] bg-[#e8f4f4]'
+                      ? 'border-primary-500 bg-[#e8f4f4]'
                       : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                   }`}
                 >
                   <div className="flex items-start gap-4">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                       answers[currentQuestion] === 'A'
-                        ? 'bg-[#0D5C5C] text-white'
+                        ? 'bg-primary-500 text-white'
                         : 'bg-gray-200 text-gray-600'
                     }`}>
                       A
@@ -325,14 +325,14 @@ export default function TKITestPage() {
                   onClick={() => handleAnswer('B')}
                   className={`w-full p-6 rounded-xl border-2 text-left transition-all ${
                     answers[currentQuestion] === 'B'
-                      ? 'border-[#0D5C5C] bg-[#e8f4f4]'
+                      ? 'border-primary-500 bg-[#e8f4f4]'
                       : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                   }`}
                 >
                   <div className="flex items-start gap-4">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                       answers[currentQuestion] === 'B'
-                        ? 'bg-[#0D5C5C] text-white'
+                        ? 'bg-primary-500 text-white'
                         : 'bg-gray-200 text-gray-600'
                     }`}>
                       B
@@ -370,8 +370,8 @@ export default function TKITestPage() {
         {currentStep === 'results' && (
           <div className="max-w-4xl mx-auto">
             {/* Congratulations Banner */}
-            <div className="bg-[#2D2D2D] rounded-xl p-8 text-center mb-6">
-              <CheckCircle2 className="w-16 h-16 text-[#D4A84B] mx-auto mb-4" />
+            <div className="bg-neutral-800 rounded-xl p-8 text-center mb-6">
+              <CheckCircle2 className="w-16 h-16 text-secondary-500 mx-auto mb-4" />
               <h2 className="text-2xl font-bold text-white mb-2">Congratulations!</h2>
               <p className="text-gray-300">You have completed the TKI Assessment</p>
             </div>

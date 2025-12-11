@@ -95,8 +95,8 @@ export default function DevelopmentPlanPage() {
 
   if (isLoading || !user) {
     return (
-      <div className="min-h-screen bg-[#0D5C5C] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#D4A84B]"></div>
+      <div className="min-h-screen bg-primary-500 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-secondary-500"></div>
       </div>
     );
   }
@@ -114,7 +114,7 @@ export default function DevelopmentPlanPage() {
     { 
       label: 'MBTI', 
       value: hasMBTI || 'Not completed', 
-      color: '#0D5C5C',
+      color: 'var(--color-primary-500)',
       completed: !!hasMBTI 
     },
     { 
@@ -132,7 +132,7 @@ export default function DevelopmentPlanPage() {
     { 
       label: 'Light score', 
       value: hasWellness ? `${assessmentResults?.wellness?.overallScore}%` : 'Not completed', 
-      color: '#D4A84B',
+      color: 'var(--color-secondary-500)',
       completed: !!hasWellness 
     },
   ];
@@ -208,7 +208,7 @@ export default function DevelopmentPlanPage() {
               </div>
             </div>
             {hasAnyAssessment && (
-              <button className="px-4 py-2 bg-[#0D5C5C] text-white rounded-lg hover:bg-[#0a4a4a] transition-colors text-sm font-medium">
+              <button className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors text-sm font-medium">
                 + Add objective
               </button>
             )}
@@ -222,7 +222,7 @@ export default function DevelopmentPlanPage() {
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    <Target className="w-5 h-5 text-[#0D5C5C]" />
+                    <Target className="w-5 h-5 text-primary-500" />
                     Development Objectives
                   </h2>
                 </div>
@@ -234,7 +234,7 @@ export default function DevelopmentPlanPage() {
                     <p className="text-sm text-gray-400 mb-4">
                       Based on your assessment results, we recommend defining development objectives with a coach.
                     </p>
-                    <button className="px-4 py-2 bg-[#0D5C5C] text-white rounded-lg hover:bg-[#0a4a4a] transition-colors text-sm font-medium">
+                    <button className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors text-sm font-medium">
                       + Add your first objective
                     </button>
                   </div>
@@ -247,7 +247,7 @@ export default function DevelopmentPlanPage() {
                     </p>
                     <button 
                       onClick={() => router.push('/dashboard/assessments')}
-                      className="text-[#0D5C5C] text-sm font-medium hover:underline"
+                      className="text-primary-500 text-sm font-medium hover:underline"
                     >
                       Start an assessment →
                     </button>
@@ -259,10 +259,10 @@ export default function DevelopmentPlanPage() {
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    <BookOpen className="w-5 h-5 text-[#0D5C5C]" />
+                    <BookOpen className="w-5 h-5 text-primary-500" />
                     Recommended Books
                   </h2>
-                  <button className="text-sm text-[#0D5C5C] hover:underline flex items-center gap-1">
+                  <button className="text-sm text-primary-500 hover:underline flex items-center gap-1">
                     View all <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -292,7 +292,7 @@ export default function DevelopmentPlanPage() {
               <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-[#0D5C5C]" />
+                    <TrendingUp className="w-5 h-5 text-primary-500" />
                     Growth Activities
                   </h2>
                 </div>
@@ -342,7 +342,7 @@ export default function DevelopmentPlanPage() {
                 </div>
                 <button 
                   onClick={() => router.push('/dashboard/results')}
-                  className="w-full mt-4 py-2 text-sm text-[#0D5C5C] border border-[#0D5C5C] rounded-lg hover:bg-[#0D5C5C]/5 transition-colors"
+                  className="w-full mt-4 py-2 text-sm text-primary-500 border border-primary-500 rounded-lg hover:bg-primary-500/5 transition-colors"
                 >
                   View full results
                 </button>
@@ -359,7 +359,7 @@ export default function DevelopmentPlanPage() {
                         <div className="flex flex-col items-center">
                           <div className={`w-3 h-3 rounded-full ${
                             update.type === 'achievement' ? 'bg-green-500' :
-                            update.type === 'result' ? 'bg-[#D4A84B]' : 'bg-[#0D5C5C]'
+                            update.type === 'result' ? 'bg-secondary-500' : 'bg-primary-500'
                           }`} />
                           {index < keyUpdates.length - 1 && (
                             <div className="w-0.5 h-full bg-gray-200 mt-1" />
@@ -387,10 +387,10 @@ export default function DevelopmentPlanPage() {
               </div>
 
               {/* CTA Card */}
-              <div className="bg-[#2D2D2D] rounded-xl p-6 text-center">
+              <div className="bg-neutral-800 rounded-xl p-6 text-center">
                 <h3 className="text-lg font-bold text-white mb-2">Ready to accelerate your growth?</h3>
                 <p className="text-gray-400 text-sm mb-4">Get personalized coaching to reach your leadership potential</p>
-                <button className="w-full py-3 bg-[#D4A84B] text-[#2D2D2D] font-semibold rounded-lg hover:bg-[#c49a42] transition-colors">
+                <button className="w-full py-3 bg-secondary-500 text-neutral-800 font-semibold rounded-lg hover:bg-secondary-600 transition-colors">
                   Book a coaching session
                 </button>
               </div>

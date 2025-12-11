@@ -51,10 +51,10 @@ export default function ReviewConfirm() {
     <SignupLayout currentStep={5}>
       <div className="bg-white rounded-2xl p-8 md:p-12 max-w-lg mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-[#2D2D2D] mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-neutral-800 mb-4">
             Review & confirm
           </h1>
-          <p className="text-[#2D2D2D]/60">
+          <p className="text-neutral-800/60">
             Please review your selection before proceeding
           </p>
         </div>
@@ -71,17 +71,17 @@ export default function ReviewConfirm() {
           <div className="bg-gray-50 rounded-xl p-6">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h3 className="font-semibold text-[#2D2D2D] capitalize">{signupData.plan} Plan</h3>
-                <p className="text-sm text-[#2D2D2D]/60 capitalize">{signupData.billingCycle} billing</p>
+                <h3 className="font-semibold text-neutral-800 capitalize">{signupData.plan} Plan</h3>
+                <p className="text-sm text-neutral-800/60 capitalize">{signupData.billingCycle} billing</p>
               </div>
               <div className="text-right">
-                <p className="font-bold text-xl text-[#2D2D2D]">${currentPrice}</p>
-                <p className="text-sm text-[#2D2D2D]/60">/month</p>
+                <p className="font-bold text-xl text-neutral-800">${currentPrice}</p>
+                <p className="text-sm text-neutral-800/60">/month</p>
               </div>
             </div>
             <button 
               onClick={() => router.push('/signup/choose-plan')}
-              className="text-sm text-[#0D5C5C] hover:underline"
+              className="text-sm text-primary-500 hover:underline"
             >
               Change plan
             </button>
@@ -89,11 +89,11 @@ export default function ReviewConfirm() {
 
           {/* Account details */}
           <div className="bg-gray-50 rounded-xl p-6">
-            <h3 className="font-semibold text-[#2D2D2D] mb-2">Account</h3>
-            <p className="text-[#2D2D2D]/70">{signupData.email}</p>
+            <h3 className="font-semibold text-neutral-800 mb-2">Account</h3>
+            <p className="text-neutral-800/70">{signupData.email}</p>
             <button 
               onClick={() => router.push('/signup/create-account')}
-              className="text-sm text-[#0D5C5C] hover:underline mt-2"
+              className="text-sm text-primary-500 hover:underline mt-2"
             >
               Change email
             </button>
@@ -101,41 +101,41 @@ export default function ReviewConfirm() {
 
           {/* Payment method placeholder */}
           <div className="bg-gray-50 rounded-xl p-6">
-            <h3 className="font-semibold text-[#2D2D2D] mb-4">Payment method</h3>
+            <h3 className="font-semibold text-neutral-800 mb-4">Payment method</h3>
             <div className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg bg-white">
               <div className="w-12 h-8 bg-gradient-to-r from-blue-600 to-blue-800 rounded flex items-center justify-center">
                 <span className="text-white text-xs font-bold">VISA</span>
               </div>
               <div>
-                <p className="text-sm text-[#2D2D2D]">•••• •••• •••• 4242</p>
-                <p className="text-xs text-[#2D2D2D]/60">Expires 12/25</p>
+                <p className="text-sm text-neutral-800">•••• •••• •••• 4242</p>
+                <p className="text-xs text-neutral-800/60">Expires 12/25</p>
               </div>
             </div>
-            <button className="text-sm text-[#0D5C5C] hover:underline mt-3">
+            <button className="text-sm text-primary-500 hover:underline mt-3">
               Add payment method
             </button>
           </div>
         </div>
 
         {/* Terms */}
-        <p className="text-xs text-[#2D2D2D]/50 text-center mb-6">
+        <p className="text-xs text-neutral-800/50 text-center mb-6">
           By confirming, you agree to our{' '}
-          <a href="/terms" className="text-[#0D5C5C] hover:underline">Terms of Service</a>
+          <a href="/terms" className="text-primary-500 hover:underline">Terms of Service</a>
           {' '}and{' '}
-          <a href="/privacy" className="text-[#0D5C5C] hover:underline">Privacy Policy</a>.
+          <a href="/privacy" className="text-primary-500 hover:underline">Privacy Policy</a>.
         </p>
 
         <div className="flex justify-between items-center pt-6 border-t border-gray-200">
           <button
             onClick={() => router.back()}
-            className="text-[#2D2D2D]/60 hover:text-[#2D2D2D] font-medium transition-colors"
+            className="text-neutral-800/60 hover:text-neutral-800 font-medium transition-colors"
           >
             ← Back
           </button>
           <button
             onClick={handleConfirm}
             disabled={isLoading}
-            className="bg-[#D4A84B] hover:bg-[#C49A3D] text-white px-8 py-3 rounded-full font-semibold transition-colors disabled:opacity-50"
+            className="bg-secondary-500 hover:bg-[#C49A3D] text-white px-8 py-3 rounded-full font-semibold transition-colors disabled:opacity-50"
           >
             {isLoading ? 'Processing...' : 'Confirm →'}
           </button>

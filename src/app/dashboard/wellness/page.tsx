@@ -21,7 +21,7 @@ const categories = [
   { id: 'nutrition', name: 'Nutrition', icon: '🥗', color: '#f39c12' },
   { id: 'sleep', name: 'Sleep', icon: '😴', color: '#9b59b6' },
   { id: 'social', name: 'Social', icon: '👥', color: '#3498db' },
-  { id: 'stress', name: 'Stress', icon: '🧘', color: '#0D5C5C' },
+  { id: 'stress', name: 'Stress', icon: '🧘', color: 'var(--color-primary-500)' },
 ];
 
 // Real questions from the ARISE Excel file
@@ -192,14 +192,14 @@ export default function WellnessTestPage() {
       category,
       score: data.count > 0 ? Math.round((data.total / (data.count * 5)) * 100) : 0,
       name: categories.find(c => c.id === category)?.name || category,
-      color: categories.find(c => c.id === category)?.color || '#0D5C5C',
+      color: categories.find(c => c.id === category)?.color || 'var(--color-primary-500)',
     }));
   };
 
   if (isLoading || !user) {
     return (
-      <div className="min-h-screen bg-[#0D5C5C] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#D4A84B]"></div>
+      <div className="min-h-screen bg-primary-500 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-secondary-500"></div>
       </div>
     );
   }
@@ -273,15 +273,15 @@ export default function WellnessTestPage() {
                     <h3 className="text-sm font-semibold text-gray-700 mb-3">What you&apos;ll discover</h3>
                     <ul className="space-y-2">
                       <li className="flex items-start gap-2">
-                        <CheckCircle className="w-4 h-4 text-[#0D5C5C] mt-0.5" />
+                        <CheckCircle className="w-4 h-4 text-primary-500 mt-0.5" />
                         <span className="text-sm text-gray-600">Your wellness balance across 6 dimensions</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <CheckCircle className="w-4 h-4 text-[#0D5C5C] mt-0.5" />
+                        <CheckCircle className="w-4 h-4 text-primary-500 mt-0.5" />
                         <span className="text-sm text-gray-600">Areas of strength and growth opportunities</span>
                       </li>
                       <li className="flex items-start gap-2">
-                        <CheckCircle className="w-4 h-4 text-[#0D5C5C] mt-0.5" />
+                        <CheckCircle className="w-4 h-4 text-primary-500 mt-0.5" />
                         <span className="text-sm text-gray-600">Personalized recommendations based on research</span>
                       </li>
                     </ul>
@@ -290,7 +290,7 @@ export default function WellnessTestPage() {
                   {/* Start button */}
                   <button
                     onClick={handleStartTest}
-                    className="w-full py-4 bg-[#0D5C5C] text-white font-semibold rounded-xl hover:bg-[#0a4a4a] transition-colors text-lg"
+                    className="w-full py-4 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-colors text-lg"
                   >
                     Start Assessment
                   </button>
@@ -334,7 +334,7 @@ export default function WellnessTestPage() {
               <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
                 <div 
                   className="h-full transition-all duration-300"
-                  style={{ width: `${progress}%`, backgroundColor: currentCategory?.color || '#0D5C5C' }}
+                  style={{ width: `${progress}%`, backgroundColor: currentCategory?.color || 'var(--color-primary-500)' }}
                 />
               </div>
             </div>
@@ -363,17 +363,17 @@ export default function WellnessTestPage() {
                     onClick={() => handleAnswer(option.value)}
                     className={`flex flex-col items-center p-4 rounded-xl border-2 transition-all ${
                       answers[currentQ.id] === option.value
-                        ? 'border-[#0D5C5C] bg-[#e8f4f4]'
+                        ? 'border-primary-500 bg-[#e8f4f4]'
                         : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                     }`}
                   >
                     <span className={`text-2xl font-bold mb-1 ${
-                      answers[currentQ.id] === option.value ? 'text-[#0D5C5C]' : 'text-gray-400'
+                      answers[currentQ.id] === option.value ? 'text-primary-500' : 'text-gray-400'
                     }`}>
                       {option.value}
                     </span>
                     <span className={`text-xs text-center ${
-                      answers[currentQ.id] === option.value ? 'text-[#0D5C5C] font-medium' : 'text-gray-500'
+                      answers[currentQ.id] === option.value ? 'text-primary-500 font-medium' : 'text-gray-500'
                     }`}>
                       {option.shortLabel}
                     </span>
@@ -408,7 +408,7 @@ export default function WellnessTestPage() {
                   className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors ${
                     !answers[currentQ.id]
                       ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                      : 'bg-[#0D5C5C] text-white hover:bg-[#0a4a4a]'
+                      : 'bg-primary-500 text-white hover:bg-primary-600'
                   }`}
                 >
                   {currentQuestion === wellnessQuestions.length - 1 ? 'Complete' : 'Next'}
@@ -433,8 +433,8 @@ export default function WellnessTestPage() {
       <main className="flex-1 p-8 overflow-auto">
         <div className="max-w-3xl mx-auto">
           {/* Congratulations Banner */}
-          <div className="bg-[#2D2D2D] rounded-xl p-8 text-center mb-6">
-            <CheckCircle2 className="w-16 h-16 text-[#D4A84B] mx-auto mb-4" />
+          <div className="bg-neutral-800 rounded-xl p-8 text-center mb-6">
+            <CheckCircle2 className="w-16 h-16 text-secondary-500 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-white mb-2">Congratulations!</h2>
             <p className="text-gray-300">You have completed the Wellness Assessment</p>
           </div>
@@ -443,7 +443,7 @@ export default function WellnessTestPage() {
           <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 mb-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Overall Wellness Score</h3>
             <div className="flex items-center gap-6">
-              <div className="w-24 h-24 rounded-full bg-[#0D5C5C] flex items-center justify-center">
+              <div className="w-24 h-24 rounded-full bg-primary-500 flex items-center justify-center">
                 <span className="text-3xl font-bold text-white">{overallScore}%</span>
               </div>
               <div>
@@ -485,7 +485,7 @@ export default function WellnessTestPage() {
           <div className="flex gap-4">
             <button
               onClick={handleViewResults}
-              className="flex-1 bg-[#0D5C5C] hover:bg-[#0a4a4a] text-white py-4 rounded-xl font-semibold transition-colors"
+              className="flex-1 bg-primary-500 hover:bg-primary-600 text-white py-4 rounded-xl font-semibold transition-colors"
             >
               View Detailed Results
             </button>

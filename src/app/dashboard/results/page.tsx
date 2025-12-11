@@ -87,8 +87,8 @@ export default function ResultsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0D5C5C] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#D4A84B]"></div>
+      <div className="min-h-screen bg-primary-500 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-secondary-500"></div>
       </div>
     );
   }
@@ -106,10 +106,10 @@ export default function ResultsPage() {
 
   // Dynamic leader profile based on assessment results
   const leaderProfile = [
-    { label: 'MBTI', value: hasMBTI || 'Not completed', color: 'bg-[#2D2D2D]' },
-    { label: 'TKI Dominant', value: hasTKI || 'Not completed', color: 'bg-[#2D2D2D]' },
-    { label: '360°', value: has360 || 'Not completed', color: 'bg-[#0D5C5C]' },
-    { label: 'Light score', value: hasWellness ? `${assessmentResults.wellness.overallScore}%` : 'Not completed', color: 'bg-[#D4A84B]' },
+    { label: 'MBTI', value: hasMBTI || 'Not completed', color: 'bg-neutral-800' },
+    { label: 'TKI Dominant', value: hasTKI || 'Not completed', color: 'bg-neutral-800' },
+    { label: '360°', value: has360 || 'Not completed', color: 'bg-primary-500' },
+    { label: 'Light score', value: hasWellness ? `${assessmentResults.wellness.overallScore}%` : 'Not completed', color: 'bg-secondary-500' },
   ];
 
   // Development goals - only show if user has completed assessments
@@ -147,7 +147,7 @@ export default function ResultsPage() {
             <button
               onClick={handleDownloadReport}
               disabled={generatingPDF || !hasAnyAssessment}
-              className="flex items-center gap-2 px-4 py-2 bg-[#0D5C5C] text-white rounded-lg text-sm font-medium hover:bg-[#0a4a4a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg text-sm font-medium hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FileText className="w-4 h-4" />
               {generatingPDF ? 'Generating...' : 'Download PDF Report'}
@@ -161,7 +161,7 @@ export default function ResultsPage() {
             </button>
             <button
               onClick={() => setShowCoachingModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-[#D4A84B] text-white rounded-lg text-sm font-medium hover:bg-[#c49a42] transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-secondary-500 text-white rounded-lg text-sm font-medium hover:bg-secondary-600 transition-colors"
             >
               <MessageCircle className="w-4 h-4" />
               Coaching support
@@ -190,7 +190,7 @@ export default function ResultsPage() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-900">Your development goals</h2>
               {developmentGoals.length > 0 && (
-                <button className="text-[#0D5C5C] text-sm font-medium hover:underline">
+                <button className="text-primary-500 text-sm font-medium hover:underline">
                   View all
                 </button>
               )}
@@ -203,7 +203,7 @@ export default function ResultsPage() {
                     <div className="flex items-center gap-3">
                       <div className={`w-3 h-3 rounded-full ${
                         goal.status === 'completed' ? 'bg-green-500' :
-                        goal.status === 'in_progress' ? 'bg-[#D4A84B]' : 'bg-gray-300'
+                        goal.status === 'in_progress' ? 'bg-secondary-500' : 'bg-gray-300'
                       }`} />
                       <span className="text-sm text-gray-700">{goal.title}</span>
                     </div>
@@ -217,7 +217,7 @@ export default function ResultsPage() {
                 <p className="text-gray-500 text-sm">Complete your assessments to see development goals</p>
                 <button 
                   onClick={() => router.push('/dashboard/assessments')}
-                  className="mt-3 text-[#0D5C5C] text-sm font-medium hover:underline"
+                  className="mt-3 text-primary-500 text-sm font-medium hover:underline"
                 >
                   Start an assessment →
                 </button>
@@ -268,7 +268,7 @@ export default function ResultsPage() {
                       ${100 - (radarData[4].value / 100) * 76 * Math.cos(Math.PI / 10)},${100 - (radarData[4].value / 100) * 76 * Math.sin(Math.PI / 10) + 50}
                     `}
                     fill="rgba(13, 92, 92, 0.2)"
-                    stroke="#0D5C5C"
+                    stroke="var(--color-primary-500)"
                     strokeWidth="2"
                   />
                 )}
@@ -297,7 +297,7 @@ export default function ResultsPage() {
                   <p className="text-sm text-gray-500">Your personality type breakdown</p>
                 </div>
                 {hasMBTI && (
-                  <span className="px-2 py-1 bg-[#0D5C5C] text-white text-xs rounded font-medium">{hasMBTI}</span>
+                  <span className="px-2 py-1 bg-primary-500 text-white text-xs rounded font-medium">{hasMBTI}</span>
                 )}
               </div>
               
@@ -309,14 +309,14 @@ export default function ResultsPage() {
                         <span className="text-sm text-gray-600 capitalize">{key}</span>
                         <div className="flex items-center gap-2">
                           <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-                            <div className="h-full bg-[#0D5C5C] rounded-full" style={{ width: `${value}%` }} />
+                            <div className="h-full bg-primary-500 rounded-full" style={{ width: `${value}%` }} />
                           </div>
                           <span className="text-sm font-medium">{value}%</span>
                         </div>
                       </div>
                     ))}
                   </div>
-                  <button className="mt-4 text-[#0D5C5C] text-sm font-medium hover:underline flex items-center gap-1">
+                  <button className="mt-4 text-primary-500 text-sm font-medium hover:underline flex items-center gap-1">
                     View full report <ChevronRight className="w-4 h-4" />
                   </button>
                 </>
@@ -326,7 +326,7 @@ export default function ResultsPage() {
                   <p className="text-gray-500 text-sm">Complete the MBTI assessment to see your results</p>
                   <button 
                     onClick={() => router.push('/dashboard/assessments')}
-                    className="mt-2 text-[#0D5C5C] text-sm font-medium hover:underline"
+                    className="mt-2 text-primary-500 text-sm font-medium hover:underline"
                   >
                     Take MBTI assessment →
                   </button>
@@ -349,41 +349,41 @@ export default function ResultsPage() {
                     {hasTKI && assessmentResults.tki.dominantResult === 'Collaborating' && (
                       <div className="bg-[#e8f4f4] rounded-lg p-3">
                         <p className="text-xs text-gray-500 mb-1">Strength</p>
-                        <p className="text-sm font-medium text-[#0D5C5C]">Collaboration</p>
+                        <p className="text-sm font-medium text-primary-500">Collaboration</p>
                       </div>
                     )}
                     {hasTKI && assessmentResults.tki.dominantResult === 'Compromising' && (
                       <div className="bg-[#e8f4f4] rounded-lg p-3">
                         <p className="text-xs text-gray-500 mb-1">Strength</p>
-                        <p className="text-sm font-medium text-[#0D5C5C]">Flexibility</p>
+                        <p className="text-sm font-medium text-primary-500">Flexibility</p>
                       </div>
                     )}
                     {has360 && (
                       <div className="bg-[#e8f4f4] rounded-lg p-3">
                         <p className="text-xs text-gray-500 mb-1">Strength</p>
-                        <p className="text-sm font-medium text-[#0D5C5C]">Self-awareness</p>
+                        <p className="text-sm font-medium text-primary-500">Self-awareness</p>
                       </div>
                     )}
                     {hasWellness && assessmentResults.wellness.overallScore >= 70 && (
                       <div className="bg-[#e8f4f4] rounded-lg p-3">
                         <p className="text-xs text-gray-500 mb-1">Strength</p>
-                        <p className="text-sm font-medium text-[#0D5C5C]">Well-being</p>
+                        <p className="text-sm font-medium text-primary-500">Well-being</p>
                       </div>
                     )}
                     {hasTKI && assessmentResults.tki.dominantResult === 'Avoiding' && (
                       <div className="bg-[#fef3cd] rounded-lg p-3">
                         <p className="text-xs text-gray-500 mb-1">Growth area</p>
-                        <p className="text-sm font-medium text-[#D4A84B]">Assertiveness</p>
+                        <p className="text-sm font-medium text-secondary-500">Assertiveness</p>
                       </div>
                     )}
                     {hasWellness && assessmentResults.wellness.overallScore < 50 && (
                       <div className="bg-[#fef3cd] rounded-lg p-3">
                         <p className="text-xs text-gray-500 mb-1">Growth area</p>
-                        <p className="text-sm font-medium text-[#D4A84B]">Self-care</p>
+                        <p className="text-sm font-medium text-secondary-500">Self-care</p>
                       </div>
                     )}
                   </div>
-                  <button className="mt-4 text-[#0D5C5C] text-sm font-medium hover:underline flex items-center gap-1">
+                  <button className="mt-4 text-primary-500 text-sm font-medium hover:underline flex items-center gap-1">
                     View all cards <ChevronRight className="w-4 h-4" />
                   </button>
                 </>
@@ -393,7 +393,7 @@ export default function ResultsPage() {
                   <p className="text-gray-500 text-sm">Complete your assessments to discover your strengths</p>
                   <button 
                     onClick={() => router.push('/dashboard/assessments')}
-                    className="mt-2 text-[#0D5C5C] text-sm font-medium hover:underline"
+                    className="mt-2 text-primary-500 text-sm font-medium hover:underline"
                   >
                     Start an assessment →
                   </button>
@@ -404,12 +404,12 @@ export default function ResultsPage() {
         </div>
 
         {/* Ready to accelerate your growth CTA */}
-        <div className="bg-[#0D5C5C] rounded-xl p-8 text-center">
+        <div className="bg-primary-500 rounded-xl p-8 text-center">
           <h2 className="text-2xl font-bold text-white mb-2">Ready to accelerate your growth?</h2>
           <p className="text-white/80 mb-6">Connect with a certified coach to unlock your full leadership potential</p>
           <button 
             onClick={() => setShowCoachingModal(true)}
-            className="bg-[#D4A84B] hover:bg-[#c49a42] text-white px-6 py-3 rounded-full font-semibold transition-colors"
+            className="bg-secondary-500 hover:bg-secondary-600 text-white px-6 py-3 rounded-full font-semibold transition-colors"
           >
             Schedule a coaching session
           </button>
@@ -434,21 +434,21 @@ export default function ResultsPage() {
             </p>
             
             <div className="grid grid-cols-3 gap-3 mb-6">
-              <button className="p-4 border-2 border-[#0D5C5C] rounded-xl text-center hover:bg-[#e8f4f4] transition-colors">
-                <p className="text-lg font-bold text-[#0D5C5C]">&lt; 60min</p>
+              <button className="p-4 border-2 border-primary-500 rounded-xl text-center hover:bg-[#e8f4f4] transition-colors">
+                <p className="text-lg font-bold text-primary-500">&lt; 60min</p>
                 <p className="text-xs text-gray-500">Quick session</p>
               </button>
-              <button className="p-4 border border-gray-200 rounded-xl text-center hover:border-[#0D5C5C] transition-colors">
+              <button className="p-4 border border-gray-200 rounded-xl text-center hover:border-primary-500 transition-colors">
                 <p className="text-lg font-bold text-gray-700">3 Sessions</p>
                 <p className="text-xs text-gray-500">Short program</p>
               </button>
-              <button className="p-4 border border-gray-200 rounded-xl text-center hover:border-[#0D5C5C] transition-colors">
+              <button className="p-4 border border-gray-200 rounded-xl text-center hover:border-primary-500 transition-colors">
                 <p className="text-lg font-bold text-gray-700">5 Sessions</p>
                 <p className="text-xs text-gray-500">Full program</p>
               </button>
             </div>
             
-            <button className="w-full bg-[#0D5C5C] hover:bg-[#0a4a4a] text-white py-3 rounded-lg font-semibold transition-colors">
+            <button className="w-full bg-primary-500 hover:bg-primary-600 text-white py-3 rounded-lg font-semibold transition-colors">
               Request coaching
             </button>
           </div>
@@ -461,7 +461,7 @@ export default function ResultsPage() {
           <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <span className="px-2 py-1 bg-[#D4A84B] text-white text-xs rounded font-medium">Share results</span>
+                <span className="px-2 py-1 bg-secondary-500 text-white text-xs rounded font-medium">Share results</span>
               </div>
               <button 
                 onClick={() => setShowShareModal(false)}
@@ -481,7 +481,7 @@ export default function ResultsPage() {
               <input 
                 type="email" 
                 placeholder="colleague@company.com"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0D5C5C] focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />
             </div>
             
@@ -490,7 +490,7 @@ export default function ResultsPage() {
               <textarea 
                 placeholder="Add a personal message..."
                 rows={3}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0D5C5C] focus:border-transparent resize-none"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
               />
             </div>
             
@@ -501,7 +501,7 @@ export default function ResultsPage() {
               >
                 Cancel
               </button>
-              <button className="flex-1 py-2 bg-[#0D5C5C] text-white rounded-lg font-medium hover:bg-[#0a4a4a] transition-colors">
+              <button className="flex-1 py-2 bg-primary-500 text-white rounded-lg font-medium hover:bg-primary-600 transition-colors">
                 Send invite
               </button>
             </div>

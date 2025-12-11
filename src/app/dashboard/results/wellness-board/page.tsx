@@ -40,8 +40,8 @@ export default function WellnessBoardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0D5C5C] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#D4A84B]"></div>
+      <div className="min-h-screen bg-primary-500 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-secondary-500"></div>
       </div>
     );
   }
@@ -118,7 +118,7 @@ export default function WellnessBoardPage() {
         </div>
 
         {/* Hero Banner */}
-        <div className="bg-[#0D5C5C] rounded-xl p-8 mb-6 relative overflow-hidden">
+        <div className="bg-primary-500 rounded-xl p-8 mb-6 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 opacity-10">
             <svg viewBox="0 0 200 200" className="w-full h-full">
               <circle cx="100" cy="100" r="80" fill="none" stroke="white" strokeWidth="2" />
@@ -167,15 +167,15 @@ export default function WellnessBoardPage() {
                     ${100 - (wellnessScores.spiritual / 100) * 80},100
                   `}
                   fill="rgba(13, 92, 92, 0.2)"
-                  stroke="#0D5C5C"
+                  stroke="var(--color-primary-500)"
                   strokeWidth="2"
                 />
                 
                 {/* Data points */}
-                <circle cx="100" cy={100 - (wellnessScores.physical / 100) * 80} r="4" fill="#0D5C5C" />
-                <circle cx={100 + (wellnessScores.mental / 100) * 80} cy="100" r="4" fill="#0D5C5C" />
-                <circle cx="100" cy={100 + (wellnessScores.emotional / 100) * 80} r="4" fill="#0D5C5C" />
-                <circle cx={100 - (wellnessScores.spiritual / 100) * 80} cy="100" r="4" fill="#0D5C5C" />
+                <circle cx="100" cy={100 - (wellnessScores.physical / 100) * 80} r="4" fill="var(--color-primary-500)" />
+                <circle cx={100 + (wellnessScores.mental / 100) * 80} cy="100" r="4" fill="var(--color-primary-500)" />
+                <circle cx="100" cy={100 + (wellnessScores.emotional / 100) * 80} r="4" fill="var(--color-primary-500)" />
+                <circle cx={100 - (wellnessScores.spiritual / 100) * 80} cy="100" r="4" fill="var(--color-primary-500)" />
                 
                 {/* Labels */}
                 <text x="100" y="10" textAnchor="middle" className="text-xs fill-gray-600 font-medium">Physical</text>
@@ -190,11 +190,11 @@ export default function WellnessBoardPage() {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-gray-700">Physical</span>
-                  <span className="text-sm font-bold text-[#0D5C5C]">{wellnessScores.physical}%</span>
+                  <span className="text-sm font-bold text-primary-500">{wellnessScores.physical}%</span>
                 </div>
                 <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-[#0D5C5C] rounded-full transition-all duration-500" 
+                    className="h-full bg-primary-500 rounded-full transition-all duration-500" 
                     style={{ width: `${wellnessScores.physical}%` }} 
                   />
                 </div>
@@ -203,11 +203,11 @@ export default function WellnessBoardPage() {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-gray-700">Mental</span>
-                  <span className="text-sm font-bold text-[#0D5C5C]">{wellnessScores.mental}%</span>
+                  <span className="text-sm font-bold text-primary-500">{wellnessScores.mental}%</span>
                 </div>
                 <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-[#0D5C5C] rounded-full transition-all duration-500" 
+                    className="h-full bg-primary-500 rounded-full transition-all duration-500" 
                     style={{ width: `${wellnessScores.mental}%` }} 
                   />
                 </div>
@@ -216,11 +216,11 @@ export default function WellnessBoardPage() {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-gray-700">Emotional</span>
-                  <span className="text-sm font-bold text-[#D4A84B]">{wellnessScores.emotional}%</span>
+                  <span className="text-sm font-bold text-secondary-500">{wellnessScores.emotional}%</span>
                 </div>
                 <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-[#D4A84B] rounded-full transition-all duration-500" 
+                    className="h-full bg-secondary-500 rounded-full transition-all duration-500" 
                     style={{ width: `${wellnessScores.emotional}%` }} 
                   />
                 </div>
@@ -229,11 +229,11 @@ export default function WellnessBoardPage() {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-gray-700">Spiritual</span>
-                  <span className="text-sm font-bold text-[#D4A84B]">{wellnessScores.spiritual}%</span>
+                  <span className="text-sm font-bold text-secondary-500">{wellnessScores.spiritual}%</span>
                 </div>
                 <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-[#D4A84B] rounded-full transition-all duration-500" 
+                    className="h-full bg-secondary-500 rounded-full transition-all duration-500" 
                     style={{ width: `${wellnessScores.spiritual}%` }} 
                   />
                 </div>
@@ -255,7 +255,7 @@ export default function WellnessBoardPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">Physical Wellness</h3>
-                  <p className="text-sm text-[#0D5C5C] font-medium">{wellnessScores.physical}% - Excellent</p>
+                  <p className="text-sm text-primary-500 font-medium">{wellnessScores.physical}% - Excellent</p>
                 </div>
               </div>
               <p className="text-sm text-gray-600">
@@ -271,7 +271,7 @@ export default function WellnessBoardPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">Mental Wellness</h3>
-                  <p className="text-sm text-[#0D5C5C] font-medium">{wellnessScores.mental}% - Good</p>
+                  <p className="text-sm text-primary-500 font-medium">{wellnessScores.mental}% - Good</p>
                 </div>
               </div>
               <p className="text-sm text-gray-600">
@@ -287,7 +287,7 @@ export default function WellnessBoardPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">Emotional Wellness</h3>
-                  <p className="text-sm text-[#D4A84B] font-medium">{wellnessScores.emotional}% - Developing</p>
+                  <p className="text-sm text-secondary-500 font-medium">{wellnessScores.emotional}% - Developing</p>
                 </div>
               </div>
               <p className="text-sm text-gray-600">
@@ -303,7 +303,7 @@ export default function WellnessBoardPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">Spiritual Wellness</h3>
-                  <p className="text-sm text-[#D4A84B] font-medium">{wellnessScores.spiritual}% - Needs Attention</p>
+                  <p className="text-sm text-secondary-500 font-medium">{wellnessScores.spiritual}% - Needs Attention</p>
                 </div>
               </div>
               <p className="text-sm text-gray-600">
@@ -320,12 +320,12 @@ export default function WellnessBoardPage() {
           <div className="space-y-4">
             {recommendations.map((rec, index) => (
               <div key={index} className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
-                <div className={`w-2 h-2 rounded-full mt-2 ${rec.priority === 'high' ? 'bg-[#D4A84B]' : 'bg-[#0D5C5C]'}`} />
+                <div className={`w-2 h-2 rounded-full mt-2 ${rec.priority === 'high' ? 'bg-secondary-500' : 'bg-primary-500'}`} />
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-xs font-medium text-gray-500 uppercase">{rec.category}</span>
                     {rec.priority === 'high' && (
-                      <span className="px-2 py-0.5 bg-[#D4A84B]/20 text-[#D4A84B] text-xs rounded-full font-medium">Priority</span>
+                      <span className="px-2 py-0.5 bg-secondary-500/20 text-secondary-500 text-xs rounded-full font-medium">Priority</span>
                     )}
                   </div>
                   <h4 className="font-medium text-gray-900">{rec.title}</h4>
@@ -338,12 +338,12 @@ export default function WellnessBoardPage() {
         </div>
 
         {/* Ready to accelerate your growth CTA */}
-        <div className="bg-[#0D5C5C] rounded-xl p-8 flex items-center gap-6">
+        <div className="bg-primary-500 rounded-xl p-8 flex items-center gap-6">
           <div className="flex-1">
             <h2 className="text-xl font-bold text-white mb-2">Ready to accelerate your growth?</h2>
             <p className="text-white/80">Connect with a certified coach to work on your wellness goals</p>
           </div>
-          <button className="bg-[#D4A84B] hover:bg-[#c49a42] text-white px-6 py-3 rounded-full font-semibold transition-colors whitespace-nowrap">
+          <button className="bg-secondary-500 hover:bg-secondary-600 text-white px-6 py-3 rounded-full font-semibold transition-colors whitespace-nowrap">
             Schedule coaching
           </button>
         </div>

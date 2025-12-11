@@ -44,7 +44,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0D5C5C] relative overflow-hidden">
+    <div className="min-h-screen bg-primary-500 relative overflow-hidden">
       {/* Background pattern */}
       <div 
         className="absolute inset-0 bg-cover bg-center opacity-20"
@@ -57,14 +57,14 @@ export default function LoginPage() {
       <header className="relative z-10 flex items-center justify-between px-8 py-6">
         <Link href="/" className="flex items-center gap-2">
           <svg width="40" height="45" viewBox="0 0 60 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M30 5C20 5 15 15 15 25C15 35 20 40 30 45C40 40 45 35 45 25C45 15 40 5 30 5Z" stroke="#D4A84B" strokeWidth="2" fill="none"/>
-            <path d="M30 15C25 15 22 20 22 27C22 34 25 38 30 42C35 38 38 34 38 27C38 20 35 15 30 15Z" stroke="#D4A84B" strokeWidth="2" fill="none"/>
-            <path d="M30 25C28 25 26 28 26 32C26 36 28 39 30 42C32 39 34 36 34 32C34 28 32 25 30 25Z" fill="#D4A84B"/>
-            <path d="M30 45C30 55 35 60 35 65" stroke="#D4A84B" strokeWidth="2" fill="none"/>
+            <path d="M30 5C20 5 15 15 15 25C15 35 20 40 30 45C40 40 45 35 45 25C45 15 40 5 30 5Z" stroke="var(--color-secondary-500)" strokeWidth="2" fill="none"/>
+            <path d="M30 15C25 15 22 20 22 27C22 34 25 38 30 42C35 38 38 34 38 27C38 20 35 15 30 15Z" stroke="var(--color-secondary-500)" strokeWidth="2" fill="none"/>
+            <path d="M30 25C28 25 26 28 26 32C26 36 28 39 30 42C32 39 34 36 34 32C34 28 32 25 30 25Z" fill="var(--color-secondary-500)"/>
+            <path d="M30 45C30 55 35 60 35 65" stroke="var(--color-secondary-500)" strokeWidth="2" fill="none"/>
           </svg>
           <span className="text-white text-xl font-semibold">ARISE</span>
         </Link>
-        <Link href="/" className="text-white hover:text-[#D4A84B] transition-colors text-sm">
+        <Link href="/" className="text-white hover:text-secondary-500 transition-colors text-sm">
           Back to home
         </Link>
       </header>
@@ -74,7 +74,7 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           {/* Title */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-[#D4A84B] mb-2">
+            <h1 className="text-3xl md:text-4xl font-bold text-secondary-500 mb-2">
               Welcome back
             </h1>
             <p className="text-white/70">
@@ -102,7 +102,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 required
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-[#D4A84B] focus:border-transparent"
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:border-transparent"
               />
             </div>
 
@@ -119,7 +119,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
                   required
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-[#D4A84B] focus:border-transparent pr-12"
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:border-transparent pr-12"
                 />
                 <button
                   type="button"
@@ -138,11 +138,11 @@ export default function LoginPage() {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded border-white/20 bg-white/10 text-[#D4A84B] focus:ring-[#D4A84B]"
+                  className="w-4 h-4 rounded border-white/20 bg-white/10 text-secondary-500 focus:ring-secondary-500"
                 />
                 <span className="text-sm text-white/70">Remember me</span>
               </label>
-              <Link href="/forgot-password" className="text-sm text-white/70 hover:text-[#D4A84B] transition-colors">
+              <Link href="/forgot-password" className="text-sm text-white/70 hover:text-secondary-500 transition-colors">
                 Forgot password?
               </Link>
             </div>
@@ -167,7 +167,7 @@ export default function LoginPage() {
                 <div className="w-full border-t border-white/20"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-[#0D5C5C] text-white/50">Or continue with</span>
+                <span className="px-4 bg-primary-500 text-white/50">Or continue with</span>
               </div>
             </div>
 
@@ -205,7 +205,7 @@ export default function LoginPage() {
             {/* Create account link */}
             <p className="text-center text-white/70 mt-6">
               Don&apos;t have an account?{' '}
-              <Link href="/signup" className="text-[#D4A84B] hover:underline font-medium">
+              <Link href="/signup" className="text-secondary-500 hover:underline font-medium">
                 Create account
               </Link>
             </p>

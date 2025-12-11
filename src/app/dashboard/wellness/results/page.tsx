@@ -15,8 +15,8 @@ interface User {
 }
 
 const categories = [
-  { id: 'physical', name: 'Physical', color: '#0D5C5C', description: 'Body health and vitality' },
-  { id: 'mental', name: 'Mental', color: '#D4A84B', description: 'Cognitive function and clarity' },
+  { id: 'physical', name: 'Physical', color: 'var(--color-primary-500)', description: 'Body health and vitality' },
+  { id: 'mental', name: 'Mental', color: 'var(--color-secondary-500)', description: 'Cognitive function and clarity' },
   { id: 'emotional', name: 'Emotional', color: '#8B5CF6', description: 'Emotional awareness and regulation' },
   { id: 'spiritual', name: 'Spiritual', color: '#EC4899', description: 'Purpose and meaning' },
 ];
@@ -87,8 +87,8 @@ export default function WellnessResultsPage() {
 
   if (isLoading || !user) {
     return (
-      <div className="min-h-screen bg-[#0D5C5C] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#D4A84B]"></div>
+      <div className="min-h-screen bg-primary-500 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-secondary-500"></div>
       </div>
     );
   }
@@ -106,13 +106,13 @@ export default function WellnessResultsPage() {
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-[#D4A84B]';
+    if (score >= 60) return 'text-secondary-500';
     if (score >= 40) return 'text-orange-500';
     return 'text-red-500';
   };
 
   return (
-    <div className="min-h-screen bg-[#0D5C5C]">
+    <div className="min-h-screen bg-primary-500">
       <div className="flex">
         <Sidebar user={user} activePage="results" onLogout={handleLogout} />
         
@@ -141,10 +141,10 @@ export default function WellnessResultsPage() {
             </div>
 
             {/* Overall Score */}
-            <div className="p-8 bg-gradient-to-r from-[#0D5C5C] to-[#0a4a4a]">
+            <div className="p-8 bg-gradient-to-r from-primary-500 to-primary-600">
               <div className="text-center">
                 <p className="text-white/70 text-sm mb-2">Overall Wellness Score</p>
-                <div className="text-6xl font-bold text-[#D4A84B] mb-2">{overallScore}%</div>
+                <div className="text-6xl font-bold text-secondary-500 mb-2">{overallScore}%</div>
                 <p className={`text-lg font-semibold ${overallScore >= 60 ? 'text-green-400' : 'text-orange-400'}`}>
                   {getScoreLabel(overallScore)}
                 </p>
@@ -241,7 +241,7 @@ export default function WellnessResultsPage() {
                 </Link>
                 <Link
                   href="/dashboard/development"
-                  className="flex-1 py-3 text-center bg-[#0D5C5C] text-white font-medium rounded-lg hover:bg-[#0a4a4a] transition-colors"
+                  className="flex-1 py-3 text-center bg-primary-500 text-white font-medium rounded-lg hover:bg-primary-600 transition-colors"
                 >
                   View Development Plan
                 </Link>

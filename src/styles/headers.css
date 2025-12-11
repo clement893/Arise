@@ -1,0 +1,230 @@
+/**
+ * ARISE Design System - Headers & Navigation Components
+ * Reusable header and navigation styles using @apply
+ */
+
+/* ============================================
+   PAGE HEADERS
+   ============================================ */
+
+.page-header {
+  
+}
+
+.page-title {
+  
+  color: var(--color-text-primary);
+}
+
+.page-title-highlight {
+  color: var(--color-primary-500);
+}
+
+.page-subtitle {
+  
+  color: var(--color-text-secondary);
+}
+
+/* ============================================
+   SECTION HEADERS
+   ============================================ */
+
+.section-header {
+  
+}
+
+.section-title {
+  
+  color: var(--color-text-primary);
+}
+
+.section-subtitle {
+  
+  color: var(--color-text-tertiary);
+}
+
+/* ============================================
+   CARD HEADERS
+   ============================================ */
+
+.card-title {
+  
+  color: var(--color-text-primary);
+}
+
+.card-subtitle {
+  
+  color: var(--color-text-secondary);
+}
+
+/* ============================================
+   SIDEBAR
+   ============================================ */
+
+.sidebar {
+  
+  background-color: var(--color-primary-700);
+}
+
+.sidebar-header {
+  
+}
+
+.sidebar-logo {
+  
+}
+
+.sidebar-nav {
+  
+}
+
+.sidebar-nav-item {
+  
+  
+}
+
+.sidebar-nav-item-active {
+  
+}
+
+.sidebar-nav-icon {
+  
+}
+
+.sidebar-footer {
+  
+}
+
+/* ============================================
+   TOP NAVIGATION
+   ============================================ */
+
+.top-nav {
+  
+  border-color: var(--color-border-light);
+}
+
+.top-nav-container {
+  
+}
+
+.top-nav-content {
+  
+}
+
+.top-nav-logo {
+  
+  color: var(--color-primary-500);
+}
+
+.top-nav-links {
+  
+}
+
+.top-nav-link {
+  
+  color: var(--color-text-secondary);
+}
+
+.top-nav-link:hover {
+  color: var(--color-primary-500);
+}
+
+.top-nav-link-active {
+  
+  color: var(--color-primary-500);
+}
+
+/* ============================================
+   BREADCRUMBS
+   ============================================ */
+
+.breadcrumbs {
+  
+}
+
+.breadcrumb-item {
+  
+  color: var(--color-text-tertiary);
+}
+
+.breadcrumb-item-current {
+  color: var(--color-text-primary);
+  
+}
+
+.breadcrumb-separator {
+  color: var(--color-text-muted);
+}
+
+/* ============================================
+   TABS
+   ============================================ */
+
+.tabs {
+  
+  border-color: var(--color-border-light);
+}
+
+.tab {
+  
+  
+  color: var(--color-text-secondary);
+}
+
+.tab:hover {
+  color: var(--color-text-primary);
+}
+
+.tab-active {
+  
+  color: var(--color-primary-500);
+  border-color: var(--color-primary-500);
+}
+
+.tabs-pills {
+  
+}
+
+.tab-pill {
+  
+  color: var(--color-text-secondary);
+}
+
+.tab-pill:hover {
+  
+}
+
+.tab-pill-active {
+  
+  background-color: var(--color-primary-500);
+}
+
+/* ============================================
+   BACK BUTTON
+   ============================================ */
+
+.back-button {
+  
+  color: var(--color-text-secondary);
+}
+
+.back-button:hover {
+  color: var(--color-primary-500);
+}
+
+.back-button-icon {
+  
+}
+
+/* ============================================
+   HEADER WITH ACTIONS
+   ============================================ */
+
+.header-with-actions {
+  
+}
+
+.header-actions {
+  
+}

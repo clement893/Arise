@@ -1,0 +1,242 @@
+/**
+ * ARISE Design System - Table Components
+ * Reusable table styles using @apply
+ */
+
+/* ============================================
+   BASE TABLE
+   ============================================ */
+
+.table-container {
+  
+  border-radius: var(--radius-card);
+}
+
+.table {
+  
+}
+
+/* ============================================
+   TABLE HEADER
+   ============================================ */
+
+.table-header {
+  background-color: var(--color-neutral-50);
+}
+
+.table-header-cell {
+  
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.table-header-cell-center {
+  
+}
+
+.table-header-cell-right {
+  
+}
+
+/* ============================================
+   TABLE BODY
+   ============================================ */
+
+.table-row {
+  
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.table-row:hover {
+  background-color: var(--color-neutral-50);
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.table-cell {
+  
+  color: var(--color-text-primary);
+}
+
+.table-cell-center {
+  
+}
+
+.table-cell-right {
+  
+}
+
+.table-cell-muted {
+  
+  color: var(--color-text-tertiary);
+}
+
+/* ============================================
+   TABLE VARIANTS
+   ============================================ */
+
+/* Striped */
+.table-striped .table-row:nth-child(even) {
+  background-color: var(--color-neutral-50);
+}
+
+/* Bordered */
+.table-bordered {
+  border: 1px solid var(--color-border-light);
+}
+
+.table-bordered .table-cell,
+.table-bordered .table-header-cell {
+  border: 1px solid var(--color-border-light);
+}
+
+/* Compact */
+.table-compact .table-header-cell,
+.table-compact .table-cell {
+  
+}
+
+/* Relaxed */
+.table-relaxed .table-header-cell,
+.table-relaxed .table-cell {
+  
+}
+
+/* ============================================
+   TABLE ACTIONS
+   ============================================ */
+
+.table-actions {
+  
+}
+
+.table-action-btn {
+  
+  color: var(--color-text-tertiary);
+}
+
+.table-action-btn:hover {
+  background-color: var(--color-neutral-100);
+  color: var(--color-text-primary);
+}
+
+.table-action-btn-danger:hover {
+  background-color: var(--color-error-50);
+  color: var(--color-error-600);
+}
+
+/* ============================================
+   TABLE EMPTY STATE
+   ============================================ */
+
+.table-empty {
+  
+}
+
+.table-empty-icon {
+  
+  color: var(--color-text-muted);
+}
+
+.table-empty-text {
+  
+  color: var(--color-text-tertiary);
+}
+
+/* ============================================
+   TABLE LOADING
+   ============================================ */
+
+.table-loading {
+  
+}
+
+.table-loading::after {
+  content: '';
+  
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.table-skeleton-row {
+  
+}
+
+.table-skeleton-cell {
+  
+  background-color: var(--color-neutral-200);
+}
+
+/* ============================================
+   SORTABLE HEADERS
+   ============================================ */
+
+.table-header-sortable {
+  
+}
+
+.table-header-sortable:hover {
+  background-color: var(--color-neutral-100);
+}
+
+.table-sort-icon {
+  
+  color: var(--color-text-muted);
+}
+
+.table-sort-icon-active {
+  color: var(--color-primary-500);
+}
+
+/* ============================================
+   SELECTABLE ROWS
+   ============================================ */
+
+.table-row-selectable {
+  
+}
+
+.table-row-selected {
+  background-color: var(--color-primary-50);
+}
+
+.table-row-selected:hover {
+  background-color: var(--color-primary-100);
+}
+
+/* ============================================
+   PAGINATION
+   ============================================ */
+
+.table-pagination {
+  
+  border-top: 1px solid var(--color-border-light);
+}
+
+.table-pagination-info {
+  
+  color: var(--color-text-tertiary);
+}
+
+.table-pagination-controls {
+  
+}
+
+.table-pagination-btn {
+  
+  color: var(--color-text-secondary);
+}
+
+.table-pagination-btn:hover:not(:disabled) {
+  background-color: var(--color-neutral-100);
+}
+
+.table-pagination-btn:disabled {
+  
+}
+
+.table-pagination-btn-active {
+  
+  background-color: var(--color-primary-500);
+}

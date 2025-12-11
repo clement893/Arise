@@ -44,7 +44,7 @@ export default function PaymentCancelPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/pricing"
-              className="inline-flex items-center justify-center bg-[#0D5C5C] hover:bg-[#0a4a4a] text-white px-8 py-3 rounded-lg font-semibold transition-colors"
+              className="inline-flex items-center justify-center bg-primary-500 hover:bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
             >
               <ArrowLeft className="w-5 h-5 mr-2" />
               Back to Pricing
@@ -59,7 +59,7 @@ export default function PaymentCancelPage() {
 
           {/* Support Link */}
           <p className="mt-8 text-sm text-gray-500">
-            Need help deciding? <Link href="/about" className="text-[#0D5C5C] hover:underline">Talk to our team</Link>
+            Need help deciding? <Link href="/about" className="text-primary-500 hover:underline">Talk to our team</Link>
           </p>
         </div>
       </main>
