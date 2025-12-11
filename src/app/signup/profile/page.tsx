@@ -1,10 +1,16 @@
 'use client';
 
-import { Button, Card, CardContent, Input, Badge } from '@/components/ui';
+/**
+ * Complete Profile Page
+ * 
+ * Step 6 of signup flow - user completes their profile information.
+ * Uses light mode inputs on white background.
+ */
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import SignupLayout from '@/components/SignupLayout';
+import { Button, Input, Select } from '@/components/ui';
 
 export default function CompleteProfile() {
   const router = useRouter();
@@ -104,6 +110,19 @@ export default function CompleteProfile() {
     }
   };
 
+  // Timezone options for Select component
+  const timezoneOptions = [
+    { value: '', label: 'Select your timezone' },
+    { value: 'America/New_York', label: 'Eastern Time (ET)' },
+    { value: 'America/Chicago', label: 'Central Time (CT)' },
+    { value: 'America/Denver', label: 'Mountain Time (MT)' },
+    { value: 'America/Los_Angeles', label: 'Pacific Time (PT)' },
+    { value: 'America/Toronto', label: 'Toronto (ET)' },
+    { value: 'America/Montreal', label: 'Montreal (ET)' },
+    { value: 'Europe/London', label: 'London (GMT)' },
+    { value: 'Europe/Paris', label: 'Paris (CET)' },
+  ];
+
   return (
     <SignupLayout currentStep={6}>
       <div className="bg-white rounded-2xl p-8 md:p-12 max-w-lg mx-auto">
@@ -111,7 +130,7 @@ export default function CompleteProfile() {
           <h1 className="text-2xl md:text-3xl font-bold text-neutral-800 mb-4">
             Complete your profile
           </h1>
-          <p className="text-neutral-800/60">
+          <p className="text-neutral-600">
             Tell us a bit about yourself
           </p>
         </div>
@@ -125,127 +144,74 @@ export default function CompleteProfile() {
         <div className="space-y-6">
           {/* Name row */}
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-neutral-800 mb-2">
-                First name *
-              </label>
-              <input
-                type="text"
-                id="firstName"
-                value={formData.firstName}
-                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                className={`w-full px-4 py-3 rounded-lg border ${
-                  errors.firstName ? 'border-red-500' : 'border-gray-300'
-                } focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent`}
-                placeholder="John"
-              />
-              {errors.firstName && (
-                <p className="mt-1 text-sm text-red-500">{errors.firstName}</p>
-              )}
-            </div>
-            <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-neutral-800 mb-2">
-                Last name *
-              </label>
-              <input
-                type="text"
-                id="lastName"
-                value={formData.lastName}
-                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                className={`w-full px-4 py-3 rounded-lg border ${
-                  errors.lastName ? 'border-red-500' : 'border-gray-300'
-                } focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent`}
-                placeholder="Doe"
-              />
-              {errors.lastName && (
-                <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>
-              )}
-            </div>
+            <Input
+              label="First name"
+              value={formData.firstName}
+              onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+              placeholder="John"
+              error={errors.firstName}
+              required
+            />
+            <Input
+              label="Last name"
+              value={formData.lastName}
+              onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+              placeholder="Doe"
+              error={errors.lastName}
+              required
+            />
           </div>
 
           {/* Company */}
-          <div>
-            <label htmlFor="company" className="block text-sm font-medium text-neutral-800 mb-2">
-              Company / Organization
-            </label>
-            <input
-              type="text"
-              id="company"
-              value={formData.company}
-              onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              placeholder="Your company name"
-            />
-          </div>
+          <Input
+            label="Company / Organization"
+            value={formData.company}
+            onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+            placeholder="Your company name"
+          />
 
           {/* Job Title */}
-          <div>
-            <label htmlFor="jobTitle" className="block text-sm font-medium text-neutral-800 mb-2">
-              Job title
-            </label>
-            <input
-              type="text"
-              id="jobTitle"
-              value={formData.jobTitle}
-              onChange={(e) => setFormData({ ...formData, jobTitle: e.target.value })}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              placeholder="Your role"
-            />
-          </div>
+          <Input
+            label="Job title"
+            value={formData.jobTitle}
+            onChange={(e) => setFormData({ ...formData, jobTitle: e.target.value })}
+            placeholder="Your role"
+          />
 
           {/* Phone */}
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-neutral-800 mb-2">
-              Phone number
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              placeholder="+1 (555) 000-0000"
-            />
-          </div>
+          <Input
+            type="tel"
+            label="Phone number"
+            value={formData.phone}
+            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+            placeholder="+1 (555) 000-0000"
+          />
 
           {/* Timezone */}
-          <div>
-            <label htmlFor="timezone" className="block text-sm font-medium text-neutral-800 mb-2">
-              Timezone
-            </label>
-            <select
-              id="timezone"
-              value={formData.timezone}
-              onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white"
-            >
-              <option value="">Select your timezone</option>
-              <option value="America/New_York">Eastern Time (ET)</option>
-              <option value="America/Chicago">Central Time (CT)</option>
-              <option value="America/Denver">Mountain Time (MT)</option>
-              <option value="America/Los_Angeles">Pacific Time (PT)</option>
-              <option value="America/Toronto">Toronto (ET)</option>
-              <option value="America/Montreal">Montreal (ET)</option>
-              <option value="Europe/London">London (GMT)</option>
-              <option value="Europe/Paris">Paris (CET)</option>
-            </select>
-          </div>
+          <Select
+            label="Timezone"
+            value={formData.timezone}
+            onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
+            options={timezoneOptions}
+          />
         </div>
 
         <div className="flex justify-between items-center pt-8 mt-8 border-t border-gray-200">
-          <button
+          <Button
+            variant="ghost"
             onClick={() => router.back()}
-            className="text-neutral-800/60 hover:text-neutral-800 font-medium transition-colors"
+            className="text-neutral-600 hover:text-neutral-800"
           >
             ← Back
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="secondary"
             onClick={handleContinue}
             disabled={isLoading}
-            className="bg-secondary-500 hover:bg-[#C49A3D] text-white px-8 py-3 rounded-full font-semibold transition-colors disabled:opacity-50"
+            isLoading={isLoading}
           >
             {isLoading ? 'Creating account...' : 'Continue →'}
-          </button>
+          </Button>
         </div>
       </div>
     </SignupLayout>

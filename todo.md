@@ -50,9 +50,18 @@
 
 
 ## Qualité et Maintenabilité
-- [ ] Identifier et supprimer les duplications de code
-- [ ] Créer des constantes/mappings pour les listes répétées (navigation, statuts, rôles)
-- [ ] Simplifier la logique répétée avec des fonctions utilitaires
-- [ ] Ajouter des commentaires clairs et concis
-- [ ] Aligner tous les fichiers avec le design system Tailwind
-- [ ] Vérifier la cohérence des couleurs et espacements
+- [x] Identifier et supprimer les duplications de code
+- [x] Créer des constantes/mappings pour les listes répétées (navigation, statuts, rôles)
+- [x] Simplifier la logique répétée avec des fonctions utilitaires
+- [x] Ajouter des commentaires clairs et concis
+- [x] Aligner tous les fichiers avec le design system Tailwind
+- [x] Vérifier la cohérence des couleurs et espacements
+
+
+## Correction des contrastes de couleurs
+- [x] Identifier les textes noirs sur fond sombre
+- [x] Corriger les composants UI (Input, Select avec support darkMode)
+- [x] Corriger CTASection (texte blanc sur fond gradient)
+- [x] Corriger le bouton coaching dans development/page.tsx
+- [x] Vérifier les pages de signup (formulaires sur fond sombre)
+- [x] Tous les textes sont maintenant lisibles avec contraste approprié

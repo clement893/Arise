@@ -392,7 +392,7 @@ export default function DevelopmentPlanPage() {
               <div className="bg-neutral-800 rounded-xl p-6 text-center">
                 <h3 className="text-lg font-bold text-white mb-2">Ready to accelerate your growth?</h3>
                 <p className="text-gray-400 text-sm mb-4">Get personalized coaching to reach your leadership potential</p>
-                <button className="w-full py-3 bg-secondary-500 text-neutral-800 font-semibold rounded-lg hover:bg-secondary-600 transition-colors">
+                <button className="w-full py-3 bg-secondary-500 text-primary-700 font-semibold rounded-lg hover:bg-secondary-600 transition-colors">
                   Book a coaching session
                 </button>
               </div>

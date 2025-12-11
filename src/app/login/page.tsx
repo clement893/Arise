@@ -1,16 +1,22 @@
 'use client';
 
+/**
+ * Login Page
+ * 
+ * Authentication page with email/password login and social login options.
+ * Uses dark mode styling for inputs on the teal background.
+ */
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Eye, EyeOff, ArrowRight } from 'lucide-react';
-import { Button, Input } from '@/components/ui';
+import { ArrowRight } from 'lucide-react';
+import { Button, Input, PasswordInput, Checkbox } from '@/components/ui';
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -77,7 +83,7 @@ export default function LoginPage() {
             <h1 className="text-3xl md:text-4xl font-bold text-secondary-500 mb-2">
               Welcome back
             </h1>
-            <p className="text-white/70">
+            <p className="text-white/80">
               Sign in to continue your leadership journey
             </p>
           </div>
@@ -90,67 +96,44 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* Email */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
-                Email address <span className="text-red-400">*</span>
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                required
-                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:border-transparent"
-              />
-            </div>
+            {/* Email - Using Input component with darkMode */}
+            <Input
+              type="email"
+              label="Email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              required
+              darkMode
+            />
 
-            {/* Password */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-white mb-2">
-                Password <span className="text-red-400">*</span>
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  required
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:border-transparent pr-12"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors"
-                >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-            </div>
+            {/* Password - Using PasswordInput component with darkMode */}
+            <PasswordInput
+              label="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              required
+              darkMode
+            />
 
             {/* Remember me & Forgot password */}
             <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded border-white/20 bg-white/10 text-secondary-500 focus:ring-secondary-500"
-                />
-                <span className="text-sm text-white/70">Remember me</span>
-              </label>
-              <Link href="/forgot-password" className="text-sm text-white/70 hover:text-secondary-500 transition-colors">
+              <Checkbox
+                label="Remember me"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                darkMode
+              />
+              <Link href="/forgot-password" className="text-sm text-white/80 hover:text-secondary-500 transition-colors">
                 Forgot password?
               </Link>
             </div>
 
             {/* Required fields note */}
-            <p className="text-xs text-white/50">* required fields</p>
+            <p className="text-xs text-white/60">* required fields</p>
 
-            {/* Submit button - Using Button component */}
+            {/* Submit button */}
             <Button
               type="submit"
               variant="secondary"
@@ -167,11 +150,11 @@ export default function LoginPage() {
                 <div className="w-full border-t border-white/20"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-primary-500 text-white/50">Or continue with</span>
+                <span className="px-4 bg-primary-500 text-white/70">Or continue with</span>
               </div>
             </div>
 
-            {/* Social login buttons - Using Button component */}
+            {/* Social login buttons */}
             <div className="grid grid-cols-2 gap-4">
               <Button
                 type="button"
@@ -203,7 +186,7 @@ export default function LoginPage() {
             </div>
 
             {/* Create account link */}
-            <p className="text-center text-white/70 mt-6">
+            <p className="text-center text-white/80 mt-6">
               Don&apos;t have an account?{' '}
               <Link href="/signup" className="text-secondary-500 hover:underline font-medium">
                 Create account
