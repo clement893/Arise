@@ -84,21 +84,91 @@ export default function TKITestPage() {
   const [currentStep, setCurrentStep] = useState<'intro' | 'questions' | 'results'>('intro');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, 'A' | 'B'>>({});
+  const [hasProgress, setHasProgress] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
+  // Load user and check for existing progress
   useEffect(() => {
     const storedUser = localStorage.getItem('arise_user');
     if (storedUser) {
       try {
         const userData = JSON.parse(storedUser);
         setUser(userData);
+        checkExistingProgress(userData.id);
       } catch {
         router.push('/signup');
       }
     } else {
       router.push('/signup');
     }
-    setLoading(false);
   }, [router]);
+
+  // Check if user has existing progress for this assessment
+  const checkExistingProgress = async (userId: number) => {
+    try {
+      const response = await fetch('/api/assessments/progress?type=tki', {
+        headers: { 'x-user-id': userId.toString() },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.progress) {
+          setHasProgress(true);
+          setCurrentQuestion(data.progress.currentQuestion || 0);
+          setAnswers(data.progress.answers || {});
+        }
+      }
+    } catch (error) {
+      console.error('Failed to check progress:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Save progress to database
+  const saveProgress = async () => {
+    if (!user || isSaving) return;
+    setIsSaving(true);
+    try {
+      await fetch('/api/assessments/progress', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': user.id.toString(),
+        },
+        body: JSON.stringify({
+          assessmentType: 'tki',
+          currentQuestion,
+          answers,
+          totalQuestions: tkiQuestions.length,
+        }),
+      });
+    } catch (error) {
+      console.error('Failed to save progress:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Delete progress when assessment is completed
+  const deleteProgress = async () => {
+    if (!user) return;
+    try {
+      await fetch('/api/assessments/progress?type=tki', {
+        method: 'DELETE',
+        headers: { 'x-user-id': user.id.toString() },
+      });
+    } catch (error) {
+      console.error('Failed to delete progress:', error);
+    }
+  };
+
+  // Auto-save progress when answers change
+  useEffect(() => {
+    if (currentStep === 'questions' && Object.keys(answers).length > 0) {
+      const timeoutId = setTimeout(() => saveProgress(), 1000);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [answers, currentQuestion, currentStep]);
 
   const handleLogout = () => {
     localStorage.removeItem('arise_user');
@@ -134,6 +204,8 @@ export default function TKITestPage() {
             overallScore: overallScore,
           }),
         });
+        // Delete progress since test is completed
+        await deleteProgress();
       } catch (error) {
         console.error('Failed to save TKI results:', error);
       }
@@ -264,14 +336,49 @@ export default function TKITestPage() {
                 </p>
               </div>
 
-              <Button
-                variant="primary"
-                fullWidth
-                size="lg"
-                onClick={() => setCurrentStep('questions')}
-              >
-                Start Assessment
-              </Button>
+              {/* Show Continue button if there's existing progress */}
+              {hasProgress ? (
+                <div className="space-y-4">
+                  <div className="bg-secondary-500/10 border border-secondary-500 rounded-lg p-4 mb-4">
+                    <p className="text-secondary-600 font-medium text-center">
+                      You have an assessment in progress ({Object.keys(answers).length}/{tkiQuestions.length} questions answered)
+                    </p>
+                  </div>
+                  <div className="flex gap-4">
+                    <Button
+                      variant="primary"
+                      fullWidth
+                      size="lg"
+                      onClick={() => setCurrentStep('questions')}
+                    >
+                      Continue Assessment
+                    </Button>
+                    <Button
+                      variant="outline"
+                      fullWidth
+                      size="lg"
+                      onClick={() => {
+                        setAnswers({});
+                        setCurrentQuestion(0);
+                        setHasProgress(false);
+                        deleteProgress();
+                        setCurrentStep('questions');
+                      }}
+                    >
+                      Start Over
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <Button
+                  variant="primary"
+                  fullWidth
+                  size="lg"
+                  onClick={() => setCurrentStep('questions')}
+                >
+                  Start Assessment
+                </Button>
+              )}
             </Card>
           </div>
         )}

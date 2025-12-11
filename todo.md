@@ -65,3 +65,14 @@
 - [x] Corriger le bouton coaching dans development/page.tsx
 - [x] Vérifier les pages de signup (formulaires sur fond sombre)
 - [x] Tous les textes sont maintenant lisibles avec contraste approprié
+
+
+## Sauvegarde automatique des tests en cours
+- [x] Analyser la structure actuelle des assessments et réponses
+- [x] Ajouter table AssessmentProgress pour stocker les réponses partielles
+- [x] Créer endpoint API /api/assessments/progress (GET, POST, DELETE)
+- [x] Modifier la page TKI pour auto-sauvegarder
+- [x] Modifier la page Wellness pour auto-sauvegarder
+- [x] Modifier la page 360-self pour auto-sauvegarder
+- [x] Ajouter bouton "Continue/Start Over" sur les tests en cours
+- [ ] Pousser sur GitHub

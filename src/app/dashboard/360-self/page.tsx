@@ -87,16 +87,87 @@ export default function SelfAssessment360Page() {
   const [testState, setTestState] = useState<TestState>('intro');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
+  const [hasProgress, setHasProgress] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
+  // Load user and check for existing progress
   useEffect(() => {
     const userData = localStorage.getItem('arise_user');
     if (!userData) {
       router.push('/login');
       return;
     }
-    setUser(JSON.parse(userData));
-    setIsLoading(false);
+    const parsedUser = JSON.parse(userData);
+    setUser(parsedUser);
+    checkExistingProgress(parsedUser.id);
   }, [router]);
+
+  // Check if user has existing progress for this assessment
+  const checkExistingProgress = async (userId: number) => {
+    try {
+      const response = await fetch('/api/assessments/progress?type=self_360', {
+        headers: { 'x-user-id': userId.toString() },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.progress) {
+          setHasProgress(true);
+          setCurrentQuestion(data.progress.currentQuestion || 0);
+          setAnswers(data.progress.answers || {});
+        }
+      }
+    } catch (error) {
+      console.error('Failed to check progress:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Save progress to database
+  const saveProgress = async () => {
+    if (!user || isSaving) return;
+    setIsSaving(true);
+    try {
+      await fetch('/api/assessments/progress', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': user.id.toString(),
+        },
+        body: JSON.stringify({
+          assessmentType: 'self_360',
+          currentQuestion,
+          answers,
+          totalQuestions: selfAssessmentQuestions.length,
+        }),
+      });
+    } catch (error) {
+      console.error('Failed to save progress:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Delete progress when assessment is completed
+  const deleteProgress = async () => {
+    if (!user) return;
+    try {
+      await fetch('/api/assessments/progress?type=self_360', {
+        method: 'DELETE',
+        headers: { 'x-user-id': user.id.toString() },
+      });
+    } catch (error) {
+      console.error('Failed to delete progress:', error);
+    }
+  };
+
+  // Auto-save progress when answers change
+  useEffect(() => {
+    if (testState === 'questions' && Object.keys(answers).length > 0) {
+      const timeoutId = setTimeout(() => saveProgress(), 1000);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [answers, currentQuestion, testState]);
 
   const handleLogout = () => {
     localStorage.removeItem('arise_user');
@@ -157,6 +228,8 @@ export default function SelfAssessment360Page() {
             overallScore: overallScore,
           }),
         });
+        // Delete progress since test is completed
+        await deleteProgress();
       } catch (error) {
         console.error('Failed to save 360 Self results:', error);
       }
@@ -300,13 +373,43 @@ export default function SelfAssessment360Page() {
                     </p>
                   </div>
 
-                  {/* Start button */}
-                  <button
-                    onClick={handleStartTest}
-                    className="w-full py-4 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-colors text-lg"
-                  >
-                    Start Self Assessment
-                  </button>
+                  {/* Start/Continue button */}
+                  {hasProgress ? (
+                    <div className="space-y-4">
+                      <div className="bg-secondary-500/10 border border-secondary-500 rounded-lg p-4">
+                        <p className="text-secondary-600 font-medium text-center">
+                          You have an assessment in progress ({Object.keys(answers).length}/{selfAssessmentQuestions.length} questions answered)
+                        </p>
+                      </div>
+                      <div className="flex gap-4">
+                        <button
+                          onClick={handleStartTest}
+                          className="flex-1 py-4 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-colors text-lg"
+                        >
+                          Continue Assessment
+                        </button>
+                        <button
+                          onClick={() => {
+                            setAnswers({});
+                            setCurrentQuestion(0);
+                            setHasProgress(false);
+                            deleteProgress();
+                            handleStartTest();
+                          }}
+                          className="flex-1 py-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 transition-colors text-lg"
+                        >
+                          Start Over
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={handleStartTest}
+                      className="w-full py-4 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 transition-colors text-lg"
+                    >
+                      Start Self Assessment
+                    </button>
+                  )}
                 </div>
 
                 {/* Right side - Visual */}

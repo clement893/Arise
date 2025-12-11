@@ -207,6 +207,25 @@ model AssessmentConfig {
   updatedAt       DateTime         @updatedAt
 }
 
+// Assessment Progress (for saving incomplete tests)
+model AssessmentProgress {
+  id              Int              @id @default(autoincrement())
+  userId          Int
+  assessmentType  AssessmentType
+  
+  // Progress data
+  currentQuestion Int              @default(0)
+  answers         Json             // Store partial answers as JSON
+  totalQuestions  Int              @default(30)
+  
+  // Timestamps
+  startedAt       DateTime         @default(now())
+  lastUpdatedAt   DateTime         @updatedAt
+  
+  @@unique([userId, assessmentType])
+  @@index([userId])
+}
+
 // Assessment Questions (Admin configurable)
 model AssessmentQuestion {
   id              Int              @id @default(autoincrement())
