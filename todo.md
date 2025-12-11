@@ -91,4 +91,9 @@
 - [x] Corriger wellness/results/page.tsx (Overall Score)
 - [x] Corriger Input.tsx et Select.tsx (helper text darkMode)
 - [x] Corriger admin/assessments/page.tsx (question count)
+- [x] Pousser sur GitHub (commit 197cb0c)
+
+## Correction contraste page principale
+- [x] Corriger Hero.tsx (sous-titre text-white/80 -> text-white)
+- [x] Corriger Header.tsx (liens navigation text-white/90 -> text-white)
 - [ ] Pousser sur GitHub

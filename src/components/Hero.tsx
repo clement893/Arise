@@ -32,7 +32,7 @@ export default function Hero() {
           </h1>
 
           {/* Subtitle */}
-          <p className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl">
+          <p className="text-lg md:text-xl text-white mb-8 max-w-2xl">
             A holistic approach to leadership assessment and development
           </p>
 

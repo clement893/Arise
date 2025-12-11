@@ -52,7 +52,7 @@ export default function Header() {
               <Link 
                 key={link.href}
                 href={link.href} 
-                className="text-white/90 hover:text-white text-sm font-medium transition-colors"
+                className="text-white hover:text-secondary-500 text-sm font-medium transition-colors"
               >
                 {link.label}
               </Link>
@@ -63,7 +63,7 @@ export default function Header() {
           <div className="hidden md:flex items-center space-x-4">
             <Link 
               href="/login" 
-              className="text-white/90 hover:text-white text-sm font-medium transition-colors"
+              className="text-white hover:text-secondary-500 text-sm font-medium transition-colors"
             >
               Sign in
             </Link>
@@ -99,7 +99,7 @@ export default function Header() {
                 <Link 
                   key={link.href}
                   href={link.href} 
-                  className="text-white/90 hover:text-white text-sm font-medium" 
+                  className="text-white hover:text-secondary-500 text-sm font-medium" 
                   onClick={closeMenu}
                 >
                   {link.label}
@@ -107,7 +107,7 @@ export default function Header() {
               ))}
               <Link 
                 href="/login" 
-                className="text-white/90 hover:text-white text-sm font-medium" 
+                className="text-white hover:text-secondary-500 text-sm font-medium" 
                 onClick={closeMenu}
               >
                 Sign in
