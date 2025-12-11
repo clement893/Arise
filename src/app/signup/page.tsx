@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import SignupLayout from '@/components/SignupLayout';
+import { Button, Card } from '@/components/ui';
+import { ArrowRight } from 'lucide-react';
 
 type UserType = 'individual' | 'coach' | 'business';
 
@@ -46,7 +47,6 @@ export default function SignupStep1() {
 
   const handleContinue = () => {
     if (selectedType) {
-      // Store in localStorage for now
       localStorage.setItem('signupUserType', selectedType);
       router.push('/signup/plans');
     }
@@ -65,14 +65,15 @@ export default function SignupStep1() {
 
       <div className="grid md:grid-cols-3 gap-6 mb-12">
         {userTypes.map((type) => (
-          <button
+          <Card
             key={type.id}
-            onClick={() => setSelectedType(type.id)}
-            className={`p-6 rounded-2xl text-center transition-all ${
+            variant={selectedType === type.id ? 'elevated' : 'default'}
+            className={`p-6 text-center cursor-pointer transition-all ${
               selectedType === type.id
                 ? 'bg-white text-[#0D5C5C] ring-4 ring-[#D4A84B]'
                 : 'bg-white/10 text-white hover:bg-white/20'
             }`}
+            onClick={() => setSelectedType(type.id)}
           >
             <div className={`mx-auto mb-4 ${selectedType === type.id ? 'text-[#0D5C5C]' : 'text-white'}`}>
               {type.icon}
@@ -81,22 +82,21 @@ export default function SignupStep1() {
             <p className={`text-sm ${selectedType === type.id ? 'text-[#0D5C5C]/70' : 'text-white/60'}`}>
               {type.description}
             </p>
-          </button>
+          </Card>
         ))}
       </div>
 
       <div className="flex justify-center">
-        <button
+        <Button
+          variant="secondary"
+          size="lg"
           onClick={handleContinue}
           disabled={!selectedType}
-          className={`px-8 py-3 rounded-full font-semibold transition-all ${
-            selectedType
-              ? 'bg-[#D4A84B] hover:bg-[#C49A3D] text-white cursor-pointer'
-              : 'bg-white/20 text-white/50 cursor-not-allowed'
-          }`}
+          rightIcon={<ArrowRight className="w-4 h-4" />}
+          className="px-8"
         >
-          Continue →
-        </button>
+          Continue
+        </Button>
       </div>
     </SignupLayout>
   );
