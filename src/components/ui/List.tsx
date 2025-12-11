@@ -30,7 +30,7 @@ const listVariants = cva(
   }
 );
 
-export interface ListProps
+interface ListProps
   extends HTMLAttributes<HTMLUListElement>,
     VariantProps<typeof listVariants> {
   children: ReactNode;
@@ -82,7 +82,7 @@ const listItemVariants = cva(
   }
 );
 
-export interface ListItemProps
+interface ListItemProps
   extends HTMLAttributes<HTMLLIElement>,
     VariantProps<typeof listItemVariants> {
   children: ReactNode;
@@ -246,3 +246,5 @@ export {
   listItemVariants,
 };
 export default List;
+
+export type { ListProps, ListItemProps };

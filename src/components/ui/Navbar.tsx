@@ -37,7 +37,7 @@ const navbarVariants = cva(
   }
 );
 
-export interface NavbarProps
+interface NavbarProps
   extends HTMLAttributes<HTMLElement>,
     VariantProps<typeof navbarVariants> {
   /** Logo element or text */
@@ -147,7 +147,7 @@ const navLinkVariants = cva(
   }
 );
 
-export interface NavLinkProps extends VariantProps<typeof navLinkVariants> {
+interface NavLinkProps extends VariantProps<typeof navLinkVariants> {
   href: string;
   children: ReactNode;
   isActive?: boolean;
@@ -240,3 +240,5 @@ const NavDropdownItem = ({ href, onClick, children, className }: NavDropdownItem
 
 export { Navbar, NavLink, NavDropdown, NavDropdownItem, navbarVariants, navLinkVariants };
 export default Navbar;
+
+export type { NavbarProps, NavLinkProps };

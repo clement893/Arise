@@ -29,13 +29,13 @@ const selectVariants = cva(
   }
 );
 
-export interface SelectOption {
+interface SelectOption {
   value: string;
   label: string;
   disabled?: boolean;
 }
 
-export interface SelectProps
+interface SelectProps
   extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'>,
     VariantProps<typeof selectVariants> {
   label?: string;
@@ -81,3 +81,5 @@ Select.displayName = 'Select';
 
 export { Select, selectVariants };
 export default Select;
+
+export type { SelectOption, SelectProps };

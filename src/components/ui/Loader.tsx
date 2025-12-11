@@ -32,7 +32,7 @@ const spinnerVariants = cva(
   }
 );
 
-export interface SpinnerProps extends HTMLAttributes<HTMLDivElement> {
+interface SpinnerProps extends HTMLAttributes<HTMLDivElement> {
   /** Spinner size */
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   /** Spinner color */
@@ -143,7 +143,7 @@ const skeletonVariants = cva(
   }
 );
 
-export interface SkeletonProps extends HTMLAttributes<HTMLDivElement> {
+interface SkeletonProps extends HTMLAttributes<HTMLDivElement> {
   /** Skeleton variant */
   variant?: 'text' | 'title' | 'avatar' | 'button' | 'card' | 'image';
   /** Width of the skeleton */
@@ -258,3 +258,5 @@ export {
   skeletonVariants,
 };
 export default Spinner;
+
+export type { SpinnerProps, SkeletonProps };

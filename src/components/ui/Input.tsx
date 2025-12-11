@@ -35,7 +35,7 @@ const inputVariants = cva(
   }
 );
 
-export interface InputProps
+interface InputProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'>,
     VariantProps<typeof inputVariants> {
   label?: string;
@@ -126,7 +126,7 @@ Input.displayName = 'Input';
 /**
  * Textarea component
  */
-export interface TextareaProps
+interface TextareaProps
   extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'size'>,
     VariantProps<typeof inputVariants> {
   label?: string;
@@ -170,7 +170,7 @@ Textarea.displayName = 'Textarea';
 /**
  * PasswordInput component with show/hide toggle
  */
-export interface PasswordInputProps extends Omit<InputProps, 'type' | 'rightIcon'> {}
+interface PasswordInputProps extends Omit<InputProps, 'type' | 'rightIcon'> {}
 
 const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>((props, ref) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -208,7 +208,7 @@ PasswordInput.displayName = 'PasswordInput';
 /**
  * Checkbox component with label
  */
-export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
+interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
   label?: string;
   description?: string;
 }
@@ -248,3 +248,5 @@ Checkbox.displayName = 'Checkbox';
 
 export { Input, Textarea, PasswordInput, Checkbox, inputVariants };
 export default Input;
+
+export type { InputProps, TextareaProps, PasswordInputProps, CheckboxProps };

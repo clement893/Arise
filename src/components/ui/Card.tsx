@@ -40,7 +40,7 @@ const cardVariants = cva(
   }
 );
 
-export interface CardProps
+interface CardProps
   extends HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof cardVariants> {
   children: ReactNode;
@@ -193,4 +193,5 @@ export {
   CardFooter,
   cardVariants,
 };
+export type { CardProps };
 export default Card;

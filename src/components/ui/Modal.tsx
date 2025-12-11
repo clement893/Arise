@@ -32,7 +32,7 @@ const modalVariants = cva(
   }
 );
 
-export interface ModalProps extends VariantProps<typeof modalVariants> {
+interface ModalProps extends VariantProps<typeof modalVariants> {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
@@ -174,7 +174,7 @@ ModalFooter.displayName = 'ModalFooter';
 /**
  * ConfirmModal - Pre-built confirmation dialog
  */
-export interface ConfirmModalProps {
+interface ConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
@@ -241,7 +241,7 @@ const alertVariants = cva(
   }
 );
 
-export interface AlertProps extends HTMLAttributes<HTMLDivElement>, VariantProps<typeof alertVariants> {
+interface AlertProps extends HTMLAttributes<HTMLDivElement>, VariantProps<typeof alertVariants> {
   title?: string;
   children: ReactNode;
   icon?: ReactNode;
@@ -294,4 +294,4 @@ Alert.displayName = 'Alert';
 
 export { Modal, ModalFooter, ConfirmModal, Alert, modalVariants, alertVariants };
 export default Modal;
-export type { ModalProps, ConfirmModalProps };
+export type { ModalProps, ConfirmModalProps, AlertProps };
