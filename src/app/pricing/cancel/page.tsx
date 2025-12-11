@@ -1,5 +1,7 @@
 'use client';
 
+import { Button, Card, CardContent, Badge, LoadingPage } from '@/components/ui';
+
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';

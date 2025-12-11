@@ -2,6 +2,18 @@
 
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { Card, CardContent, Badge } from '@/components/ui';
+
+const values = [
+  { icon: '🎯', title: 'Authenticity', description: 'We encourage leaders to embrace their true selves and lead with integrity.' },
+  { icon: '📈', title: 'Growth', description: 'We believe in continuous improvement and lifelong learning.' },
+  { icon: '🤝', title: 'Collaboration', description: 'We foster connections and support between leaders at all levels.' },
+];
+
+const team = [
+  { initials: 'CL', name: 'Clement L.', role: 'Founder & CEO', description: 'Passionate about leadership development and organizational transformation.', color: 'bg-primary-500' },
+  { initials: 'AR', name: 'ARISE Team', role: 'Development & Support', description: 'A dedicated team committed to building the best leadership platform.', color: 'bg-secondary-500' },
+];
 
 export default function AboutPage() {
   return (
@@ -25,14 +37,14 @@ export default function AboutPage() {
         <div className="max-w-4xl mx-auto px-4 py-16">
           <div className="grid md:grid-cols-2 gap-12">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Mission</h2>
-              <p className="text-gray-600 leading-relaxed">
+              <h2 className="text-3xl font-bold text-neutral-900 mb-4">Our Mission</h2>
+              <p className="text-neutral-600 leading-relaxed">
                 We believe that effective leadership starts with self-understanding. Our mission is to provide accessible, science-based assessment tools that help leaders at all levels discover their strengths, understand their blind spots, and develop actionable plans for growth.
               </p>
             </div>
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Approach</h2>
-              <p className="text-gray-600 leading-relaxed">
+              <h2 className="text-3xl font-bold text-neutral-900 mb-4">Our Approach</h2>
+              <p className="text-neutral-600 leading-relaxed">
                 ARISE integrates four key dimensions of leadership assessment: personality type (MBTI), conflict handling style (TKI), multi-rater feedback (360°), and holistic wellness. This comprehensive approach provides a complete picture of your leadership profile.
               </p>
             </div>
@@ -40,55 +52,41 @@ export default function AboutPage() {
         </div>
 
         {/* Values Section */}
-        <div className="bg-gray-50 py-16">
+        <div className="bg-neutral-50 py-16">
           <div className="max-w-4xl mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Our Values</h2>
+            <h2 className="text-3xl font-bold text-center text-neutral-900 mb-12">Our Values</h2>
             <div className="grid md:grid-cols-3 gap-8">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">🎯</span>
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-2">Authenticity</h3>
-                <p className="text-gray-600 text-sm">We encourage leaders to embrace their true selves and lead with integrity.</p>
-              </div>
-              <div className="text-center">
-                <div className="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">📈</span>
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-2">Growth</h3>
-                <p className="text-gray-600 text-sm">We believe in continuous improvement and lifelong learning.</p>
-              </div>
-              <div className="text-center">
-                <div className="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">🤝</span>
-                </div>
-                <h3 className="font-semibold text-gray-900 mb-2">Collaboration</h3>
-                <p className="text-gray-600 text-sm">We foster connections and support between leaders at all levels.</p>
-              </div>
+              {values.map((value) => (
+                <Card key={value.title} variant="flat" className="text-center">
+                  <CardContent className="pt-6">
+                    <div className="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <span className="text-2xl" aria-hidden="true">{value.icon}</span>
+                    </div>
+                    <h3 className="font-semibold text-neutral-900 mb-2">{value.title}</h3>
+                    <p className="text-neutral-600 text-sm">{value.description}</p>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
         </div>
 
         {/* Team Section */}
         <div className="max-w-4xl mx-auto px-4 py-16">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Leadership Team</h2>
+          <h2 className="text-3xl font-bold text-center text-neutral-900 mb-12">Leadership Team</h2>
           <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-white rounded-lg p-6 shadow-sm border">
-              <div className="w-20 h-20 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl text-white font-bold">CL</span>
-              </div>
-              <h3 className="font-semibold text-gray-900 text-center mb-1">Clement L.</h3>
-              <p className="text-primary-500 text-center text-sm mb-3">Founder & CEO</p>
-              <p className="text-gray-600 text-sm text-center">Passionate about leadership development and organizational transformation.</p>
-            </div>
-            <div className="bg-white rounded-lg p-6 shadow-sm border">
-              <div className="w-20 h-20 bg-secondary-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl text-white font-bold">AR</span>
-              </div>
-              <h3 className="font-semibold text-gray-900 text-center mb-1">ARISE Team</h3>
-              <p className="text-primary-500 text-center text-sm mb-3">Development & Support</p>
-              <p className="text-gray-600 text-sm text-center">A dedicated team committed to building the best leadership platform.</p>
-            </div>
+            {team.map((member) => (
+              <Card key={member.name} variant="bordered">
+                <CardContent className="pt-6 text-center">
+                  <div className={`w-20 h-20 ${member.color} rounded-full flex items-center justify-center mx-auto mb-4`}>
+                    <span className="text-3xl text-white font-bold">{member.initials}</span>
+                  </div>
+                  <h3 className="font-semibold text-neutral-900 mb-1">{member.name}</h3>
+                  <Badge variant="primary" size="sm" className="mb-3">{member.role}</Badge>
+                  <p className="text-neutral-600 text-sm">{member.description}</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </main>

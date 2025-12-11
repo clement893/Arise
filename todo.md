@@ -8,18 +8,42 @@
 - [x] Supprimer les styles inline et réduire la duplication de classes
 - [x] Pousser sur GitHub (commit 8f8438c)
 
-
 ## Refactorisation Composants Réutilisables
-- [ ] Installer clsx et class-variance-authority (cva)
-- [ ] Créer utilitaire cn() pour fusionner les classes
-- [ ] Créer Button avec variantes (primary, secondary, outline, ghost, danger, loading)
-- [ ] Créer Card avec variantes et sous-composants (CardHeader, CardContent, CardFooter)
-- [ ] Créer Input, Textarea, Checkbox, PasswordInput avec accessibilité ARIA
-- [ ] Créer Select et RadioGroup
-- [ ] Créer Modal/Dialog avec accessibilité
-- [ ] Créer Alert/Toast pour les notifications
-- [ ] Créer Loader, Spinner, Skeleton
-- [ ] Créer Navbar et Sidebar réutilisables
-- [ ] Créer composants de liste (ListItem, Avatar, Badge)
-- [ ] Refactoriser les pages pour utiliser les nouveaux composants
-- [ ] Supprimer le markup dupliqué
+- [x] Installer clsx et class-variance-authority (cva)
+- [x] Créer utilitaire cn() pour fusionner les classes
+- [x] Créer Button avec variantes (primary, secondary, outline, ghost, danger, loading)
+- [x] Créer Card avec variantes et sous-composants (CardHeader, CardContent, CardFooter)
+- [x] Créer Input, Textarea, Checkbox, PasswordInput avec accessibilité ARIA
+- [x] Créer Select et RadioGroup
+- [x] Créer Modal/Dialog avec accessibilité
+- [x] Créer Alert/Toast pour les notifications
+- [x] Créer Loader, Spinner, Skeleton
+- [x] Créer Navbar et Sidebar réutilisables
+- [x] Créer composants de liste (ListItem, Avatar, Badge)
+- [x] Pousser sur GitHub (commit 95ae7e7)
+
+## Application des composants UI sur toutes les pages
+- [ ] Refactoriser src/app/page.tsx (landing page)
+- [ ] Refactoriser src/app/admin/page.tsx
+- [ ] Refactoriser src/app/admin/assessments/page.tsx
+- [ ] Refactoriser src/app/dashboard/360-evaluators/page.tsx
+- [ ] Refactoriser src/app/dashboard/360-self/page.tsx
+- [ ] Refactoriser src/app/dashboard/development/page.tsx
+- [ ] Refactoriser src/app/dashboard/profile/page.tsx
+- [ ] Refactoriser src/app/dashboard/results/page.tsx
+- [ ] Refactoriser src/app/dashboard/results/wellness-board/page.tsx
+- [ ] Refactoriser src/app/dashboard/settings/page.tsx
+- [ ] Refactoriser src/app/dashboard/wellness/page.tsx
+- [ ] Refactoriser src/app/dashboard/wellness/results/page.tsx
+- [ ] Refactoriser src/app/feedback/[token]/page.tsx
+- [ ] Refactoriser src/app/pricing/cancel/page.tsx
+- [ ] Refactoriser src/app/pricing/success/page.tsx
+- [ ] Refactoriser src/app/signup/choose-plan/page.tsx
+- [ ] Refactoriser src/app/signup/create-account/page.tsx
+- [ ] Refactoriser src/app/signup/plans/page.tsx
+- [ ] Refactoriser src/app/signup/profile/page.tsx
+- [ ] Refactoriser src/app/signup/review/page.tsx
+- [ ] Refactoriser src/app/signup/welcome/page.tsx
+- [ ] Refactoriser src/app/about/page.tsx
+- [ ] Refactoriser src/app/privacy/page.tsx
+- [ ] Refactoriser src/app/terms/page.tsx

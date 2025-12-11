@@ -1,5 +1,7 @@
 'use client';
 
+import { Button, Card, CardContent, Input, Badge } from '@/components/ui';
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import SignupLayout from '@/components/SignupLayout';
