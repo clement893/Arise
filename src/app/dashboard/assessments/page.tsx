@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import Sidebar from '@/components/dashboard/Sidebar';
 import { Brain, Users, MessageSquare, Heart, Info, ExternalLink } from 'lucide-react';
+import { Button, Badge, Card, LoadingPage } from '@/components/ui';
 
 interface User {
   id: number;
@@ -68,7 +68,6 @@ export default function AssessmentsPage() {
     }
   };
 
-  // Determine assessment status based on actual data
   const getAssessmentStatus = (assessmentId: string): 'completed' | 'in-progress' | 'not-started' => {
     if (!assessmentResults) return 'not-started';
     
@@ -86,18 +85,15 @@ export default function AssessmentsPage() {
     }
   };
 
-  // Determine action label based on status
   const getActionLabel = (assessmentId: string, status: 'completed' | 'in-progress' | 'not-started'): string => {
     if (status === 'completed') {
       switch (assessmentId) {
         case 'mbti':
+        case '360-feedback':
+        case 'wellness':
           return 'View results';
         case 'tki':
           return 'Review';
-        case '360-feedback':
-          return 'View results';
-        case 'wellness':
-          return 'View results';
         default:
           return 'View';
       }
@@ -105,13 +101,11 @@ export default function AssessmentsPage() {
     return 'Start';
   };
 
-  // Determine action type based on status
   const getActionType = (status: 'completed' | 'in-progress' | 'not-started'): 'view' | 'continue' | 'review' | 'add' | 'start' => {
     if (status === 'completed') return 'view';
     return 'start';
   };
 
-  // Build assessments array dynamically based on actual results
   const buildAssessments = (): Assessment[] => {
     const mbtiStatus = getAssessmentStatus('mbti');
     const tkiStatus = getAssessmentStatus('tki');
@@ -125,9 +119,7 @@ export default function AssessmentsPage() {
         description: 'Understanding your natural preferences',
         icon: <Brain className="w-6 h-6 text-[#0D5C5C]" />,
         status: mbtiStatus,
-        tags: [
-          { label: 'External link', type: 'external' },
-        ],
+        tags: [{ label: 'External link', type: 'external' }],
         actionLabel: getActionLabel('mbti', mbtiStatus),
         actionType: getActionType(mbtiStatus),
         route: mbtiStatus === 'completed' ? '/dashboard/results' : 'https://www.16personalities.com/free-personality-test',
@@ -138,9 +130,7 @@ export default function AssessmentsPage() {
         description: 'Explore your conflict management approach',
         icon: <MessageSquare className="w-6 h-6 text-[#0D5C5C]" />,
         status: tkiStatus,
-        tags: [
-          { label: 'ARISE Platform', type: 'platform' },
-        ],
+        tags: [{ label: 'ARISE Platform', type: 'platform' }],
         actionLabel: getActionLabel('tki', tkiStatus),
         actionType: getActionType(tkiStatus),
         route: tkiStatus === 'completed' ? '/dashboard/results' : '/dashboard/tki',
@@ -151,9 +141,7 @@ export default function AssessmentsPage() {
         description: 'Multi-faceted leadership perspectives',
         icon: <Users className="w-6 h-6 text-[#0D5C5C]" />,
         status: feedbackStatus,
-        tags: [
-          { label: 'ARISE Platform', type: 'platform' },
-        ],
+        tags: [{ label: 'ARISE Platform', type: 'platform' }],
         actionLabel: getActionLabel('360-feedback', feedbackStatus),
         actionType: getActionType(feedbackStatus),
         hasEvaluatorNotice: feedbackStatus === 'not-started',
@@ -165,9 +153,7 @@ export default function AssessmentsPage() {
         description: 'Assess your holistic Well-Being',
         icon: <Heart className="w-6 h-6 text-[#0D5C5C]" />,
         status: wellnessStatus,
-        tags: [
-          { label: 'ARISE Platform', type: 'platform' },
-        ],
+        tags: [{ label: 'ARISE Platform', type: 'platform' }],
         actionLabel: getActionLabel('wellness', wellnessStatus),
         actionType: getActionType(wellnessStatus),
         route: wellnessStatus === 'completed' ? '/dashboard/wellness/results' : '/dashboard/wellness',
@@ -180,23 +166,11 @@ export default function AssessmentsPage() {
   const getStatusBadge = (status: Assessment['status']) => {
     switch (status) {
       case 'completed':
-        return (
-          <span className="px-3 py-1 text-xs font-medium rounded-full bg-[#0D5C5C] text-white">
-            Completed
-          </span>
-        );
+        return <Badge variant="success">Completed</Badge>;
       case 'in-progress':
-        return (
-          <span className="px-3 py-1 text-xs font-medium rounded-full bg-[#D4A84B] text-white">
-            In progress
-          </span>
-        );
+        return <Badge variant="warning">In progress</Badge>;
       case 'not-started':
-        return (
-          <span className="px-3 py-1 text-xs font-medium rounded-full bg-gray-200 text-gray-600">
-            Not Started
-          </span>
-        );
+        return <Badge variant="default">Not Started</Badge>;
     }
   };
 
@@ -204,70 +178,49 @@ export default function AssessmentsPage() {
     switch (tag.type) {
       case 'external':
         return (
-          <span key={tag.label} className="px-3 py-1 text-xs font-medium rounded-full border border-gray-300 text-gray-600 flex items-center gap-1">
+          <Badge key={tag.label} variant="default" className="flex items-center gap-1">
             <ExternalLink className="w-3 h-3" />
             {tag.label}
-          </span>
+          </Badge>
         );
       case 'platform':
-        return (
-          <span key={tag.label} className="px-3 py-1 text-xs font-medium rounded-full bg-[#0D5C5C]/10 text-[#0D5C5C]">
-            {tag.label}
-          </span>
-        );
+        return <Badge key={tag.label} variant="primary">{tag.label}</Badge>;
       default:
-        return (
-          <span key={tag.label} className="px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
-            {tag.label}
-          </span>
-        );
+        return <Badge key={tag.label} variant="default">{tag.label}</Badge>;
     }
   };
 
   const handleAssessmentAction = (assessment: Assessment) => {
     if (assessment.route) {
       if (assessment.route.startsWith('http')) {
-        // External link - open in new tab
         window.open(assessment.route, '_blank');
       } else {
-        // Internal route
         router.push(assessment.route);
       }
     }
   };
 
   const getActionButton = (assessment: Assessment) => {
-    const baseClasses = "px-4 py-2 text-sm font-medium rounded-lg transition-colors";
-    
     const handleClick = () => handleAssessmentAction(assessment);
 
     switch (assessment.status) {
       case 'completed':
         return (
-          <button 
-            onClick={handleClick}
-            className={`${baseClasses} border border-[#0D5C5C] text-[#0D5C5C] hover:bg-[#0D5C5C] hover:text-white`}
-          >
+          <Button variant="outline" onClick={handleClick}>
             {assessment.actionLabel}
-          </button>
+          </Button>
         );
       case 'in-progress':
         return (
-          <button 
-            onClick={handleClick}
-            className={`${baseClasses} bg-[#0D5C5C] text-white hover:bg-[#0a4a4a]`}
-          >
+          <Button variant="primary" onClick={handleClick}>
             Continue
-          </button>
+          </Button>
         );
       case 'not-started':
         return (
-          <button 
-            onClick={handleClick}
-            className={`${baseClasses} bg-[#D4A84B] text-white hover:bg-[#c49a42]`}
-          >
+          <Button variant="secondary" onClick={handleClick}>
             Start
-          </button>
+          </Button>
         );
     }
   };
@@ -279,27 +232,19 @@ export default function AssessmentsPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0D5C5C]"></div>
-      </div>
-    );
+    return <LoadingPage />;
   }
 
   if (!user) {
     return null;
   }
 
-  // Check if all assessments are completed
-  const allCompleted = assessments.every(a => a.status === 'completed');
   const completedCount = assessments.filter(a => a.status === 'completed').length;
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
-      {/* Sidebar */}
       <Sidebar user={user} onLogout={handleLogout} />
 
-      {/* Main Content */}
       <main className="flex-1 p-8">
         <div className="max-w-4xl">
           {/* Header */}
@@ -315,9 +260,8 @@ export default function AssessmentsPage() {
           <div className="space-y-4">
             {assessments.map((assessment) => (
               <div key={assessment.id}>
-                {/* Assessment Card */}
-                <div className="bg-white rounded-xl p-6 shadow-sm">
-                  <div className="flex items-start justify-between">
+                <Card>
+                  <div className="flex items-start justify-between p-6">
                     <div className="flex items-start gap-4">
                       {/* Icon */}
                       <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
@@ -342,66 +286,31 @@ export default function AssessmentsPage() {
                       {getActionButton(assessment)}
                     </div>
                   </div>
-                </div>
+                </Card>
 
-                {/* Evaluator Notice (for 360° Feedback when not started) */}
+                {/* Evaluator Notice */}
                 {assessment.hasEvaluatorNotice && (
-                  <div className="mt-2 bg-gray-50 rounded-xl p-4 flex items-center justify-between border border-gray-200">
-                    <div className="flex items-center gap-3">
-                      <Info className="w-5 h-5 text-gray-400" />
-                      <span className="text-sm text-gray-600">
-                        Add your evaluators before starting this assessment.
-                      </span>
+                  <Card className="mt-2 bg-gray-50 border border-gray-200">
+                    <div className="p-4 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Info className="w-5 h-5 text-gray-400" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-700">Add evaluators</p>
+                          <p className="text-xs text-gray-500">Invite colleagues for 360° feedback</p>
+                        </div>
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => router.push('/dashboard/360-evaluators')}
+                      >
+                        + Add evaluators
+                      </Button>
                     </div>
-                    <button 
-                      onClick={() => router.push('/dashboard/360-evaluators')}
-                      className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors"
-                    >
-                      Add evaluators
-                    </button>
-                  </div>
+                  </Card>
                 )}
               </div>
             ))}
-
-            {/* CTA Card - Only show if not all assessments are completed */}
-            {!allCompleted && (
-              <div className="bg-[#0D5C5C] rounded-xl p-6">
-                <div className="text-center">
-                  <h3 className="font-semibold text-white text-lg mb-2">Complete your assessments</h3>
-                  <p className="text-sm text-white/70 mb-4">
-                    Complete all assessments to unlock your full leadership profile and personalized development plan.
-                  </p>
-                  <button 
-                    onClick={() => {
-                      const firstIncomplete = assessments.find(a => a.status !== 'completed');
-                      if (firstIncomplete) handleAssessmentAction(firstIncomplete);
-                    }}
-                    className="px-6 py-2 text-sm font-medium rounded-lg bg-[#D4A84B] text-white hover:bg-[#c49a42] transition-colors"
-                  >
-                    Continue assessments
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Success Card - Show when all assessments are completed */}
-            {allCompleted && (
-              <div className="bg-[#0D5C5C] rounded-xl p-6">
-                <div className="text-center">
-                  <h3 className="font-semibold text-white text-lg mb-2">All assessments completed!</h3>
-                  <p className="text-sm text-white/70 mb-4">
-                    View your comprehensive results and personalized development plan.
-                  </p>
-                  <button 
-                    onClick={() => router.push('/dashboard/results')}
-                    className="px-6 py-2 text-sm font-medium rounded-lg bg-[#D4A84B] text-white hover:bg-[#c49a42] transition-colors"
-                  >
-                    View results
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </main>
