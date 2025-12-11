@@ -32,9 +32,11 @@ const spinnerVariants = cva(
   }
 );
 
-export interface SpinnerProps
-  extends HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof spinnerVariants> {
+export interface SpinnerProps extends HTMLAttributes<HTMLDivElement> {
+  /** Spinner size */
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  /** Spinner color */
+  color?: 'primary' | 'secondary' | 'white' | 'neutral';
   /** Accessible label for screen readers */
   label?: string;
 }
@@ -141,9 +143,9 @@ const skeletonVariants = cva(
   }
 );
 
-export interface SkeletonProps
-  extends HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof skeletonVariants> {
+export interface SkeletonProps extends HTMLAttributes<HTMLDivElement> {
+  /** Skeleton variant */
+  variant?: 'text' | 'title' | 'avatar' | 'button' | 'card' | 'image';
   /** Width of the skeleton */
   width?: string | number;
   /** Height of the skeleton */
