@@ -164,7 +164,7 @@ export default function ParticipantDetailPage() {
             </div>
             <div className="flex items-center gap-4">
               {participant.hasCoach ? (
-                <Badge variant="default" className="text-sm">Has Coach</Badge>
+                <Badge variant="success" className="text-sm">Has Coach</Badge>
               ) : (
                 <Badge variant="secondary" className="text-sm">No Coach</Badge>
               )}
@@ -308,7 +308,7 @@ export default function ParticipantDetailPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       {assessment.completedAt ? (
-                        <Badge variant="default">Completed</Badge>
+                        <Badge variant="completed">Completed</Badge>
                       ) : (
                         <Badge variant="secondary">In Progress</Badge>
                       )}
