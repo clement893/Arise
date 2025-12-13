@@ -4,7 +4,6 @@ import { Button, Card, CardContent, Badge, LoadingPage } from '@/components/ui';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Sidebar from '@/components/dashboard/Sidebar';
 import { ChevronDown, Loader2, Check, AlertCircle } from 'lucide-react';
 
 interface User {
@@ -231,12 +230,6 @@ export default function SettingsPage() {
     </button>
   );
 
-  const handleLogout = () => {
-    localStorage.removeItem('arise_user');
-    localStorage.removeItem('arise_access_token');
-    router.push('/');
-  };
-
   if (isLoading) {
     return <LoadingPage />;
   }
@@ -246,10 +239,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f0f5f5] flex">
-      <Sidebar user={user} activePage="settings" onLogout={handleLogout} />
-
-      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
+    <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
         <div className="max-w-3xl mx-auto">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
@@ -463,7 +453,6 @@ export default function SettingsPage() {
             </section>
           </Card>
         </div>
-      </main>
-    </div>
+    </main>
   );
 }

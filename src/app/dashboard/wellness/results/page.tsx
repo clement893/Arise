@@ -5,7 +5,6 @@ import { Button, Card, CardContent, Badge, Spinner, LoadingPage } from '@/compon
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Sidebar from '@/components/dashboard/Sidebar';
 import { ArrowLeft, Download, Share2 } from 'lucide-react';
 
 interface User {
@@ -80,12 +79,6 @@ export default function WellnessResultsPage() {
 
     setIsLoading(false);
   }, [router]);
-
-  const handleLogout = () => {
-    localStorage.removeItem('arise_user');
-    localStorage.removeItem('arise_signup_data');
-    router.push('/');
-  };
 
   if (isLoading || !user) {
     return (

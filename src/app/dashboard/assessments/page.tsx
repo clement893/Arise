@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Sidebar from '@/components/dashboard/Sidebar';
 import { Brain, Users, MessageSquare, Heart, Info, ExternalLink } from 'lucide-react';
 import { Button, Badge, Card, LoadingPage } from '@/components/ui';
 
@@ -226,12 +225,6 @@ export default function AssessmentsPage() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('arise_user');
-    localStorage.removeItem('arise_signup_data');
-    router.push('/');
-  };
-
   if (isLoading) {
     return <LoadingPage />;
   }
@@ -243,10 +236,7 @@ export default function AssessmentsPage() {
   const completedCount = assessments.filter(a => a.status === 'completed').length;
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      <Sidebar user={user} onLogout={handleLogout} />
-
-      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8">
+    <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8">
         <div className="max-w-4xl">
           {/* Header */}
           <div className="mb-8">
@@ -315,6 +305,5 @@ export default function AssessmentsPage() {
           </div>
         </div>
       </main>
-    </div>
   );
 }

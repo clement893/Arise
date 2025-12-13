@@ -4,7 +4,6 @@ import { Button, Card, CardContent, Badge, Spinner, LoadingPage } from '@/compon
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import Sidebar from '@/components/dashboard/Sidebar';
 import { Share2, MessageCircle, ChevronRight, Download, FileText, AlertCircle } from 'lucide-react';
 import { generateLeadershipReport } from '@/lib/generateReport';
 
@@ -111,12 +110,6 @@ export default function ResultsPage() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('arise_user');
-    localStorage.removeItem('arise_signup_data');
-    router.push('/');
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-primary-500 flex items-center justify-center">
@@ -166,10 +159,7 @@ export default function ResultsPage() {
   const mbtiData = hasMBTI ? assessmentResults.mbti : null;
 
   return (
-    <div className="min-h-screen bg-[#f0f5f5] flex">
-      <Sidebar user={user} onLogout={handleLogout} />
-
-      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
+    <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
           <div>

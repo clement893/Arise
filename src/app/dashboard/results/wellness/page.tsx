@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import Sidebar from '@/components/dashboard/Sidebar';
 import { Button, Card, LoadingPage } from '@/components/ui';
 import { ArrowLeft, Download, Share2, TrendingUp, TrendingDown } from 'lucide-react';
 import { authenticatedFetch } from '@/lib/token-refresh';
@@ -83,12 +82,6 @@ export default function WellnessDetailedResultsPage() {
     };
   }, [fetchWellnessResults, router]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('arise_user');
-    localStorage.removeItem('arise_signup_data');
-    router.push('/');
-  };
-
   const handleShare = async () => {
     if (navigator.share) {
       try {
@@ -135,9 +128,7 @@ export default function WellnessDetailedResultsPage() {
 
   if (!user || !wellnessResult) {
     return (
-      <div className="min-h-screen bg-[#f0f5f5] flex">
-        <Sidebar user={user || { id: 0, email: '' }} onLogout={handleLogout} />
-        <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto flex items-center justify-center">
+      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto flex items-center justify-center">
           <Card className="p-8 max-w-md">
             <h2 className="text-xl font-bold text-gray-900 mb-4">No Wellness Results Found</h2>
             <p className="text-gray-600 mb-6">You haven't completed the Wellness assessment yet.</p>
@@ -146,9 +137,8 @@ export default function WellnessDetailedResultsPage() {
             </Button>
           </Card>
         </main>
-      </div>
-    );
-  }
+  );
+}
 
   const scores = wellnessResult.scores || {};
   const overallScore = wellnessResult.overallScore || 0;
@@ -167,10 +157,7 @@ export default function WellnessDetailedResultsPage() {
   const overallLevel = getScoreLevel(overallScore);
 
   return (
-    <div className="min-h-screen bg-[#f0f5f5] flex">
-      <Sidebar user={user} onLogout={handleLogout} />
-
-      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
+    <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
           <div className="flex items-center gap-3 sm:gap-4">

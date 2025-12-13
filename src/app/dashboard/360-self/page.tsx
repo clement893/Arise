@@ -4,7 +4,6 @@ import { Button, Card, CardContent, Badge, Spinner, LoadingPage } from '@/compon
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Sidebar from '@/components/dashboard/Sidebar';
 import { ArrowLeft, ArrowRight, Clock, CheckCircle, CheckCircle2, Users, MessageSquare, Award, Lightbulb, Brain, Heart } from 'lucide-react';
 
 interface User {
@@ -185,12 +184,6 @@ export default function SelfAssessment360Page() {
     }
   }, [answers, currentQuestion, testState]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('arise_user');
-    localStorage.removeItem('arise_signup_data');
-    router.push('/');
-  };
-
   const handleStartTest = () => {
     setTestState('questions');
   };
@@ -303,10 +296,7 @@ export default function SelfAssessment360Page() {
   // Intro Screen
   if (testState === 'intro') {
     return (
-      <div className="min-h-screen bg-[#f0f5f5] flex">
-        <Sidebar user={user} activePage="assessments" onLogout={handleLogout} />
-        
-        <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
+      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
           <div className="max-w-3xl mx-auto">
             <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
               {/* Header */}
@@ -467,17 +457,13 @@ export default function SelfAssessment360Page() {
             </div>
           </div>
         </main>
-      </div>
-    );
-  }
+  );
+}
 
   // Questions Screen
   if (testState === 'questions') {
     return (
-      <div className="min-h-screen bg-[#f0f5f5] flex">
-        <Sidebar user={user} activePage="assessments" onLogout={handleLogout} />
-        
-        <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
+      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
           <div className="max-w-3xl mx-auto">
             {/* Progress Bar */}
             <div className="mb-4 sm:mb-6">
@@ -580,10 +566,7 @@ export default function SelfAssessment360Page() {
   const overallAverage = (scores.reduce((acc, s) => acc + parseFloat(s.average), 0) / scores.length).toFixed(1);
 
   return (
-    <div className="min-h-screen bg-[#f0f5f5] flex">
-      <Sidebar user={user} activePage="assessments" onLogout={handleLogout} />
-      
-      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
+    <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
         <div className="max-w-3xl mx-auto">
           {/* Congratulations Banner */}
           <div className="bg-neutral-800 rounded-xl p-8 text-center mb-6">

@@ -4,7 +4,6 @@ import { Button, Card, CardContent, Badge, LoadingPage } from '@/components/ui';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Sidebar from '@/components/dashboard/Sidebar';
 import { ArrowLeft, CheckCircle, Circle, BookOpen, Target, TrendingUp, Calendar, ChevronRight, ExternalLink, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
 import { recommendedBooks } from '@/lib/books';
@@ -57,12 +56,6 @@ export default function DevelopmentPlanPage() {
     } catch (error) {
       console.error('Failed to fetch assessment results:', error);
     }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('arise_user');
-    localStorage.removeItem('arise_signup_data');
-    router.push('/');
   };
 
   if (isLoading || !user) {
@@ -160,10 +153,7 @@ export default function DevelopmentPlanPage() {
   const keyUpdates = buildKeyUpdates();
 
   return (
-    <div className="min-h-screen bg-[#f0f5f5] flex">
-      <Sidebar user={user} onLogout={handleLogout} />
-      
-      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
+    <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
@@ -377,6 +367,5 @@ export default function DevelopmentPlanPage() {
           </div>
         </div>
       </main>
-    </div>
   );
 }

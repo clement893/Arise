@@ -4,7 +4,6 @@ import { Button, Card, CardContent, Badge, Spinner, LoadingPage } from '@/compon
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Sidebar from '@/components/dashboard/Sidebar';
 import { ArrowLeft, Download, Share2, ChevronRight } from 'lucide-react';
 
 interface User {
@@ -33,12 +32,6 @@ export default function WellnessBoardPage() {
     }
     setLoading(false);
   }, [router]);
-
-  const handleLogout = () => {
-    localStorage.removeItem('arise_user');
-    localStorage.removeItem('arise_signup_data');
-    router.push('/');
-  };
 
   if (loading) {
     return (
@@ -91,10 +84,7 @@ export default function WellnessBoardPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#f0f5f5] flex">
-      <Sidebar user={user} onLogout={handleLogout} />
-
-      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
+    <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           <button 
@@ -350,6 +340,5 @@ export default function WellnessBoardPage() {
           </button>
         </div>
       </main>
-    </div>
   );
 }

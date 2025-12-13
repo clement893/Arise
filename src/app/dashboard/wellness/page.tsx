@@ -5,7 +5,6 @@ import { Button, Card, CardContent, Badge, Spinner, LoadingPage } from '@/compon
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Sidebar from '@/components/dashboard/Sidebar';
 import { ArrowLeft, ArrowRight, Clock, CheckCircle, CheckCircle2 } from 'lucide-react';
 
 interface User {
@@ -186,12 +185,6 @@ export default function WellnessTestPage() {
     }
   }, [answers, currentQuestion, testState]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('arise_user');
-    localStorage.removeItem('arise_signup_data');
-    router.push('/');
-  };
-
   const handleStartTest = () => {
     setTestState('questions');
   };
@@ -305,10 +298,7 @@ export default function WellnessTestPage() {
   // Intro Screen
   if (testState === 'intro') {
     return (
-      <div className="min-h-screen bg-[#f0f5f5] flex">
-        <Sidebar user={user} activePage="assessments" onLogout={handleLogout} />
-        
-        <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
+      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
           <div className="max-w-3xl mx-auto">
             <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
               {/* Header */}
@@ -437,17 +427,13 @@ export default function WellnessTestPage() {
             </div>
           </div>
         </main>
-      </div>
-    );
-  }
+  );
+}
 
   // Questions Screen
   if (testState === 'questions') {
     return (
-      <div className="min-h-screen bg-[#f0f5f5] flex">
-        <Sidebar user={user} activePage="assessments" onLogout={handleLogout} />
-        
-        <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
+      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
           <div className="max-w-3xl mx-auto">
             {/* Progress Bar */}
             <div className="mb-4 sm:mb-6">
@@ -553,10 +539,7 @@ export default function WellnessTestPage() {
   const overallScore = Math.round(scores.reduce((acc, s) => acc + s.score, 0) / scores.length);
 
   return (
-    <div className="min-h-screen bg-[#f0f5f5] flex">
-      <Sidebar user={user} activePage="assessments" onLogout={handleLogout} />
-      
-      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
+    <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
         <div className="max-w-3xl mx-auto">
           {/* Congratulations Banner */}
           <div className="bg-neutral-800 rounded-xl p-8 text-center mb-6">

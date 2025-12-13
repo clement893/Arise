@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Sidebar from '@/components/dashboard/Sidebar';
 import { ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { Button, Card, LoadingPage } from '@/components/ui';
 
@@ -205,12 +204,6 @@ export default function TKITestPage() {
     }
   }, [answers, currentQuestion, currentStep]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('arise_user');
-    localStorage.removeItem('arise_signup_data');
-    router.push('/');
-  };
-
   const handleAnswer = (choice: 'A' | 'B') => {
     setAnswers(prev => ({ ...prev, [currentQuestion]: choice }));
   };
@@ -312,10 +305,7 @@ export default function TKITestPage() {
   const dominantMode = getDominantMode(scores);
 
   return (
-    <div className="min-h-screen bg-[#f0f5f5] flex">
-      <Sidebar user={user} onLogout={handleLogout} />
-
-      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
+    <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           <Button 
@@ -618,6 +608,5 @@ export default function TKITestPage() {
           </div>
         )}
       </main>
-    </div>
   );
 }

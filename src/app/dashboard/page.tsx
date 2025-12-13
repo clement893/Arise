@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Sidebar from '@/components/dashboard/Sidebar';
 import FeedbackBanner from '@/components/dashboard/FeedbackBanner';
 import ProgressCard from '@/components/dashboard/ProgressCard';
 import EvaluationCard from '@/components/dashboard/EvaluationCard';
@@ -58,13 +57,11 @@ export default function DashboardPage() {
         setUser(userData);
         fetchAssessments(userData.id);
       } catch {
-        router.push('/signup');
+        // User will be handled by layout
       }
-    } else {
-      router.push('/signup');
     }
     setLoading(false);
-  }, [router]);
+  }, []);
 
   const fetchAssessments = async (userId: number) => {
     try {
@@ -83,11 +80,6 @@ export default function DashboardPage() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('arise_user');
-    localStorage.removeItem('arise_signup_data');
-    router.push('/');
-  };
 
   if (loading) {
     return <LoadingPage />;
@@ -140,10 +132,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f0f5f5] flex">
-      <Sidebar user={user} onLogout={handleLogout} />
-
-      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
+    <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
         {/* Welcome Header */}
         <div className="mb-4 sm:mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
@@ -226,7 +215,6 @@ export default function DashboardPage() {
 
         {/* Coaching CTA */}
         <CoachingCTA />
-      </main>
-    </div>
+    </main>
   );
 }
