@@ -10,6 +10,7 @@ interface User {
   lastName: string;
   email: string;
   role: string;
+  userType?: string;
 }
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -33,19 +34,35 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           return;
         }
 
-        // Verify with API
-        const response = await fetch('/api/auth/me');
-        if (response.ok) {
-          const data = await response.json();
-          if (data.user.role !== 'admin') {
-            router.push('/dashboard');
+        // Verify with API and get full user data including userType
+        const accessToken = localStorage.getItem('arise_access_token');
+        if (accessToken) {
+          const { authenticatedFetch } = await import('@/lib/token-refresh');
+          const response = await authenticatedFetch('/api/user/profile');
+          if (response.ok) {
+            const data = await response.json();
+            const fullUser = {
+              ...data.user,
+              role: parsedUser?.role || 'admin', // Keep role from localStorage
+            };
+            if (fullUser.role !== 'admin') {
+              router.push('/dashboard');
+              return;
+            }
+            setUser(fullUser);
+            localStorage.setItem('arise_user', JSON.stringify(fullUser));
+            setIsLoading(false);
             return;
           }
-          setUser(data.user);
-          localStorage.setItem('arise_user', JSON.stringify(data.user));
-        } else {
-          router.push('/login');
         }
+        
+        // Fallback: use stored user if API fails
+        if (parsedUser) {
+          setUser(parsedUser);
+          setIsLoading(false);
+          return;
+        }
+        router.push('/login');
       } catch (error) {
         console.error('Auth check error:', error);
         router.push('/login');

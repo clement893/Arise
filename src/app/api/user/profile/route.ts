@@ -1,17 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getCurrentUser, unauthorizedResponse } from '@/lib/auth';
 
 // GET - Récupérer le profil utilisateur
 export async function GET(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id');
+    const user = await getCurrentUser(request);
     
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID required' },
-        { status: 401 }
-      );
+    if (!user) {
+      return unauthorizedResponse('Authentication required');
     }
+
+    const userId = user.id;
 
     const user = await prisma.user.findUnique({
       where: { id: parseInt(userId) },
@@ -58,14 +58,13 @@ export async function GET(request: NextRequest) {
 // PUT - Mettre à jour le profil utilisateur
 export async function PUT(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id');
+    const user = await getCurrentUser(request);
     
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID required' },
-        { status: 401 }
-      );
+    if (!user) {
+      return unauthorizedResponse('Authentication required');
     }
+
+    const userId = user.id;
 
     const body = await request.json();
     const {
@@ -155,14 +154,13 @@ export async function PUT(request: NextRequest) {
 // DELETE - Supprimer le compte utilisateur
 export async function DELETE(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id');
+    const user = await getCurrentUser(request);
     
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID required' },
-        { status: 401 }
-      );
+    if (!user) {
+      return unauthorizedResponse('Authentication required');
     }
+
+    const userId = user.id;
 
     await prisma.user.delete({
       where: { id: parseInt(userId) },

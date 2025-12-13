@@ -2,12 +2,15 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, ClipboardList, LogOut } from 'lucide-react';
+import { LayoutDashboard, ClipboardList, LogOut, User, Users } from 'lucide-react';
 
 interface AdminSidebarProps {
   user: {
     firstName: string;
     lastName: string;
+    email: string;
+    role?: string;
+    userType?: string;
   };
 }
 
@@ -45,7 +48,7 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
 
       {/* Admin Info */}
       <div className="p-4 border-b border-gray-200">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 mb-3">
           <div className="w-10 h-10 rounded-full bg-[#0D5C5C] flex items-center justify-center text-white font-semibold text-sm">
             {getInitials()}
           </div>
@@ -54,6 +57,28 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
             <p className="text-xs text-gray-500">Admin</p>
           </div>
         </div>
+        
+        {/* Switch Profile Button */}
+        {(user.userType === 'coach' || user.userType === 'individual') && (
+          <button
+            onClick={() => {
+              router.push('/dashboard');
+            }}
+            className="w-full flex items-center gap-2 px-3 py-2 bg-primary-500/10 hover:bg-primary-500/20 rounded-lg transition-colors text-sm text-primary-700 font-medium"
+          >
+            {user.userType === 'coach' ? (
+              <>
+                <Users className="w-4 h-4" />
+                <span>Switch to Coach Profile</span>
+              </>
+            ) : (
+              <>
+                <User className="w-4 h-4" />
+                <span>Switch to Personal Profile</span>
+              </>
+            )}
+          </button>
+        )}
       </div>
 
       {/* Navigation */}
