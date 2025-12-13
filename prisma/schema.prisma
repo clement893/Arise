@@ -239,3 +239,32 @@ model AssessmentQuestion {
   
   @@index([assessmentType])
 }
+
+// Products/Plans (Admin manageable)
+model Product {
+  id              Int              @id @default(autoincrement())
+  name            String           @unique
+  planType        PlanType         @unique
+  description     String?
+  
+  // Pricing
+  monthlyPrice    Int              @default(0) // Price in cents
+  annualPrice     Int              @default(0) // Price in cents
+  currency        String           @default("USD")
+  
+  // Features
+  features        Json?            // Store features as JSON array
+  
+  // Status
+  isActive        Boolean          @default(true)
+  isPopular       Boolean          @default(false)
+  
+  // Display order
+  displayOrder    Int              @default(0)
+  
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  
+  @@index([planType])
+  @@index([isActive])
+}

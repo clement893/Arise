@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, ClipboardList, LogOut, User, Users } from 'lucide-react';
+import { LayoutDashboard, ClipboardList, LogOut, User, Users, Package } from 'lucide-react';
 
 interface AdminSidebarProps {
   user: {
@@ -21,6 +21,7 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
   const navItems = [
     { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/admin/assessments', label: 'Assessments', icon: ClipboardList },
+    { href: '/admin/products', label: 'Products & Pricing', icon: Package },
   ];
 
   const handleLogout = async () => {
