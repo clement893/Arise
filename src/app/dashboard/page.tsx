@@ -92,7 +92,14 @@ export default function DashboardPage() {
   const getAssessmentStatus = (type: 'tki' | 'wellness' | 'self_360' | 'mbti') => {
     if (!assessmentSummary) return 'not_started';
     const result = assessmentSummary[type];
-    return result ? 'completed' : 'not_started';
+    // Check if assessment exists and has completedAt or dominantResult/overallScore to ensure it's actually completed
+    if (!result) return 'not_started';
+    // For TKI, check dominantResult; for wellness check overallScore; for others check dominantResult
+    const isCompleted = result.completedAt || 
+      (type === 'tki' && result.dominantResult) ||
+      (type === 'wellness' && result.overallScore !== undefined) ||
+      (type !== 'wellness' && result.dominantResult);
+    return isCompleted ? 'completed' : 'not_started';
   };
 
   const getProgressPercentage = (type: 'tki' | 'wellness' | 'self_360' | 'mbti') => {
