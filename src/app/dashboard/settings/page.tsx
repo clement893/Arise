@@ -231,12 +231,14 @@ export default function SettingsPage() {
     </button>
   );
 
+  const handleLogout = () => {
+    localStorage.removeItem('arise_user');
+    localStorage.removeItem('arise_access_token');
+    router.push('/');
+  };
+
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
-      </div>
-    );
+    return <LoadingPage />;
   }
 
   if (!user) {
@@ -244,63 +246,48 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-primary-500">
-      {/* Top Bar */}
-      <div className="bg-primary-500 text-white px-6 py-3">
-        <span className="text-sm font-medium tracking-wider">SETTINGS</span>
-      </div>
+    <div className="min-h-screen bg-[#f0f5f5] flex">
+      <Sidebar user={user} activePage="settings" onLogout={handleLogout} />
 
-      <div className="flex">
-        {/* Sidebar */}
-        <Sidebar user={user} activePage="settings" />
-
-        {/* Main Content */}
-        <main className="flex-1 lg:ml-64 p-4 sm:p-6 lg:p-8 bg-primary-500/30 min-h-[calc(100vh-48px)]">
-          <div className="max-w-3xl mx-auto">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h1 className="text-2xl font-bold text-primary-500">Settings</h1>
-                <p className="text-gray-600">Manage your account settings</p>
-              </div>
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="px-6 py-2 bg-primary-500 text-white rounded-lg font-medium hover:bg-primary-600 transition-colors disabled:opacity-50 flex items-center gap-2"
-                >
-                  {isSaving ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Saving...
-                    </>
-                  ) : saveStatus === 'success' ? (
-                    <>
-                      <Check className="w-4 h-4" />
-                      Saved!
-                    </>
-                  ) : saveStatus === 'error' ? (
-                    <>
-                      <AlertCircle className="w-4 h-4" />
-                      Error
-                    </>
-                  ) : (
-                    'Save'
-                  )}
-                </button>
-                <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden">
-                  <span className="text-primary-500 font-semibold text-sm">
-                    {user.firstName?.charAt(0).toUpperCase() || 'U'}
-                  </span>
-                </div>
-              </div>
+      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
+        <div className="max-w-3xl mx-auto">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Settings</h1>
+              <p className="text-sm sm:text-base text-gray-600">Manage your account settings and preferences</p>
             </div>
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="px-4 sm:px-6 py-2 bg-primary-500 text-white rounded-lg font-medium hover:bg-primary-600 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 w-full sm:w-auto"
+            >
+              {isSaving ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Saving...
+                </>
+              ) : saveStatus === 'success' ? (
+                <>
+                  <Check className="w-4 h-4" />
+                  Saved!
+                </>
+              ) : saveStatus === 'error' ? (
+                <>
+                  <AlertCircle className="w-4 h-4" />
+                  Error
+                </>
+              ) : (
+                'Save Changes'
+              )}
+            </button>
+          </div>
 
-            {/* Settings Card */}
-            <div className="bg-white rounded-xl shadow-sm p-8">
-              {/* Notifications */}
-              <section className="mb-8">
-                <h2 className="text-primary-500 font-semibold mb-4">Notifications</h2>
+          {/* Settings Card */}
+          <Card className="p-6 sm:p-8">
+            {/* Notifications */}
+            <section className="mb-6 sm:mb-8">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Notifications</h2>
                 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
@@ -327,9 +314,9 @@ export default function SettingsPage() {
                 </div>
               </section>
 
-              {/* Appearance */}
-              <section className="mb-8">
-                <h2 className="text-primary-500 font-semibold mb-4">Appearance</h2>
+            {/* Appearance */}
+            <section className="mb-6 sm:mb-8">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Appearance</h2>
                 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
@@ -367,9 +354,9 @@ export default function SettingsPage() {
                 </div>
               </section>
 
-              {/* Privacy */}
-              <section className="mb-8">
-                <h2 className="text-primary-500 font-semibold mb-4">Privacy</h2>
+            {/* Privacy */}
+            <section className="mb-6 sm:mb-8">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Privacy</h2>
                 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
@@ -396,9 +383,9 @@ export default function SettingsPage() {
                 </div>
               </section>
 
-              {/* Security */}
-              <section className="mb-8">
-                <h2 className="text-primary-500 font-semibold mb-4">Security</h2>
+            {/* Security */}
+            <section className="mb-6 sm:mb-8">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Security</h2>
                 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
@@ -416,34 +403,33 @@ export default function SettingsPage() {
                 </div>
               </section>
 
-              {/* Danger Zone */}
-              <section className="pt-6 border-t border-gray-200">
-                <h2 className="text-red-600 font-semibold mb-4">Danger Zone</h2>
-                <div className="flex items-center justify-between p-4 border border-red-200 rounded-lg bg-red-50">
-                  <div>
-                    <h3 className="font-medium text-gray-900">Delete Account</h3>
-                    <p className="text-sm text-gray-500">Permanently delete your account and all data</p>
-                  </div>
-                  <button
-                    onClick={handleDeleteAccount}
-                    disabled={isDeleting}
-                    className="px-6 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-2"
-                  >
-                    {isDeleting ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        Deleting...
-                      </>
-                    ) : (
-                      'Delete account'
-                    )}
-                  </button>
+            {/* Danger Zone */}
+            <section className="pt-6 border-t border-gray-200">
+              <h2 className="text-lg sm:text-xl font-semibold text-red-600 mb-4">Danger Zone</h2>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-6 border border-red-200 rounded-lg bg-red-50">
+                <div>
+                  <h3 className="font-medium text-gray-900 mb-1">Delete Account</h3>
+                  <p className="text-sm text-gray-600">Permanently delete your account and all data</p>
                 </div>
-              </section>
-            </div>
-          </div>
-        </main>
-      </div>
+                <button
+                  onClick={handleDeleteAccount}
+                  disabled={isDeleting}
+                  className="px-4 sm:px-6 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 w-full sm:w-auto"
+                >
+                  {isDeleting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Deleting...
+                    </>
+                  ) : (
+                    'Delete Account'
+                  )}
+                </button>
+              </div>
+            </section>
+          </Card>
+        </div>
+      </main>
     </div>
   );
 }
