@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
       const progress = await prisma.assessmentProgress.findUnique({
         where: {
           userId_assessmentType: {
-            userId: parseInt(userId),
+            userId: userId,
             assessmentType: assessmentType as any,
           },
         },
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
 
     // Otherwise, get all in-progress assessments for the user
     const allProgress = await prisma.assessmentProgress.findMany({
-      where: { userId: parseInt(userId) },
+      where: { userId: userId },
       orderBy: { lastUpdatedAt: 'desc' },
     });
 
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
     const progress = await prisma.assessmentProgress.upsert({
       where: {
         userId_assessmentType: {
-          userId: parseInt(userId),
+          userId: userId,
           assessmentType: assessmentType,
         },
       },
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
         totalQuestions: totalQuestions ?? 30,
       },
       create: {
-        userId: parseInt(userId),
+        userId: userId,
         assessmentType,
         currentQuestion: currentQuestion ?? 0,
         answers: answers ?? {},
@@ -139,7 +139,7 @@ export async function DELETE(request: NextRequest) {
     await prisma.assessmentProgress.delete({
       where: {
         userId_assessmentType: {
-          userId: parseInt(userId),
+          userId: userId,
           assessmentType: assessmentType as any,
         },
       },

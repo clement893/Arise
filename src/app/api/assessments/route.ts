@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     const userId = user.id;
     const assessmentType = request.nextUrl.searchParams.get('type');
 
-    const whereClause: any = { userId: parseInt(userId) };
+    const whereClause: any = { userId: userId };
     if (assessmentType) {
       whereClause.assessmentType = assessmentType;
     }
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
     const assessment = await prisma.assessmentResult.upsert({
       where: {
         userId_assessmentType: {
-          userId: parseInt(userId),
+          userId: userId,
           assessmentType: assessmentType,
         },
       },
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
         completedAt: new Date(),
       },
       create: {
-        userId: parseInt(userId),
+        userId: userId,
         assessmentType,
         answers,
         scores,
