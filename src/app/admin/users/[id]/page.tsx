@@ -387,7 +387,7 @@ export default function UserDetailPage() {
                       >
                         <option value="starter">Starter</option>
                         <option value="individual">Individual</option>
-                        {formData.role === 'coach' && <option value="coach">Coach</option>}
+                        {formData.roles.includes('coach') && <option value="coach">Coach</option>}
                         <option value="professional">Professional</option>
                         <option value="enterprise">Enterprise</option>
                         <option value="revelation">Revelation</option>
