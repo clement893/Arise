@@ -22,6 +22,17 @@ export async function GET(request: NextRequest) {
 
     const assessments = await prisma.assessmentResult.findMany({
       where: whereClause,
+      select: {
+        id: true,
+        userId: true,
+        assessmentType: true,
+        answers: true,
+        scores: true,
+        dominantResult: true,
+        overallScore: true,
+        completedAt: true,
+        createdAt: true,
+      },
       orderBy: { completedAt: 'desc' },
     });
 
@@ -36,7 +47,9 @@ export async function GET(request: NextRequest) {
       overallProgress: Math.round((assessments.length / 4) * 100),
     };
 
-    console.log('GET /api/assessments - User:', userId, 'Found assessments:', assessments.length, 'Summary:', summary);
+    console.log('GET /api/assessments - User:', userId, 'Found assessments:', assessments.length);
+    console.log('GET /api/assessments - TKI assessment:', assessments.find(a => a.assessmentType === 'tki'));
+    console.log('GET /api/assessments - Summary TKI:', summary.tki);
     return NextResponse.json({ assessments, summary });
   } catch (error) {
     console.error('Get assessments error:', error);
