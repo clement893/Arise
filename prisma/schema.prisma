@@ -28,7 +28,8 @@ model User {
   
   // User type and plan
   userType      UserType     @default(individual)
-  role          UserRole     @default(participant)
+  role          UserRole     @default(participant) // Legacy field, kept for backward compatibility
+  roles         Json?        @default(["participant"]) // Array of roles: ["admin", "coach", "participant"]
   plan          PlanType     @default(starter)
   billingCycle  BillingCycle @default(monthly)
   

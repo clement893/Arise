@@ -85,7 +85,7 @@ export async function PUT(request: NextRequest) {
       return forbiddenResponse('Admin access required');
     }
 
-    const { userId, action, userType, plan } = await request.json();
+    const { userId, action, userType, plan, roles } = await request.json();
 
     if (!userId || !action) {
       return NextResponse.json(
@@ -94,38 +94,122 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Prevent admin from modifying their own role
-    if (userId === adminUser.id && (action === 'make_participant' || action === 'delete')) {
+    // Prevent admin from removing their own admin role
+    if (userId === adminUser.id && (action === 'make_participant' || action === 'remove_admin')) {
       return NextResponse.json(
-        { error: 'Cannot modify your own admin account' },
+        { error: 'Cannot remove your own admin permissions' },
         { status: 400 }
       );
     }
 
+    // Get current user to manage roles array
+    const currentUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { roles: true, role: true }
+    });
+
+    let currentRoles: string[] = [];
+    if (currentUser?.roles) {
+      currentRoles = Array.isArray(currentUser.roles) 
+        ? currentUser.roles 
+        : JSON.parse(currentUser.roles as string);
+    } else if (currentUser?.role) {
+      currentRoles = [currentUser.role];
+    }
+
     switch (action) {
       case 'make_admin':
+        if (!currentRoles.includes('admin')) {
+          currentRoles.push('admin');
+        }
         await prisma.user.update({
           where: { id: userId },
-          data: { role: 'admin' }
+          data: { 
+            role: 'admin', // Keep legacy field
+            roles: currentRoles
+          }
+        });
+        break;
+
+      case 'remove_admin':
+        currentRoles = currentRoles.filter(r => r !== 'admin');
+        await prisma.user.update({
+          where: { id: userId },
+          data: { 
+            role: currentRoles[0] || 'participant', // Fallback to first role
+            roles: currentRoles
+          }
         });
         break;
 
       case 'make_participant':
+        if (!currentRoles.includes('participant')) {
+          currentRoles.push('participant');
+        }
         await prisma.user.update({
           where: { id: userId },
-          data: { role: 'participant' }
+          data: { 
+            role: currentRoles.includes('admin') ? 'admin' : 'participant',
+            roles: currentRoles
+          }
+        });
+        break;
+
+      case 'remove_participant':
+        currentRoles = currentRoles.filter(r => r !== 'participant');
+        await prisma.user.update({
+          where: { id: userId },
+          data: { 
+            role: currentRoles[0] || 'participant',
+            roles: currentRoles
+          }
         });
         break;
 
       case 'make_coach':
+        if (!currentRoles.includes('coach')) {
+          currentRoles.push('coach');
+        }
         await prisma.user.update({
           where: { id: userId },
           data: { 
-            role: 'coach',
+            role: currentRoles.includes('admin') ? 'admin' : 'coach',
+            roles: currentRoles,
             userType: userType || 'coach',
             plan: plan || 'coach'
           }
         });
+        break;
+
+      case 'remove_coach':
+        currentRoles = currentRoles.filter(r => r !== 'coach');
+        await prisma.user.update({
+          where: { id: userId },
+          data: { 
+            role: currentRoles[0] || 'participant',
+            roles: currentRoles
+          }
+        });
+        break;
+
+      case 'set_roles':
+        // Set roles directly from array
+        if (roles && Array.isArray(roles)) {
+          await prisma.user.update({
+            where: { id: userId },
+            data: { 
+              role: roles.includes('admin') ? 'admin' : roles[0] || 'participant',
+              roles: roles,
+              userType: userType || undefined,
+              plan: plan || undefined
+            }
+          });
+        } else {
+          return NextResponse.json(
+            { error: 'Invalid roles array' },
+            { status: 400 }
+          );
+        }
         break;
 
       case 'delete':

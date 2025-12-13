@@ -38,6 +38,7 @@ export async function GET(
         phone: true,
         timezone: true,
         role: true,
+        roles: true,
         userType: true,
         plan: true,
         billingCycle: true,
@@ -55,7 +56,17 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({ user });
+    // Parse roles array
+    const roles = user.roles 
+      ? (Array.isArray(user.roles) ? user.roles : JSON.parse(user.roles as string))
+      : [user.role];
+
+    return NextResponse.json({ 
+      user: {
+        ...user,
+        roles
+      }
+    });
   } catch (error) {
     console.error('Error fetching user:', error);
     return NextResponse.json(

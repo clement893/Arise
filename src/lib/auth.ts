@@ -5,7 +5,8 @@ import { extractTokenFromHeader, verifyAccessToken } from './jwt';
 export interface AuthUser {
   id: number;
   email: string;
-  role: string;
+  role: string; // Legacy, kept for backward compatibility
+  roles?: string[]; // Array of roles
   firstName: string | null;
   lastName: string | null;
 }
@@ -29,6 +30,7 @@ export async function getCurrentUser(request: NextRequest): Promise<AuthUser | n
             id: true,
             email: true,
             role: true,
+            roles: true,
             firstName: true,
             lastName: true,
             isActive: true,
@@ -37,7 +39,10 @@ export async function getCurrentUser(request: NextRequest): Promise<AuthUser | n
 
         // Check if user exists and is active
         if (user && user.isActive) {
-          return user;
+          return {
+            ...user,
+            roles: user.roles ? (Array.isArray(user.roles) ? user.roles : JSON.parse(user.roles as string)) : [user.role]
+          };
         }
       }
     }
@@ -63,6 +68,7 @@ export async function getCurrentUser(request: NextRequest): Promise<AuthUser | n
         id: true,
         email: true,
         role: true,
+        roles: true,
         firstName: true,
         lastName: true,
         isActive: true,
@@ -74,16 +80,26 @@ export async function getCurrentUser(request: NextRequest): Promise<AuthUser | n
       return null;
     }
 
-    // Verify role hasn't changed (security check)
-    if (user.role !== payload.role) {
-      return null;
-    }
+    // Parse roles array
+    const roles = user.roles ? (Array.isArray(user.roles) ? user.roles : JSON.parse(user.roles as string)) : [user.role];
 
-    return user;
+    return {
+      ...user,
+      roles
+    };
   } catch (error) {
     console.error('Error getting current user:', error);
     return null;
   }
+}
+
+/**
+ * Check if the current user has a specific role
+ */
+export function hasRole(user: AuthUser | null, role: string): boolean {
+  if (!user) return false;
+  const roles = user.roles || [user.role];
+  return roles.includes(role);
 }
 
 /**
@@ -93,7 +109,7 @@ export async function getCurrentUser(request: NextRequest): Promise<AuthUser | n
 export async function requireAdmin(request: NextRequest): Promise<AuthUser | null> {
   const user = await getCurrentUser(request);
   
-  if (!user || user.role !== 'admin') {
+  if (!user || !hasRole(user, 'admin')) {
     return null;
   }
 
@@ -107,7 +123,7 @@ export async function requireAdmin(request: NextRequest): Promise<AuthUser | nul
 export async function requireCoach(request: NextRequest): Promise<AuthUser | null> {
   const user = await getCurrentUser(request);
   
-  if (!user || (user.role !== 'coach' && user.role !== 'admin')) {
+  if (!user || (!hasRole(user, 'coach') && !hasRole(user, 'admin'))) {
     return null;
   }
 

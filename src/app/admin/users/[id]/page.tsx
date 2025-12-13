@@ -29,6 +29,7 @@ interface UserDetails {
   firstName: string | null;
   lastName: string | null;
   role: string;
+  roles?: string[];
   userType: string;
   plan: string;
   isActive: boolean;
@@ -51,7 +52,7 @@ export default function UserDetailPage() {
   const [success, setSuccess] = useState(false);
   
   const [formData, setFormData] = useState({
-    role: 'participant' as 'coach' | 'participant' | 'admin',
+    roles: ['participant'] as string[],
     userType: 'individual' as 'coach' | 'individual' | 'business',
     plan: 'starter' as 'starter' | 'individual' | 'coach' | 'professional' | 'enterprise' | 'revelation' | 'coaching',
     isActive: true,
@@ -79,8 +80,9 @@ export default function UserDetailPage() {
       setUser(data.user);
       
       // Set form data from user
+      const roles = data.user.roles || [data.user.role || 'participant'];
       setFormData({
-        role: data.user.role || 'participant',
+        roles: Array.isArray(roles) ? roles : [roles],
         userType: data.user.userType || 'individual',
         plan: data.user.plan || 'starter',
         isActive: data.user.isActive !== false,
@@ -98,10 +100,11 @@ export default function UserDetailPage() {
     setIsSaving(true);
 
     try {
-      // Update user role using PUT endpoint
+      // Update user roles using PUT endpoint with set_roles action
       const response = await api.put('/api/admin/users', {
         userId: userId,
-        action: `make_${formData.role}`,
+        action: 'set_roles',
+        roles: formData.roles,
         userType: formData.userType,
         plan: formData.plan,
       });
@@ -124,12 +127,27 @@ export default function UserDetailPage() {
     }
   };
 
-  const handleRoleChange = (role: 'coach' | 'participant' | 'admin') => {
+  const handleRoleToggle = (role: 'coach' | 'participant' | 'admin') => {
+    const currentRoles = formData.roles || [];
+    let newRoles: string[];
+    
+    if (currentRoles.includes(role)) {
+      // Remove role if already present
+      newRoles = currentRoles.filter(r => r !== role);
+      // Ensure at least one role remains
+      if (newRoles.length === 0) {
+        newRoles = ['participant'];
+      }
+    } else {
+      // Add role
+      newRoles = [...currentRoles, role];
+    }
+    
     setFormData({
       ...formData,
-      role,
-      userType: role === 'coach' ? 'coach' : formData.userType,
-      plan: role === 'coach' ? 'coach' : formData.plan,
+      roles: newRoles,
+      userType: newRoles.includes('coach') ? 'coach' : formData.userType,
+      plan: newRoles.includes('coach') && formData.plan === 'starter' ? 'coach' : formData.plan,
     });
   };
 
@@ -276,63 +294,88 @@ export default function UserDetailPage() {
                 </h2>
                 
                 <div className="space-y-6">
-                  {/* Role Selection */}
+                  {/* Role Selection - Multiple roles */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-3">
-                      User Role *
+                      User Roles * (Multiple selection allowed)
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      <button
-                        type="button"
-                        onClick={() => handleRoleChange('coach')}
-                        className={`p-4 border-2 rounded-lg text-left transition-all ${
-                          formData.role === 'coach'
-                            ? 'border-primary-500 bg-primary-50'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        <div className="font-semibold text-gray-900">Coach</div>
-                        <div className="text-sm text-gray-600 mt-1">For coaches and consultants</div>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleRoleChange('participant')}
-                        className={`p-4 border-2 rounded-lg text-left transition-all ${
-                          formData.role === 'participant'
-                            ? 'border-primary-500 bg-primary-50'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        <div className="font-semibold text-gray-900">Participant</div>
-                        <div className="text-sm text-gray-600 mt-1">Regular user</div>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleRoleChange('admin')}
-                        className={`p-4 border-2 rounded-lg text-left transition-all ${
-                          formData.role === 'admin'
-                            ? 'border-primary-500 bg-primary-50'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        <div className="font-semibold text-gray-900">Admin</div>
-                        <div className="text-sm text-gray-600 mt-1">Administrator</div>
-                      </button>
+                      <label className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                        formData.roles.includes('coach')
+                          ? 'border-primary-500 bg-primary-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="checkbox"
+                            checked={formData.roles.includes('coach')}
+                            onChange={() => handleRoleToggle('coach')}
+                            className="w-4 h-4 text-primary-500 rounded focus:ring-primary-500"
+                          />
+                          <div>
+                            <div className="font-semibold text-gray-900">Coach</div>
+                            <div className="text-sm text-gray-600 mt-1">For coaches and consultants</div>
+                          </div>
+                        </div>
+                      </label>
+                      <label className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                        formData.roles.includes('participant')
+                          ? 'border-primary-500 bg-primary-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="checkbox"
+                            checked={formData.roles.includes('participant')}
+                            onChange={() => handleRoleToggle('participant')}
+                            className="w-4 h-4 text-primary-500 rounded focus:ring-primary-500"
+                          />
+                          <div>
+                            <div className="font-semibold text-gray-900">Participant</div>
+                            <div className="text-sm text-gray-600 mt-1">Regular user</div>
+                          </div>
+                        </div>
+                      </label>
+                      <label className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                        formData.roles.includes('admin')
+                          ? 'border-primary-500 bg-primary-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="checkbox"
+                            checked={formData.roles.includes('admin')}
+                            onChange={() => handleRoleToggle('admin')}
+                            className="w-4 h-4 text-primary-500 rounded focus:ring-primary-500"
+                          />
+                          <div>
+                            <div className="font-semibold text-gray-900">Admin</div>
+                            <div className="text-sm text-gray-600 mt-1">Administrator</div>
+                          </div>
+                        </div>
+                      </label>
                     </div>
                   </div>
 
-                  {/* Current Role Badge */}
+                  {/* Current Roles Badges */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Current Role
+                      Current Roles
                     </label>
-                    <Badge variant={formData.role === 'admin' ? 'admin' : formData.role === 'coach' ? 'coach' : 'participant'}>
-                      {user.role}
-                    </Badge>
+                    <div className="flex flex-wrap gap-2">
+                      {(user.roles || [user.role]).map((role: string) => (
+                        <Badge 
+                          key={role}
+                          variant={role === 'admin' ? 'admin' : role === 'coach' ? 'coach' : 'participant'}
+                        >
+                          {role}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Plan Selection */}
-                  {formData.role !== 'admin' && (
+                  {!formData.roles.includes('admin') && (
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Plan
@@ -355,14 +398,17 @@ export default function UserDetailPage() {
 
                   {/* Save Button */}
                   <div className="pt-4 border-t">
-                    <Button
-                      onClick={handleSave}
-                      leftIcon={<Save className="w-4 h-4" />}
-                      isLoading={isSaving}
-                      disabled={formData.role === user.role}
-                    >
-                      Update Permissions
-                    </Button>
+                      <Button
+                        onClick={handleSave}
+                        leftIcon={<Save className="w-4 h-4" />}
+                        isLoading={isSaving}
+                        disabled={
+                          JSON.stringify(formData.roles.sort()) === 
+                          JSON.stringify((user.roles || [user.role]).sort())
+                        }
+                      >
+                        Update Permissions
+                      </Button>
                   </div>
                 </div>
               </div>
