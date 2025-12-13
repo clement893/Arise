@@ -96,10 +96,13 @@ export default function CoachParticipantsPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
-  const handleAssignCoach = async (participantId: number, assign: boolean) => {
+  const handleAssignCoach = useCallback(async (participantId: number, assign: boolean) => {
     try {
       const response = await api.put(`/api/coach/participants/${participantId}`, {
         hasCoach: assign,
