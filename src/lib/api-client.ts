@@ -48,10 +48,10 @@ export async function apiRequest(
 ): Promise<Response> {
   const { skipAuth = false, headers = {}, ...restOptions } = options;
 
-  // Prepare headers
-  const requestHeaders: HeadersInit = {
+  // Prepare headers as Record<string, string>
+  const requestHeaders: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...headers,
+    ...(headers as Record<string, string>),
   };
 
   // Add authentication token if not skipped
