@@ -32,6 +32,7 @@ export async function GET(request: NextRequest) {
         employeeCount: true,
         userType: true,
         role: true,
+        roles: true,
         plan: true,
         billingCycle: true,
         createdAt: true,
@@ -46,7 +47,17 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ user });
+    // Parse roles array if it exists
+    const roles = user.roles 
+      ? (Array.isArray(user.roles) ? user.roles : JSON.parse(user.roles as string))
+      : [user.role];
+
+    return NextResponse.json({ 
+      user: {
+        ...user,
+        roles
+      }
+    });
   } catch (error) {
     console.error('Get profile error:', error);
     return NextResponse.json(
