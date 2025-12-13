@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/dashboard/Sidebar';
 import { ArrowLeft, CheckCircle, Circle, BookOpen, Target, TrendingUp, Calendar, ChevronRight, ExternalLink, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
+import { recommendedBooks } from '@/lib/books';
 
 interface User {
   id: number;
@@ -22,38 +23,6 @@ interface AssessmentResults {
   self_360?: { dominantResult: string; completedAt?: string };
   wellness?: { overallScore: number; completedAt?: string };
 }
-
-// Recommended books (these are static resources, not user data)
-const recommendedBooks = [
-  {
-    id: 1,
-    title: 'Dare to Lead',
-    author: 'Brené Brown',
-    image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=200&h=300&fit=crop',
-    category: 'Leadership',
-  },
-  {
-    id: 2,
-    title: 'Crucial Conversations',
-    author: 'Patterson, Grenny, et al.',
-    image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=200&h=300&fit=crop',
-    category: 'Communication',
-  },
-  {
-    id: 3,
-    title: 'The 7 Habits',
-    author: 'Stephen Covey',
-    image: 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=200&h=300&fit=crop',
-    category: 'Personal Growth',
-  },
-  {
-    id: 4,
-    title: 'Emotional Intelligence',
-    author: 'Daniel Goleman',
-    image: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=200&h=300&fit=crop',
-    category: 'Self-Awareness',
-  },
-];
 
 export default function DevelopmentPlanPage() {
   const router = useRouter();
@@ -264,15 +233,22 @@ export default function DevelopmentPlanPage() {
                     <BookOpen className="w-5 h-5 text-primary-500" />
                     Recommended Books
                   </h2>
-                  <button className="text-sm text-primary-500 hover:underline flex items-center gap-1">
+                  <button 
+                    onClick={() => router.push('/dashboard/development/books')}
+                    className="text-sm text-primary-500 hover:underline flex items-center gap-1"
+                  >
                     View all <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
 
                 <div className="grid grid-cols-4 gap-4">
-                  {recommendedBooks.map((book) => (
-                    <div key={book.id} className="group cursor-pointer">
-                      <div className="relative aspect-[2/3] rounded-lg overflow-hidden mb-2 shadow-md group-hover:shadow-lg transition-shadow">
+                  {recommendedBooks.slice(0, 4).map((book) => (
+                    <div 
+                      key={book.id} 
+                      className="group cursor-pointer"
+                      onClick={() => router.push('/dashboard/development/books')}
+                    >
+                      <div className="relative aspect-[2/3] rounded-lg overflow-hidden mb-2 shadow-md group-hover:shadow-lg transition-shadow bg-primary-500">
                         <Image
                           src={book.image}
                           alt={book.title}
