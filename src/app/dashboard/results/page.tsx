@@ -2,8 +2,8 @@
 
 import { Button, Card, CardContent, Badge, Spinner, LoadingPage } from '@/components/ui';
 
-import { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import { Share2, MessageCircle, ChevronRight, Download, FileText, AlertCircle } from 'lucide-react';
 import { generateLeadershipReport } from '@/lib/generateReport';
 
