@@ -72,15 +72,15 @@ export async function POST(request: NextRequest) {
 
     // Map userType to enum value
     const validUserTypes = ['individual', 'coach', 'business'] as const;
-    const mappedUserType = validUserTypes.includes(userType) ? userType : 'individual';
+    const mappedUserType = (userType && validUserTypes.includes(userType)) ? userType : 'individual';
 
     // Map plan to enum value
     const validPlans = ['starter', 'professional', 'enterprise'] as const;
-    const mappedPlan = validPlans.includes(plan) ? plan : 'starter';
+    const mappedPlan = (plan && validPlans.includes(plan)) ? plan : 'starter';
 
     // Map billingCycle to enum value
     const validBillingCycles = ['monthly', 'annual'] as const;
-    const mappedBillingCycle = validBillingCycles.includes(billingCycle) ? billingCycle : 'monthly';
+    const mappedBillingCycle = (billingCycle && validBillingCycles.includes(billingCycle)) ? billingCycle : 'monthly';
 
     // Create user
     const user = await prisma.user.create({
