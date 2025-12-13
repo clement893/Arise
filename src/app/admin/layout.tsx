@@ -23,36 +23,38 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       try {
         // Check localStorage first
         const storedUser = localStorage.getItem('arise_user');
+        let parsedUser = null;
         if (storedUser) {
-          const parsedUser = JSON.parse(storedUser);
+          parsedUser = JSON.parse(storedUser);
           if (parsedUser.role !== 'admin') {
             router.push('/dashboard');
             return;
           }
-          setUser(parsedUser);
-          setIsLoading(false);
-          return;
         }
 
         // Verify with API and get full user data including userType
         const accessToken = localStorage.getItem('arise_access_token');
         if (accessToken) {
-          const { authenticatedFetch } = await import('@/lib/token-refresh');
-          const response = await authenticatedFetch('/api/user/profile');
-          if (response.ok) {
-            const data = await response.json();
-            const fullUser = {
-              ...data.user,
-              role: parsedUser?.role || 'admin', // Keep role from localStorage
-            };
-            if (fullUser.role !== 'admin') {
-              router.push('/dashboard');
+          try {
+            const { authenticatedFetch } = await import('@/lib/token-refresh');
+            const response = await authenticatedFetch('/api/user/profile');
+            if (response.ok) {
+              const data = await response.json();
+              const fullUser = {
+                ...data.user,
+                role: parsedUser?.role || 'admin', // Keep role from localStorage
+              };
+              if (fullUser.role !== 'admin') {
+                router.push('/dashboard');
+                return;
+              }
+              setUser(fullUser);
+              localStorage.setItem('arise_user', JSON.stringify(fullUser));
+              setIsLoading(false);
               return;
             }
-            setUser(fullUser);
-            localStorage.setItem('arise_user', JSON.stringify(fullUser));
-            setIsLoading(false);
-            return;
+          } catch (apiError) {
+            console.error('API error:', apiError);
           }
         }
         
