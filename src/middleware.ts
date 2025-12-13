@@ -32,6 +32,7 @@ export function middleware(request: NextRequest) {
   const token = extractTokenFromHeader(authHeader);
 
   if (!token) {
+    console.log('Middleware: No token found in Authorization header');
     return NextResponse.json(
       { error: 'Authentication required', code: 'AUTHENTICATION_ERROR' },
       { status: 401 }
@@ -40,11 +41,14 @@ export function middleware(request: NextRequest) {
 
   const payload = verifyAccessToken(token);
   if (!payload) {
+    console.log('Middleware: Token verification failed for path:', pathname);
     return NextResponse.json(
       { error: 'Invalid or expired token', code: 'AUTHENTICATION_ERROR' },
       { status: 401 }
     );
   }
+
+  console.log('Middleware: Token verified successfully for user:', payload.userId);
 
   // Add user info to headers for use in route handlers
   const requestHeaders = new Headers(request.headers);

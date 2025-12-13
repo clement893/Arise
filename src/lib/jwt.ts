@@ -65,6 +65,10 @@ export function verifyAccessToken(token: string): TokenPayload | null {
     const decoded = jwt.verify(token, JWT_SECRET, options) as TokenPayload;
     return decoded;
   } catch (error) {
+    // Log the error for debugging
+    if (error instanceof Error) {
+      console.error('Token verification error:', error.message);
+    }
     return null;
   }
 }
