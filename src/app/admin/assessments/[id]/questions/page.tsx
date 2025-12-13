@@ -364,20 +364,43 @@ export default function QuestionsManagementPage() {
                     </div>
                   </div>
                 ) : (
-                  <div className="flex items-start justify-between">
+                      <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <GripVertical className="w-4 h-4 text-gray-400" />
                         <span className="text-sm font-medium text-gray-500">
                           #{question.order + 1}
                         </span>
-                        {question.category && (
+                        {question.category && question.category !== 'tki_pair' && (
                           <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded">
                             {question.category}
                           </span>
                         )}
                       </div>
-                      <p className="text-gray-900">{question.text}</p>
+                      {(() => {
+                        // Parse TKI questions (stored as JSON)
+                        if (assessmentId === 'tki' && question.category === 'tki_pair') {
+                          try {
+                            const parsed = JSON.parse(question.text);
+                            return (
+                              <div className="space-y-2">
+                                <p className="text-gray-900 font-medium">Pair {parsed.pair}</p>
+                                <div className="space-y-1 text-sm">
+                                  <p className="text-gray-700"><span className="font-medium">A:</span> {parsed.statement_a}</p>
+                                  <p className="text-gray-700"><span className="font-medium">B:</span> {parsed.statement_b}</p>
+                                  <div className="flex gap-2 mt-2">
+                                    <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded">{parsed.mode_a}</span>
+                                    <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded">{parsed.mode_b}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          } catch {
+                            return <p className="text-gray-900">{question.text}</p>;
+                          }
+                        }
+                        return <p className="text-gray-900">{question.text}</p>;
+                      })()}
                     </div>
                     <div className="flex gap-2 ml-4">
                       <Button

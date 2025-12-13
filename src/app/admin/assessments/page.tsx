@@ -634,8 +634,31 @@ export default function AdminAssessments() {
                             </div>
                           ) : (
                             <>
-                              <p className="text-gray-900">{question.text}</p>
-                              {question.category && (
+                              {(() => {
+                                // Parse TKI questions (stored as JSON)
+                                if (selectedAssessment?.id === 'tki' && question.category === 'tki_pair') {
+                                  try {
+                                    const parsed = JSON.parse(question.text);
+                                    return (
+                                      <div className="space-y-2">
+                                        <p className="text-gray-900 font-medium">Pair {parsed.pair}</p>
+                                        <div className="space-y-1 text-sm">
+                                          <p className="text-gray-700"><span className="font-medium">A:</span> {parsed.statement_a}</p>
+                                          <p className="text-gray-700"><span className="font-medium">B:</span> {parsed.statement_b}</p>
+                                          <div className="flex gap-2 mt-2">
+                                            <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded">{parsed.mode_a}</span>
+                                            <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded">{parsed.mode_b}</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  } catch {
+                                    return <p className="text-gray-900">{question.text}</p>;
+                                  }
+                                }
+                                return <p className="text-gray-900">{question.text}</p>;
+                              })()}
+                              {question.category && question.category !== 'tki_pair' && (
                                 <span className="inline-block mt-1 px-2 py-0.5 bg-gray-200 text-gray-600 text-xs rounded">
                                   {question.category}
                                 </span>
