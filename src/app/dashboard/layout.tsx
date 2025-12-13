@@ -12,6 +12,7 @@ interface User {
   email: string;
   plan?: string;
   role?: string;
+  roles?: string[];
 }
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -44,6 +45,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 // Use role from API (database) if available, otherwise fallback to localStorage
                 // This ensures role is always synced with database on refresh
                 role: data.user.role || parsedStoredUser.role,
+                // Include roles array for multiple roles support
+                roles: data.user.roles || parsedStoredUser.roles || (data.user.role ? [data.user.role] : []),
               };
               setUser(updatedUser);
               // Update localStorage with fresh data including role from database

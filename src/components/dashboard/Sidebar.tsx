@@ -33,6 +33,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { isAdmin as checkIsAdmin } from '@/lib/constants';
 import { getInitials } from '@/lib/helpers';
+import { Users } from 'lucide-react';
 
 // =============================================================================
 // TYPES
@@ -126,14 +127,19 @@ interface UserProfileProps {
   plan?: string;
   isAdmin: boolean;
   role?: string;
+  roles?: string[];
   onSwitchSpace?: (space: 'admin' | 'coach' | 'personal') => void;
 }
 
-const UserProfile = ({ displayName, fullName, plan, isAdmin, role, onSwitchSpace }: UserProfileProps) => {
+const UserProfile = ({ displayName, fullName, plan, isAdmin, role, roles, onSwitchSpace }: UserProfileProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const currentPath = pathname || '';
+
+  // Check if user has coach role (support multiple roles)
+  const userRoles = roles || (role ? [role] : []);
+  const isCoach = userRoles.includes('coach') || isAdmin;
 
   const availableSpaces = [];
   
@@ -141,18 +147,18 @@ const UserProfile = ({ displayName, fullName, plan, isAdmin, role, onSwitchSpace
   // Always include personal profile
   availableSpaces.push({ id: 'personal', label: 'Personal Profile', href: '/dashboard', icon: User });
   
+  // Add coach profile if user is coach or admin
+  if (isCoach) {
+    availableSpaces.push({ id: 'coach', label: 'Coach Dashboard', href: '/coach/dashboard', icon: Users });
+  }
+  
   // Add admin panel if user is admin
   if (isAdmin) {
     availableSpaces.push({ id: 'admin', label: 'Admin Panel', href: '/admin/dashboard', icon: Shield });
   }
-  
-  // Add coach profile if user is coach or admin
-  if (role === 'coach' || isAdmin) {
-    availableSpaces.push({ id: 'coach', label: 'Coach Profile', href: '/dashboard?view=coach', icon: User });
-  }
 
   const currentSpace = currentPath.startsWith('/admin') ? 'admin' : 
-                       currentPath.includes('coach') ? 'coach' : 'personal';
+                       currentPath.startsWith('/coach') ? 'coach' : 'personal';
 
   const handleSpaceClick = (space: 'admin' | 'coach' | 'personal', href: string) => {
     setIsMenuOpen(false);
@@ -387,6 +393,7 @@ export default function Sidebar({ user, activePage, onLogout }: SidebarProps) {
             plan={user.plan}
             isAdmin={userIsAdmin}
             role={user.role || ''}
+            roles={(user as any).roles || (user.role ? [user.role] : [])}
           />
         </div>
 
