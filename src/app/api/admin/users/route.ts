@@ -3,6 +3,79 @@ import { prisma } from '@/lib/prisma';
 import { requireAdmin, forbiddenResponse, unauthorizedResponse } from '@/lib/auth';
 import bcrypt from 'bcryptjs';
 
+// POST - Create a new user (coach or participant)
+export async function POST(request: NextRequest) {
+  try {
+    // Verify admin authentication
+    const adminUser = await requireAdmin(request);
+    
+    if (!adminUser) {
+      return forbiddenResponse('Admin access required');
+    }
+
+    const body = await request.json();
+    const { email, password, firstName, lastName, role = 'coach', userType = 'coach', plan = 'coach' } = body;
+
+    if (!email || !password) {
+      return NextResponse.json(
+        { error: 'Missing email or password' },
+        { status: 400 }
+      );
+    }
+
+    // Check if user already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email }
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { error: 'User with this email already exists' },
+        { status: 409 }
+      );
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    // Create user
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        firstName: firstName || null,
+        lastName: lastName || null,
+        role: role === 'coach' ? 'coach' : 'participant',
+        userType: userType === 'coach' ? 'coach' : 'individual',
+        plan: plan || 'coach',
+        isActive: true,
+        emailVerified: true
+      },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        role: true,
+        userType: true,
+        createdAt: true
+      }
+    });
+
+    return NextResponse.json({ 
+      success: true,
+      message: 'User created successfully',
+      user
+    }, { status: 201 });
+  } catch (error) {
+    console.error('Error creating user:', error);
+    return NextResponse.json(
+      { error: 'Failed to create user' },
+      { status: 500 }
+    );
+  }
+}
+
 export async function PUT(request: NextRequest) {
   try {
     // Verify admin authentication
