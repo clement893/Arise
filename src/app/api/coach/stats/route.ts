@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireCoach } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { isParticipant } from '@/lib/roles-helper';
 
 /**
  * Get coach dashboard statistics
@@ -65,11 +66,9 @@ export async function GET(request: NextRequest) {
     ]);
 
     // Filter participants that don't have admin/coach in roles array
-    const participants = participantsData.filter(user => {
-      if (!user.roles) return true; // If no roles array, assume participant
-      const roles = Array.isArray(user.roles) ? user.roles : JSON.parse(user.roles as string);
-      return !roles.includes('admin') && !roles.includes('coach');
-    });
+    const participants = participantsData.filter(user => 
+      isParticipant(user.roles, user.role || 'participant')
+    );
 
     // Calculate statistics efficiently
     const participantsWithCoachCount = await prisma.user.count({

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireCoach } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { isParticipant } from '@/lib/roles-helper';
 
 /**
  * Get list of participants for coach
@@ -82,28 +83,33 @@ export async function GET(request: NextRequest) {
     ]);
 
     // Filter to only participants (check roles array for admin/coach)
-    const participants = allUsers.filter(user => {
-      if (!user.roles) return true; // If no roles array, assume participant
-      const roles = Array.isArray(user.roles) ? user.roles : JSON.parse(user.roles as string);
-      return !roles.includes('admin') && !roles.includes('coach');
-    });
+    const participants = allUsers.filter(user => 
+      isParticipant(user.roles, user.role || 'participant')
+    );
 
-    // Add computed fields
+    // Add computed fields (optimized single-pass calculation)
     const participantsWithStats = participants.map(participant => {
       const assessments = participant.assessments || [];
-      const completedCount = assessments.filter(a => a.completedAt !== null).length;
-      const totalCount = assessments.length;
-      const averageScore = assessments.length > 0
-        ? assessments
-            .filter(a => a.overallScore !== null)
-            .reduce((sum, a) => sum + (a.overallScore || 0), 0) / assessments.length
-        : 0;
+      let completedCount = 0;
+      let totalScore = 0;
+      let scoreCount = 0;
+      
+      // Single pass through assessments
+      for (const assessment of assessments) {
+        if (assessment.completedAt !== null) {
+          completedCount++;
+        }
+        if (assessment.overallScore !== null) {
+          totalScore += assessment.overallScore;
+          scoreCount++;
+        }
+      }
 
       return {
         ...participant,
-        assessmentCount: totalCount,
+        assessmentCount: assessments.length,
         completedAssessments: completedCount,
-        averageScore: Math.round(averageScore),
+        averageScore: scoreCount > 0 ? Math.round(totalScore / scoreCount) : 0,
       };
     });
 
