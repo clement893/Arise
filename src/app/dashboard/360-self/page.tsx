@@ -556,8 +556,7 @@ export default function SelfAssessment360Page() {
             </div>
           </div>
         </main>
-      </div>
-    );
+  );
   }
 
   // Complete Screen

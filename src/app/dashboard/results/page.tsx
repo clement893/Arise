@@ -471,10 +471,9 @@ export default function ResultsPage() {
             Schedule a coaching session
           </button>
         </div>
-      </main>
 
-      {/* Coaching Modal */}
-      {showCoachingModal && (
+        {/* Coaching Modal */}
+        {showCoachingModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
             <div className="flex items-center justify-between mb-4">
@@ -564,7 +563,7 @@ export default function ResultsPage() {
             </div>
           </div>
         </div>
-      )}
-    </div>
+        )}
+      </main>
   );
 }

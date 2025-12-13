@@ -530,8 +530,7 @@ export default function WellnessTestPage() {
             </div>
           </div>
         </main>
-      </div>
-    );
+  );
   }
 
   // Complete Screen

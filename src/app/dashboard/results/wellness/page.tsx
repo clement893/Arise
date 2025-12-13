@@ -357,7 +357,6 @@ export default function WellnessDetailedResultsPage() {
             </div>
           </div>
         </Card>
-      </main>
-    </div>
+    </main>
   );
 }

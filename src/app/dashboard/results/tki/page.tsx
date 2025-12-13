@@ -364,7 +364,6 @@ export default function TKIDetailedResultsPage() {
             </div>
           </div>
         </Card>
-      </main>
-    </div>
+    </main>
   );
 }

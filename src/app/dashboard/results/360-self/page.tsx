@@ -373,7 +373,6 @@ export default function Self360DetailedResultsPage() {
             </div>
           </div>
         </Card>
-      </main>
-    </div>
+    </main>
   );
 }
