@@ -76,6 +76,7 @@ export default function AdminDashboard() {
   const [deletePassword, setDeletePassword] = useState('');
   const [deleteError, setDeleteError] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     loadData();
@@ -108,6 +109,7 @@ export default function AdminDashboard() {
       } else {
         const errorData = await response.json().catch(() => ({}));
         console.error('Error loading admin data:', errorData);
+        setLoadError(errorData.error || `Failed to load data (${response.status})`);
         // Set empty data to prevent blank screen
         setStats({
           totalUsers: 0,
@@ -122,6 +124,7 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       console.error('Error loading admin data:', error);
+      setLoadError(error instanceof Error ? error.message : 'Failed to load admin data');
       // Set empty data to prevent blank screen
       setStats({
         totalUsers: 0,
@@ -300,6 +303,28 @@ export default function AdminDashboard() {
           <Avatar name="Admin" size="lg" />
         </div>
       </div>
+
+      {/* Error Message */}
+      {loadError && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <AlertTriangle className="w-5 h-5 text-red-600" />
+            <h3 className="font-semibold text-red-900">Error loading data</h3>
+          </div>
+          <p className="text-sm text-red-800 mb-3">{loadError}</p>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setLoadError(null);
+              setIsLoading(true);
+              loadData();
+            }}
+          >
+            Retry
+          </Button>
+        </div>
+      )}
 
       {/* Stats Cards - Using StatCard component */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
