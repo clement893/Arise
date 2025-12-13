@@ -80,8 +80,9 @@ export async function getCurrentUser(request: NextRequest): Promise<AuthUser | n
       return null;
     }
 
-    // Parse roles array
-    const roles = user.roles ? (Array.isArray(user.roles) ? user.roles : JSON.parse(user.roles as string)) : [user.role];
+    // Parse roles array using optimized helper
+    const { parseRoles } = await import('@/lib/roles-helper');
+    const roles = parseRoles(user.roles, user.role);
 
     return {
       ...user,

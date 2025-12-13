@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
       isParticipant(user.roles, user.role || 'participant')
     );
 
-    // Calculate statistics efficiently
+    // Calculate statistics efficiently with parallel queries
     const participantsWithCoachCount = await prisma.user.count({
       where: {
         isActive: true,
@@ -79,22 +79,24 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    const totalAssessments = assessmentResults.length;
-    const completedAssessments = assessmentResults.filter(a => a.completedAt !== null).length;
-    
-    // Group assessments by type (single pass)
+    // Single pass through assessmentResults for all calculations
     const assessmentsByType: Record<string, number> = {};
+    let completedAssessments = 0;
     let totalScore = 0;
     let scoreCount = 0;
     
     for (const result of assessmentResults) {
       assessmentsByType[result.assessmentType] = (assessmentsByType[result.assessmentType] || 0) + 1;
+      if (result.completedAt !== null) {
+        completedAssessments++;
+      }
       if (result.overallScore !== null) {
         totalScore += result.overallScore;
         scoreCount++;
       }
     }
 
+    const totalAssessments = assessmentResults.length;
     const averageScore = scoreCount > 0 ? Math.round(totalScore / scoreCount) : 0;
 
     return NextResponse.json({
