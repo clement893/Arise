@@ -13,39 +13,14 @@ interface User {
   lastName?: string | null;
 }
 
-// TKI Questions - 30 pairs from the ARISE assessment
-const tkiQuestions = [
-  { pair: 1, statement_a: "I press to get my points across", statement_b: "I try to investigate an issue to find a mutually acceptable solution.", mode_a: "Competing", mode_b: "Collaborating" },
-  { pair: 2, statement_a: "I generally pursue my goals firmly.", statement_b: "I try to postpone the issue until I can properly reflect about it", mode_a: "Competing", mode_b: "Avoiding" },
-  { pair: 3, statement_a: "I attempt to postpone the issue until I've had some time to think it over.", statement_b: "I give up some points in exchange for others.", mode_a: "Avoiding", mode_b: "Compromising" },
-  { pair: 4, statement_a: "I try to win my position.", statement_b: "I might try to soothe the other's feelings and preserve our relationship.", mode_a: "Competing", mode_b: "Accommodating" },
-  { pair: 5, statement_a: "I consistently seek the other's help in working out a solution.", statement_b: "I try to do what is necessary to avoid useless tensions.", mode_a: "Collaborating", mode_b: "Avoiding" },
-  { pair: 6, statement_a: "I am firm in pursuing my goals.", statement_b: "I try to find a compromise solution.", mode_a: "Competing", mode_b: "Compromising" },
-  { pair: 7, statement_a: "I try to find a middle ground.", statement_b: "I attempt to get all concerns and issues immediately out in the open.", mode_a: "Compromising", mode_b: "Collaborating" },
-  { pair: 8, statement_a: "I sometimes avoid taking positions that would create controversy.", statement_b: "I will let the other person have some of their positions if they let me have some of mine.", mode_a: "Avoiding", mode_b: "Compromising" },
-  { pair: 9, statement_a: "I suggest a middle ground.", statement_b: "I press to get my points made.", mode_a: "Compromising", mode_b: "Competing" },
-  { pair: 10, statement_a: "I might try to soothe the other's feelings and preserve our relationship.", statement_b: "I am usually firm in pursuing my goals.", mode_a: "Accommodating", mode_b: "Competing" },
-  { pair: 11, statement_a: "I attempt to get all concerns out in the open.", statement_b: "I feel that differences are not always worth worrying about.", mode_a: "Collaborating", mode_b: "Avoiding" },
-  { pair: 12, statement_a: "I try to win my position.", statement_b: "Rather than negotiate on things we both disagree, I prefer to stress those things upon which we both agree.", mode_a: "Competing", mode_b: "Accommodating" },
-  { pair: 13, statement_a: "I give up some points in exchange for others.", statement_b: "I try to postpone the issue until I have time to think about it.", mode_a: "Compromising", mode_b: "Avoiding" },
-  { pair: 14, statement_a: "I consistently seek the other's help in working out a solution.", statement_b: "I try to find a compromise solution.", mode_a: "Collaborating", mode_b: "Compromising" },
-  { pair: 15, statement_a: "I feel that differences are not always worth worrying about.", statement_b: "I make some effort to get my way.", mode_a: "Avoiding", mode_b: "Competing" },
-  { pair: 16, statement_a: "I sometimes sacrifice my own wishes for the wishes of the other person.", statement_b: "I attempt to get all concerns and issues immediately out in the open.", mode_a: "Accommodating", mode_b: "Collaborating" },
-  { pair: 17, statement_a: "I try to find a compromise solution.", statement_b: "I feel that differences are not always worth worrying about.", mode_a: "Compromising", mode_b: "Accommodating" },
-  { pair: 18, statement_a: "I am usually firm in pursuing my goals.", statement_b: "I try to find a solution that satisfies both of us.", mode_a: "Competing", mode_b: "Collaborating" },
-  { pair: 19, statement_a: "I propose a middle ground.", statement_b: "I am frequently concerned with satisfying all wishes.", mode_a: "Compromising", mode_b: "Collaborating" },
-  { pair: 20, statement_a: "I will let the other person have some of their positions if they let me have some of mine.", statement_b: "I attempt to deal with all their and my concerns.", mode_a: "Compromising", mode_b: "Collaborating" },
-  { pair: 21, statement_a: "I try to do what is necessary to avoid useless tensions.", statement_b: "I generally pursue my goals firmly.", mode_a: "Avoiding", mode_b: "Competing" },
-  { pair: 22, statement_a: "I attempt to postpone the issue until I have had some time to think it over.", statement_b: "I might try to soothe the other's feelings and preserve our relationship.", mode_a: "Avoiding", mode_b: "Accommodating" },
-  { pair: 23, statement_a: "I try to find a compromise solution.", statement_b: "I try to win my position.", mode_a: "Compromising", mode_b: "Competing" },
-  { pair: 24, statement_a: "I try to do what is necessary to avoid useless tensions.", statement_b: "I sometimes sacrifice my own wishes for the wishes of the other person.", mode_a: "Avoiding", mode_b: "Accommodating" },
-  { pair: 25, statement_a: "I consistently seek the other's help in working out a solution.", statement_b: "I am usually firm in pursuing my goals.", mode_a: "Collaborating", mode_b: "Competing" },
-  { pair: 26, statement_a: "I try to find a middle ground.", statement_b: "I try to get the other person to settle for a compromise.", mode_a: "Compromising", mode_b: "Competing" },
-  { pair: 27, statement_a: "I attempt to get all concerns and issues immediately out in the open.", statement_b: "I attempt to postpone the issue until I've had some time to think it over.", mode_a: "Collaborating", mode_b: "Avoiding" },
-  { pair: 28, statement_a: "I sometimes sacrifice my own wishes for the wishes of the other person.", statement_b: "I try to win my position.", mode_a: "Accommodating", mode_b: "Competing" },
-  { pair: 29, statement_a: "I give up some points in exchange for others.", statement_b: "I feel that differences are not always worth worrying about.", mode_a: "Compromising", mode_b: "Avoiding" },
-  { pair: 30, statement_a: "I try to find a solution that satisfies both of us.", statement_b: "I might try to soothe the other's feelings and preserve our relationship.", mode_a: "Collaborating", mode_b: "Accommodating" },
-];
+// TKI Question type
+interface TKIQuestion {
+  pair: number;
+  statement_a: string;
+  statement_b: string;
+  mode_a: string;
+  mode_b: string;
+}
 
 type TKIMode = 'Competing' | 'Collaborating' | 'Compromising' | 'Avoiding' | 'Accommodating';
 
@@ -81,11 +56,45 @@ export default function TKITestPage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [tkiQuestions, setTkiQuestions] = useState<TKIQuestion[]>([]);
   const [currentStep, setCurrentStep] = useState<'intro' | 'questions' | 'results'>('intro');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, 'A' | 'B'>>({});
   const [hasProgress, setHasProgress] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Load questions from database
+  useEffect(() => {
+    const loadQuestions = async () => {
+      try {
+        const response = await fetch('/api/assessments/tki/questions');
+        if (response.ok) {
+          const data = await response.json();
+          const questions: TKIQuestion[] = data.questions
+            .sort((a: any, b: any) => a.order - b.order)
+            .map((q: any) => {
+              try {
+                const parsed = JSON.parse(q.text);
+                return {
+                  pair: parsed.pair,
+                  statement_a: parsed.statement_a,
+                  statement_b: parsed.statement_b,
+                  mode_a: parsed.mode_a,
+                  mode_b: parsed.mode_b,
+                };
+              } catch {
+                return null;
+              }
+            })
+            .filter((q: TKIQuestion | null) => q !== null) as TKIQuestion[];
+          setTkiQuestions(questions);
+        }
+      } catch (error) {
+        console.error('Failed to load questions:', error);
+      }
+    };
+    loadQuestions();
+  }, []);
 
   // Load user and check for existing progress
   useEffect(() => {
@@ -94,14 +103,16 @@ export default function TKITestPage() {
       try {
         const userData = JSON.parse(storedUser);
         setUser(userData);
-        checkExistingProgress(userData.id);
+        if (tkiQuestions.length > 0) {
+          checkExistingProgress(userData.id);
+        }
       } catch {
         router.push('/signup');
       }
     } else {
       router.push('/signup');
     }
-  }, [router]);
+  }, [router, tkiQuestions.length]);
 
   // Check if user has existing progress for this assessment
   const checkExistingProgress = async (userId: number) => {
@@ -271,7 +282,7 @@ export default function TKITestPage() {
     return dominantMode;
   };
 
-  if (loading) {
+  if (loading || tkiQuestions.length === 0) {
     return <LoadingPage />;
   }
 

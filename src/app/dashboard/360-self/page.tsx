@@ -25,50 +25,12 @@ const categories = [
   { id: 'stress', name: 'Stress Management', icon: Heart, color: 'var(--color-primary-500)' },
 ];
 
-// Real questions from the ARISE Excel file - 360° Self Assessment
-const selfAssessmentQuestions = [
-  // Communication (5 questions)
-  { id: 1, category: 'communication', text: "I communicate my ideas and expectations clearly and in a way that is easy to understand." },
-  { id: 2, category: 'communication', text: "I listen attentively and demonstrate understanding of others' perspectives before responding." },
-  { id: 3, category: 'communication', text: "I adapt my communication style to different audiences and situations." },
-  { id: 4, category: 'communication', text: "I provide feedback that is respectful, actionable, and supportive of growth." },
-  { id: 5, category: 'communication', text: "My communication fosters collaboration, engagement and alignment within the team." },
-  
-  // Team Culture (5 questions)
-  { id: 6, category: 'team_culture', text: "I promote teamwork and support colleagues to achieve shared goals." },
-  { id: 7, category: 'team_culture', text: "I treat team members with respect and encourage an inclusive environment where everyone feels valued." },
-  { id: 8, category: 'team_culture', text: "I build trust within the team by being reliable, transparent and accountable." },
-  { id: 9, category: 'team_culture', text: "I address and resolve conflicts in a constructive and respectful way." },
-  { id: 10, category: 'team_culture', text: "I actively contribute to building a positive, motivating and collaborative team culture." },
-  
-  // Leadership Style (5 questions)
-  { id: 11, category: 'leadership', text: "I inspire and motivate others towards a shared vision." },
-  { id: 12, category: 'leadership', text: "I demonstrate fairness, integrity and consistency in my leadership." },
-  { id: 13, category: 'leadership', text: "I empower others to take ownership and make decisions." },
-  { id: 14, category: 'leadership', text: "I adapt my leadership style to different situations and individuals." },
-  { id: 15, category: 'leadership', text: "I provide clear direction while also encouraging autonomy." },
-  
-  // Change Management (5 questions)
-  { id: 16, category: 'change', text: "I embrace and adapt effectively to organizational changes." },
-  { id: 17, category: 'change', text: "I help others understand and navigate change confidently." },
-  { id: 18, category: 'change', text: "I maintain a positive and flexible attitude during transitions." },
-  { id: 19, category: 'change', text: "I support the team effectively during challenges linked to change." },
-  { id: 20, category: 'change', text: "I actively contribute to driving and sustaining change initiatives." },
-  
-  // Problem Solving and Decision Making (5 questions)
-  { id: 21, category: 'problem_solving', text: "I analyze problems effectively and identify appropriate solutions." },
-  { id: 22, category: 'problem_solving', text: "I consider diverse perspectives when solving problems." },
-  { id: 23, category: 'problem_solving', text: "I manage disagreements constructively and seek mutually beneficial solutions." },
-  { id: 24, category: 'problem_solving', text: "I remain calm and constructive under pressure." },
-  { id: 25, category: 'problem_solving', text: "I follow through on problem-solving actions to ensure effective outcomes." },
-  
-  // Stress Management (5 questions)
-  { id: 26, category: 'stress', text: "I manage stress without negatively affecting performance or team dynamics." },
-  { id: 27, category: 'stress', text: "I demonstrate resilience and composure under pressure." },
-  { id: 28, category: 'stress', text: "I use healthy coping strategies to handle stress effectively." },
-  { id: 29, category: 'stress', text: "I support colleagues in managing stress and maintaining well-being." },
-  { id: 30, category: 'stress', text: "I balance workload and prioritize effectively to prevent unnecessary stress." },
-];
+// 360° Self Assessment Question type
+interface SelfAssessmentQuestion {
+  id: number;
+  category: string;
+  text: string;
+}
 
 const answerOptions = [
   { value: 1, label: 'Never or Rarely', shortLabel: '1' },
@@ -84,11 +46,35 @@ export default function SelfAssessment360Page() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [selfAssessmentQuestions, setSelfAssessmentQuestions] = useState<SelfAssessmentQuestion[]>([]);
   const [testState, setTestState] = useState<TestState>('intro');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [hasProgress, setHasProgress] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Load questions from database
+  useEffect(() => {
+    const loadQuestions = async () => {
+      try {
+        const response = await fetch('/api/assessments/360-self/questions');
+        if (response.ok) {
+          const data = await response.json();
+          const questions: SelfAssessmentQuestion[] = data.questions
+            .sort((a: any, b: any) => a.order - b.order)
+            .map((q: any, index: number) => ({
+              id: index + 1,
+              category: q.category || '',
+              text: q.text,
+            }));
+          setSelfAssessmentQuestions(questions);
+        }
+      } catch (error) {
+        console.error('Failed to load questions:', error);
+      }
+    };
+    loadQuestions();
+  }, []);
 
   // Load user and check for existing progress
   useEffect(() => {
@@ -99,8 +85,10 @@ export default function SelfAssessment360Page() {
     }
     const parsedUser = JSON.parse(userData);
     setUser(parsedUser);
-    checkExistingProgress(parsedUser.id);
-  }, [router]);
+    if (selfAssessmentQuestions.length > 0) {
+      checkExistingProgress(parsedUser.id);
+    }
+  }, [router, selfAssessmentQuestions.length]);
 
   // Check if user has existing progress for this assessment
   const checkExistingProgress = async (userId: number) => {

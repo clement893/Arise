@@ -26,50 +26,12 @@ const categories = [
   { id: 'stress', name: 'Stress', icon: '🧘', color: 'var(--color-primary-500)' },
 ];
 
-// Real questions from the ARISE Excel file
-const wellnessQuestions = [
-  // Substances (5 questions)
-  { id: 1, category: 'substances', text: "I avoid or limit my weekly alcohol consumption to about 2 glasses per week." },
-  { id: 2, category: 'substances', text: "I make healthy choices by avoiding tobacco in all forms, such as smoking, vaping, or chewing tobacco." },
-  { id: 3, category: 'substances', text: "I take prescription and over-the-counter medications responsibly, following dosage instructions and consulting healthcare providers when needed." },
-  { id: 4, category: 'substances', text: "I keep my caffeine consumption within healthy limits, which is no more than 3 cups of coffee or 8 cups of tea per day." },
-  { id: 5, category: 'substances', text: "I do not consume illegal drugs and avoid usage of recreational drugs." },
-  
-  // Exercise (5 questions)
-  { id: 6, category: 'exercise', text: "I am regularly active for at least 150 min (1.5h) per week in ways that get my heart rate up, like fast walking, cycling, or swimming." },
-  { id: 7, category: 'exercise', text: "I do strength or resistance training, such as weightlifting, bodyweight exercises, or resistance bands, at least 2 times per week." },
-  { id: 8, category: 'exercise', text: "I do flexibility or mobility exercises, such as stretching or yoga, at least 2–3 times per week." },
-  { id: 9, category: 'exercise', text: "I avoid sitting for longer than 30–60 minutes at a time by standing, walking, or moving around during the day." },
-  { id: 10, category: 'exercise', text: "I have the physical and mental energy to stay active, focused, and productive throughout the day." },
-  
-  // Nutrition (5 questions)
-  { id: 11, category: 'nutrition', text: "I make it a habit to eat balanced meals — for example, meals that combine protein (like fish, beans, or eggs), healthy fats (like nuts or olive oil), and complex carbs (like whole grains or vegetables)." },
-  { id: 12, category: 'nutrition', text: "Each day, I make sure to eat fruits and vegetables — about 5 or more servings, such as a piece of fruit, a handful of raw veggies, or half a cup of cooked vegetables." },
-  { id: 13, category: 'nutrition', text: "I maintain a healthier lifestyle by focusing on nutritious foods while keeping processed foods, sugary drinks, and sweet snacks to a minimum — treating them as occasional rather than everyday choices." },
-  { id: 14, category: 'nutrition', text: "I make sure to drink enough water throughout the day, aiming for the recommended amount — about 2.7 liters (91 ounces) for women and 3.8 liters (128 ounces) for men." },
-  { id: 15, category: 'nutrition', text: "I consistently follow healthy eating habits (closer to 80%) while allowing some flexibility during the week (closer to 20%)." },
-  
-  // Sleep (5 questions)
-  { id: 16, category: 'sleep', text: "I get 7–9 hours of sleep most nights, supporting my health and daily energy." },
-  { id: 17, category: 'sleep', text: "I maintain a regular sleep schedule by going to bed and waking up at consistent times." },
-  { id: 18, category: 'sleep', text: "Most nights, my sleep feels restful and restorative, leaving me refreshed in the morning." },
-  { id: 19, category: 'sleep', text: "I prepare for restful sleep by limiting caffeine, alcohol, and screen use (such as TV, phone, or computer) in the hours before bed." },
-  { id: 20, category: 'sleep', text: "If my sleep is disrupted by stress, noise, or restlessness, I take healthy steps — such as calming my mind, adjusting my environment, or practicing relaxation techniques — to improve my rest." },
-  
-  // Social (5 questions)
-  { id: 21, category: 'social', text: "I have close personal relationships that are strong, supportive, and nurturing, and I feel I can rely on them in times of need." },
-  { id: 22, category: 'social', text: "I connect with friends, family, or community several times a week in meaningful ways — such as supportive conversations, shared activities, or quality time together." },
-  { id: 23, category: 'social', text: "I feel comfortable seeking support from others when I need it." },
-  { id: 24, category: 'social', text: "I choose positive and uplifting social interactions that support my well-being." },
-  { id: 25, category: 'social', text: "I balance time with others and time alone in a way that supports my health and happiness — making space for meaningful connection while also honoring my need for rest and personal time." },
-  
-  // Stress (5 questions)
-  { id: 26, category: 'stress', text: "I notice when I am feeling stressed and use healthy strategies — such as deep breathing, taking breaks, or talking to someone — to manage it effectively." },
-  { id: 27, category: 'stress', text: "A few times each week, I practice relaxation techniques — such as meditation, stretching, or deep breathing — to help reduce stress and restore calm." },
-  { id: 28, category: 'stress', text: "I make time several times a week for hobbies, fun, or personal enjoyment, which helps me relax, recharge, and maintain balance in my life." },
-  { id: 29, category: 'stress', text: "I manage my workload in a balanced way, setting healthy limits and taking breaks when needed, so I can stay productive without feeling overwhelmed." },
-  { id: 30, category: 'stress', text: "I experience a sense of calm, focus, and emotional balance in my daily life, helping me handle challenges with resilience and clarity." },
-];
+// Wellness Question type
+interface WellnessQuestion {
+  id: number;
+  category: string;
+  text: string;
+}
 
 const answerOptions = [
   { value: 1, label: 'Strongly Disagree', shortLabel: 'SD' },
@@ -85,11 +47,35 @@ export default function WellnessTestPage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [wellnessQuestions, setWellnessQuestions] = useState<WellnessQuestion[]>([]);
   const [testState, setTestState] = useState<TestState>('intro');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [hasProgress, setHasProgress] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Load questions from database
+  useEffect(() => {
+    const loadQuestions = async () => {
+      try {
+        const response = await fetch('/api/assessments/wellness/questions');
+        if (response.ok) {
+          const data = await response.json();
+          const questions: WellnessQuestion[] = data.questions
+            .sort((a: any, b: any) => a.order - b.order)
+            .map((q: any, index: number) => ({
+              id: index + 1,
+              category: q.category || '',
+              text: q.text,
+            }));
+          setWellnessQuestions(questions);
+        }
+      } catch (error) {
+        console.error('Failed to load questions:', error);
+      }
+    };
+    loadQuestions();
+  }, []);
 
   // Load user and check for existing progress
   useEffect(() => {
@@ -100,8 +86,10 @@ export default function WellnessTestPage() {
     }
     const parsedUser = JSON.parse(userData);
     setUser(parsedUser);
-    checkExistingProgress(parsedUser.id);
-  }, [router]);
+    if (wellnessQuestions.length > 0) {
+      checkExistingProgress(parsedUser.id);
+    }
+  }, [router, wellnessQuestions.length]);
 
   // Check if user has existing progress for this assessment
   const checkExistingProgress = async (userId: number) => {
