@@ -211,32 +211,17 @@ export default function ParticipantDetailPage() {
         </div>
 
         {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-          <div className="border-b border-gray-200">
-            <div className="flex gap-4">
-              <button
-                onClick={() => setActiveTab('overview')}
-                className={`px-4 py-2 border-b-2 font-medium text-sm ${
-                  activeTab === 'overview'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                Overview
-              </button>
-              <button
-                onClick={() => setActiveTab('assessments')}
-                className={`px-4 py-2 border-b-2 font-medium text-sm ${
-                  activeTab === 'assessments'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                Assessments ({participant.assessments.length})
-              </button>
-            </div>
-          </div>
-        </Tabs>
+        <div className="mb-6">
+          <Tabs
+            tabs={[
+              { id: 'overview', label: 'Overview' },
+              { id: 'assessments', label: `Assessments (${participant.assessments.length})` },
+            ]}
+            activeTab={activeTab}
+            onChange={setActiveTab}
+            variant="underline"
+          />
+        </div>
 
         {/* Tab Content */}
         {activeTab === 'overview' && (

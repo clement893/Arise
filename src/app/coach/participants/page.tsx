@@ -191,33 +191,16 @@ export default function CoachParticipantsPage() {
 
             {/* Tabs */}
             <div className="mt-4">
-              <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <div className="flex gap-2">
-                  <Button
-                    variant={activeTab === 'all' ? 'default' : 'outline'}
-                    onClick={() => setActiveTab('all')}
-                    size="sm"
-                  >
-                    All ({participants.length})
-                  </Button>
-                  <Button
-                    variant={activeTab === 'with_coach' ? 'default' : 'outline'}
-                    onClick={() => setActiveTab('with_coach')}
-                    size="sm"
-                  >
-                    <UserCheck className="h-4 w-4 mr-1" />
-                    With Coach ({participants.filter(p => p.hasCoach).length})
-                  </Button>
-                  <Button
-                    variant={activeTab === 'without_coach' ? 'default' : 'outline'}
-                    onClick={() => setActiveTab('without_coach')}
-                    size="sm"
-                  >
-                    <UserX className="h-4 w-4 mr-1" />
-                    Without Coach ({participants.filter(p => !p.hasCoach).length})
-                  </Button>
-                </div>
-              </Tabs>
+              <Tabs
+                tabs={[
+                  { id: 'all', label: `All (${participants.length})` },
+                  { id: 'with_coach', label: `With Coach (${participants.filter(p => p.hasCoach).length})`, icon: <UserCheck className="h-4 w-4" /> },
+                  { id: 'without_coach', label: `Without Coach (${participants.filter(p => !p.hasCoach).length})`, icon: <UserX className="h-4 w-4" /> },
+                ]}
+                activeTab={activeTab}
+                onChange={setActiveTab}
+                variant="pills"
+              />
             </div>
           </div>
         </Card>
