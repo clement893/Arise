@@ -115,7 +115,8 @@ export default function AdminAssessments() {
   const loadQuestions = async (assessmentId: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/admin/assessments/${assessmentId}/questions`);
+      const { authenticatedFetch } = await import('@/lib/token-refresh');
+      const response = await authenticatedFetch(`/api/admin/assessments/${assessmentId}/questions`);
       if (response.ok) {
         const data = await response.json();
         setQuestions(data.questions || []);
@@ -133,9 +134,9 @@ export default function AdminAssessments() {
     setIsSaving(true);
     setSaveStatus('saving');
     try {
-      const response = await fetch(`/api/admin/assessments/${selectedAssessment.id}`, {
+      const { authenticatedFetch } = await import('@/lib/token-refresh');
+      const response = await authenticatedFetch(`/api/admin/assessments/${selectedAssessment.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editForm),
       });
       
@@ -164,13 +165,13 @@ export default function AdminAssessments() {
     
     setSaveStatus('saving');
     try {
-      const response = await fetch(`/api/admin/assessments/${selectedAssessment.id}/questions`, {
+      const { authenticatedFetch } = await import('@/lib/token-refresh');
+      const response = await authenticatedFetch(`/api/admin/assessments/${selectedAssessment.id}/questions`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           text: newQuestion.text,
           category: newQuestion.category,
-          order: questions.length + 1
+          order: questions.length
         }),
       });
       
@@ -200,9 +201,9 @@ export default function AdminAssessments() {
     
     setSaveStatus('saving');
     try {
-      const response = await fetch(`/api/admin/assessments/${selectedAssessment.id}/questions/${editingQuestionId}`, {
+      const { authenticatedFetch } = await import('@/lib/token-refresh');
+      const response = await authenticatedFetch(`/api/admin/assessments/${selectedAssessment.id}/questions/${editingQuestionId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editingQuestionData),
       });
       
@@ -236,7 +237,8 @@ export default function AdminAssessments() {
     
     setSaveStatus('saving');
     try {
-      const response = await fetch(`/api/admin/assessments/${selectedAssessment.id}/questions/${questionId}`, {
+      const { authenticatedFetch } = await import('@/lib/token-refresh');
+      const response = await authenticatedFetch(`/api/admin/assessments/${selectedAssessment.id}/questions/${questionId}`, {
         method: 'DELETE',
       });
       
@@ -271,22 +273,21 @@ export default function AdminAssessments() {
     
     setQuestions(newQuestions);
     
-    // Save new order to backend
-    setSaveStatus('saving');
-    try {
-      // Update both questions' order
-      await Promise.all([
-        fetch(`/api/admin/assessments/${selectedAssessment?.id}/questions/${newQuestions[currentIndex].id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ order: newQuestions[currentIndex].order }),
-        }),
-        fetch(`/api/admin/assessments/${selectedAssessment?.id}/questions/${newQuestions[newIndex].id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ order: newQuestions[newIndex].order }),
-        })
-      ]);
+      // Save new order to backend
+      setSaveStatus('saving');
+      try {
+        const { authenticatedFetch } = await import('@/lib/token-refresh');
+        // Update both questions' order
+        await Promise.all([
+          authenticatedFetch(`/api/admin/assessments/${selectedAssessment?.id}/questions/${newQuestions[currentIndex].id}`, {
+            method: 'PUT',
+            body: JSON.stringify({ text: newQuestions[currentIndex].text, category: newQuestions[currentIndex].category, order: newQuestions[currentIndex].order }),
+          }),
+          authenticatedFetch(`/api/admin/assessments/${selectedAssessment?.id}/questions/${newQuestions[newIndex].id}`, {
+            method: 'PUT',
+            body: JSON.stringify({ text: newQuestions[newIndex].text, category: newQuestions[newIndex].category, order: newQuestions[newIndex].order }),
+          })
+        ]);
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 2000);
     } catch (error) {
