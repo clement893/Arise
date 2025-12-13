@@ -92,43 +92,9 @@ export default function ResultsPage() {
     };
   }, [fetchAssessments, pathname, refreshKey]);
 
-  const handleDownloadReport = async () => {
-    if (!user || !assessmentResults) return;
-    
-    setGeneratingPDF(true);
-    try {
-      const { authenticatedFetch } = await import('@/lib/token-refresh');
-      const response = await authenticatedFetch('/api/assessments');
-      
-      if (response.ok) {
-        const data = await response.json();
-        generateLeadershipReport(
-          { firstName: user.firstName || '', lastName: user.lastName || '', email: user.email },
-          data.summary
-        );
-      }
-    } catch (error) {
-      console.error('Failed to generate report:', error);
-    } finally {
-      setGeneratingPDF(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-primary-500 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-secondary-500"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null;
-  }
-
-
   // Check if user has completed any assessments
   // Use useMemo to recalculate when assessmentResults changes - ensures leader profile is truly dynamic
+  // IMPORTANT: This must be BEFORE any conditional returns to follow React hooks rules
   const { tkiData, hasMBTI, tkiDominantResult, hasTKI, has360, hasWellness, hasAnyAssessment, leaderProfile } = useMemo(() => {
     const tki = assessmentResults?.tki;
     const mbti = assessmentResults?.mbti?.dominantResult;
@@ -162,7 +128,7 @@ export default function ResultsPage() {
       },
       { 
         label: 'Light score', 
-        value: wellness ? `${assessmentResults.wellness.overallScore}%` : 'Not completed', 
+        value: wellness ? `${assessmentResults?.wellness?.overallScore || 0}%` : 'Not completed', 
         color: 'bg-secondary-500' 
       },
     ];
@@ -180,6 +146,40 @@ export default function ResultsPage() {
       leaderProfile: profile,
     };
   }, [assessmentResults]);
+
+  const handleDownloadReport = async () => {
+    if (!user || !assessmentResults) return;
+    
+    setGeneratingPDF(true);
+    try {
+      const { authenticatedFetch } = await import('@/lib/token-refresh');
+      const response = await authenticatedFetch('/api/assessments');
+      
+      if (response.ok) {
+        const data = await response.json();
+        generateLeadershipReport(
+          { firstName: user.firstName || '', lastName: user.lastName || '', email: user.email },
+          data.summary
+        );
+      }
+    } catch (error) {
+      console.error('Failed to generate report:', error);
+    } finally {
+      setGeneratingPDF(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-primary-500 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-secondary-500"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
 
   // Development goals - only show if user has completed assessments
   const developmentGoals = hasAnyAssessment ? [
