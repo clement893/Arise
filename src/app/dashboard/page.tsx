@@ -181,7 +181,13 @@ export default function DashboardPage() {
               status={getAssessmentStatus('tki')}
               badge="ARISE Platform"
               badgeColor="bg-primary-500/10 text-primary-500"
-              onAction={() => router.push('/dashboard/tki')}
+              onAction={() => {
+                if (getAssessmentStatus('tki') === 'completed') {
+                  router.push('/dashboard/results');
+                } else {
+                  router.push('/dashboard/tki');
+                }
+              }}
             />
             <EvaluationCard
               icon={<Users className="w-6 h-6" />}
@@ -190,14 +196,26 @@ export default function DashboardPage() {
               status={getAssessmentStatus('self_360')}
               badge="ARISE Platform"
               badgeColor="bg-primary-500/10 text-primary-500"
-              onAction={() => router.push('/dashboard/360-self')}
+              onAction={() => {
+                if (getAssessmentStatus('self_360') === 'completed') {
+                  router.push('/dashboard/results');
+                } else {
+                  router.push('/dashboard/360-self');
+                }
+              }}
             />
             <EvaluationCard
               icon={<Heart className="w-6 h-6" />}
               title="Wellness"
               description={getWellnessResult()}
               status={getAssessmentStatus('wellness')}
-              onAction={() => router.push('/dashboard/wellness')}
+              onAction={() => {
+                if (getAssessmentStatus('wellness') === 'completed') {
+                  router.push('/dashboard/results');
+                } else {
+                  router.push('/dashboard/wellness');
+                }
+              }}
             />
           </div>
         </div>
