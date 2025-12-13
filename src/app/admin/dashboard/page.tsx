@@ -9,7 +9,9 @@ import {
   Search, 
   Filter, 
   MoreHorizontal,
-  Download
+  Download,
+  AlertTriangle,
+  X
 } from 'lucide-react';
 
 // Import UI components
@@ -18,6 +20,7 @@ import {
   StatCard, 
   Badge, 
   Input,
+  PasswordInput,
   Tabs,
   Avatar,
   Table,
@@ -68,6 +71,11 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [actionMenuOpen, setActionMenuOpen] = useState<number | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleteError, setDeleteError] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -139,6 +147,18 @@ export default function AdminDashboard() {
   const handleUserAction = async (userId: number, action: string) => {
     setActionMenuOpen(null);
     
+    // For delete action, show confirmation modal
+    if (action === 'delete') {
+      const user = users.find(u => u.id === userId);
+      if (user) {
+        setUserToDelete(user);
+        setDeleteModalOpen(true);
+        setDeletePassword('');
+        setDeleteError('');
+      }
+      return;
+    }
+    
     try {
       const { authenticatedFetch } = await import('@/lib/token-refresh');
       const response = await authenticatedFetch('/api/admin/users', {
@@ -154,6 +174,42 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       console.error('Error performing action:', error);
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!userToDelete || !deletePassword) {
+      setDeleteError('Please enter your password to confirm deletion');
+      return;
+    }
+
+    setIsDeleting(true);
+    setDeleteError('');
+
+    try {
+      const { authenticatedFetch } = await import('@/lib/token-refresh');
+      const response = await authenticatedFetch('/api/admin/users', {
+        method: 'DELETE',
+        body: JSON.stringify({ 
+          userId: userToDelete.id,
+          password: deletePassword 
+        }),
+      });
+
+      if (response.ok) {
+        setDeleteModalOpen(false);
+        setUserToDelete(null);
+        setDeletePassword('');
+        loadData();
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        setDeleteError(errorData.error || 'Failed to delete user. Please check your password.');
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      setDeleteError('An error occurred while deleting the user');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -352,10 +408,10 @@ export default function AdminDashboard() {
                           Make Admin
                         </button>
                         <button
-                          onClick={() => handleUserAction(user.id, 'deactivate')}
+                          onClick={() => handleUserAction(user.id, 'delete')}
                           className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50"
                         >
-                          Deactivate
+                          Delete User
                         </button>
                       </div>
                     )}
@@ -366,6 +422,86 @@ export default function AdminDashboard() {
           </TableBody>
         </Table>
       </Card>
+
+      {/* Delete Confirmation Modal */}
+      {deleteModalOpen && userToDelete && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                  <AlertTriangle className="w-6 h-6 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Delete User</h3>
+                  <p className="text-sm text-gray-500">This action cannot be undone</p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setDeleteModalOpen(false);
+                  setUserToDelete(null);
+                  setDeletePassword('');
+                  setDeleteError('');
+                }}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+              <p className="text-sm text-gray-700 mb-2">
+                You are about to delete:
+              </p>
+              <p className="font-semibold text-gray-900">
+                {userToDelete.firstName} {userToDelete.lastName}
+              </p>
+              <p className="text-sm text-gray-600">{userToDelete.email}</p>
+            </div>
+
+            <div className="mb-4">
+              <PasswordInput
+                label="Enter your password to confirm deletion"
+                value={deletePassword}
+                onChange={(e) => {
+                  setDeletePassword(e.target.value);
+                  setDeleteError('');
+                }}
+                placeholder="Your password"
+                fullWidth
+                error={deleteError}
+                required
+              />
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setDeleteModalOpen(false);
+                  setUserToDelete(null);
+                  setDeletePassword('');
+                  setDeleteError('');
+                }}
+                fullWidth
+                disabled={isDeleting}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={handleDeleteConfirm}
+                fullWidth
+                isLoading={isDeleting}
+                className="bg-red-600 hover:bg-red-700 text-white"
+              >
+                {isDeleting ? 'Deleting...' : 'Delete User'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
