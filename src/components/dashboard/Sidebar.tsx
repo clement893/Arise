@@ -296,7 +296,26 @@ export default function Sidebar({ user, activePage, onLogout }: SidebarProps) {
    */
   const isItemActive = (itemHref: string): boolean => {
     if (activePage) {
-      return itemHref.includes(activePage);
+      // Map activePage to expected href patterns
+      const activePageMap: Record<string, string> = {
+        'dashboard': '/dashboard',
+        'assessments': '/dashboard/assessments',
+        'results': '/dashboard/results',
+        'development': '/dashboard/development',
+        'settings': '/dashboard/settings',
+        'profile': '/dashboard/profile',
+      };
+      
+      const expectedHref = activePageMap[activePage];
+      if (expectedHref && itemHref === expectedHref) {
+        // For dashboard, require exact pathname match
+        if (activePage === 'dashboard') {
+          return pathname === expectedHref;
+        }
+        // For other pages, check if pathname starts with expected href
+        return pathname?.startsWith(expectedHref) ?? false;
+      }
+      return false;
     }
     return pathname === itemHref;
   };
