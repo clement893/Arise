@@ -143,13 +143,13 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-[#f0f5f5] flex">
       <Sidebar user={user} onLogout={handleLogout} />
 
-      <main className="flex-1 p-8 overflow-auto">
+      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
         {/* Welcome Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">
+        <div className="mb-4 sm:mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
             Welcome <span className="text-primary-500">{user.firstName || 'User'}</span>
           </h1>
-          <p className="text-gray-600">Continue your journey to authentic leadership</p>
+          <p className="text-sm sm:text-base text-gray-600">Continue your journey to authentic leadership</p>
         </div>
 
         {/* Feedback Banner */}
@@ -163,9 +163,9 @@ export default function DashboardPage() {
         </div>
 
         {/* Your Evaluations */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Your evaluations</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">Your evaluations</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <EvaluationCard
               icon={<Brain className="w-6 h-6" />}
               title="MBTI Personality"

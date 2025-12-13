@@ -315,7 +315,7 @@ export default function TKITestPage() {
     <div className="min-h-screen bg-[#f0f5f5] flex">
       <Sidebar user={user} onLogout={handleLogout} />
 
-      <main className="flex-1 p-8 overflow-auto">
+      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           <Button 
@@ -434,8 +434,8 @@ export default function TKITestPage() {
         {currentStep === 'questions' && (
           <div className="max-w-3xl mx-auto">
             {/* Progress Bar */}
-            <div className="mb-6">
-              <div className="flex justify-between text-sm text-gray-600 mb-2">
+            <div className="mb-4 sm:mb-6">
+              <div className="flex justify-between text-xs sm:text-sm text-gray-600 mb-2">
                 <span>Question {currentQuestion + 1} of {tkiQuestions.length}</span>
                 <span>{Math.round(progress)}% Complete</span>
               </div>
@@ -447,62 +447,63 @@ export default function TKITestPage() {
               </div>
             </div>
 
-            <Card className="p-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6 text-center">
+            <Card className="p-4 sm:p-6 md:p-8">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-6 text-center">
                 Which statement best describes your behavior in conflict situations?
               </h2>
 
-              <div className="space-y-4 mb-8">
+              <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
                 {/* Option A */}
                 <button
                   onClick={() => handleAnswer('A')}
-                  className={`w-full p-6 rounded-xl border-2 text-left transition-all ${
+                  className={`w-full p-4 sm:p-6 rounded-xl border-2 text-left transition-all ${
                     answers[currentQuestion] === 'A'
                       ? 'border-primary-500 bg-[#e8f4f4]'
                       : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                   }`}
                 >
-                  <div className="flex items-start gap-4">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  <div className="flex items-start gap-3 sm:gap-4">
+                    <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm sm:text-base ${
                       answers[currentQuestion] === 'A'
                         ? 'bg-primary-500 text-white'
                         : 'bg-gray-200 text-gray-600'
                     }`}>
                       A
                     </div>
-                    <p className="text-gray-800 text-lg">{tkiQuestions[currentQuestion].statement_a}</p>
+                    <p className="text-base sm:text-lg text-gray-800">{tkiQuestions[currentQuestion].statement_a}</p>
                   </div>
                 </button>
 
                 {/* Option B */}
                 <button
                   onClick={() => handleAnswer('B')}
-                  className={`w-full p-6 rounded-xl border-2 text-left transition-all ${
+                  className={`w-full p-4 sm:p-6 rounded-xl border-2 text-left transition-all ${
                     answers[currentQuestion] === 'B'
                       ? 'border-primary-500 bg-[#e8f4f4]'
                       : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                   }`}
                 >
-                  <div className="flex items-start gap-4">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  <div className="flex items-start gap-3 sm:gap-4">
+                    <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm sm:text-base ${
                       answers[currentQuestion] === 'B'
                         ? 'bg-primary-500 text-white'
                         : 'bg-gray-200 text-gray-600'
                     }`}>
                       B
                     </div>
-                    <p className="text-gray-800 text-lg">{tkiQuestions[currentQuestion].statement_b}</p>
+                    <p className="text-base sm:text-lg text-gray-800">{tkiQuestions[currentQuestion].statement_b}</p>
                   </div>
                 </button>
               </div>
 
               {/* Navigation */}
-              <div className="flex justify-between">
+              <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-0">
                 <Button
                   variant="ghost"
                   onClick={handlePrevious}
                   disabled={currentQuestion === 0}
-                  leftIcon={<ArrowLeft className="w-5 h-5" />}
+                  leftIcon={<ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />}
+                  className="w-full sm:w-auto"
                 >
                   Previous
                 </Button>
@@ -511,7 +512,8 @@ export default function TKITestPage() {
                   variant="primary"
                   onClick={handleNext}
                   disabled={!answers[currentQuestion]}
-                  rightIcon={<ArrowRight className="w-5 h-5" />}
+                  rightIcon={<ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />}
+                  className="w-full sm:w-auto"
                 >
                   {currentQuestion === tkiQuestions.length - 1 ? 'View Results' : 'Next'}
                 </Button>

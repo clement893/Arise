@@ -94,7 +94,7 @@ export default function WellnessBoardPage() {
     <div className="min-h-screen bg-[#f0f5f5] flex">
       <Sidebar user={user} onLogout={handleLogout} />
 
-      <main className="flex-1 p-8 overflow-auto">
+      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           <button 

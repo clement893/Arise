@@ -165,45 +165,48 @@ export default function ResultsPage() {
     <div className="min-h-screen bg-[#f0f5f5] flex">
       <Sidebar user={user} onLogout={handleLogout} />
 
-      <main className="flex-1 p-8 overflow-auto">
+      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Results & Reports</h1>
-            <p className="text-gray-600">Your comprehensive leadership assessment results</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Results & Reports</h1>
+            <p className="text-sm sm:text-base text-gray-600">Your comprehensive leadership assessment results</p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <button
               onClick={handleDownloadReport}
               disabled={generatingPDF || !hasAnyAssessment}
-              className="flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg text-sm font-medium hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-primary-500 text-white rounded-lg text-xs sm:text-sm font-medium hover:bg-primary-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FileText className="w-4 h-4" />
-              {generatingPDF ? 'Generating...' : 'Download PDF Report'}
+              <span className="hidden sm:inline">{generatingPDF ? 'Generating...' : 'Download PDF Report'}</span>
+              <span className="sm:hidden">{generatingPDF ? 'Generating...' : 'PDF'}</span>
             </button>
             <button
               onClick={() => setShowShareModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-white border border-gray-300 rounded-lg text-xs sm:text-sm font-medium hover:bg-gray-50 transition-colors"
             >
               <Share2 className="w-4 h-4" />
-              Share results
+              <span className="hidden sm:inline">Share results</span>
+              <span className="sm:hidden">Share</span>
             </button>
             <button
               onClick={() => setShowCoachingModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-secondary-500 text-white rounded-lg text-sm font-medium hover:bg-secondary-600 transition-colors"
+              className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-secondary-500 text-white rounded-lg text-xs sm:text-sm font-medium hover:bg-secondary-600 transition-colors"
             >
               <MessageCircle className="w-4 h-4" />
-              Coaching support
+              <span className="hidden sm:inline">Coaching support</span>
+              <span className="sm:hidden">Coaching</span>
             </button>
           </div>
         </div>
 
         {/* Your leader profile */}
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Your leader profile</h2>
-          <p className="text-sm text-gray-500 mb-4">A snapshot of your leadership assessment results</p>
+        <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 mb-4 sm:mb-6">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Your leader profile</h2>
+          <p className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4">A snapshot of your leadership assessment results</p>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
             {leaderProfile.map((item, index) => {
               const getClickHandler = () => {
                 if (item.label === 'TKI Dominant' && hasTKI) {

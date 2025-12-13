@@ -137,7 +137,7 @@ export default function WellnessDetailedResultsPage() {
     return (
       <div className="min-h-screen bg-[#f0f5f5] flex">
         <Sidebar user={user || { id: 0, email: '' }} onLogout={handleLogout} />
-        <main className="flex-1 p-8 overflow-auto flex items-center justify-center">
+        <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto flex items-center justify-center">
           <Card className="p-8 max-w-md">
             <h2 className="text-xl font-bold text-gray-900 mb-4">No Wellness Results Found</h2>
             <p className="text-gray-600 mb-6">You haven't completed the Wellness assessment yet.</p>
@@ -170,28 +170,30 @@ export default function WellnessDetailedResultsPage() {
     <div className="min-h-screen bg-[#f0f5f5] flex">
       <Sidebar user={user} onLogout={handleLogout} />
 
-      <main className="flex-1 p-8 overflow-auto">
+      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
+          <div className="flex items-center gap-3 sm:gap-4">
             <Button 
               variant="ghost"
               size="sm"
               onClick={() => router.push('/dashboard/results')}
-              leftIcon={<ArrowLeft className="w-5 h-5" />}
+              leftIcon={<ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />}
             >
-              Back to Results
+              <span className="hidden sm:inline">Back to Results</span>
+              <span className="sm:hidden">Back</span>
             </Button>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Wellness Assessment - Detailed Results</h1>
-              <p className="text-gray-600">Your holistic well-being score</p>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Wellness Assessment - Detailed Results</h1>
+              <p className="text-sm sm:text-base text-gray-600">Your holistic well-being score</p>
             </div>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <Button 
               variant="outline" 
               leftIcon={<Share2 className="w-4 h-4" />}
               onClick={handleShare}
+              className="w-full sm:w-auto"
             >
               Share
             </Button>
@@ -199,6 +201,7 @@ export default function WellnessDetailedResultsPage() {
               variant="secondary" 
               leftIcon={<Download className="w-4 h-4" />}
               onClick={handleDownloadPDF}
+              className="w-full sm:w-auto"
             >
               Download PDF
             </Button>

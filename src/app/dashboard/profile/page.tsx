@@ -245,7 +245,7 @@ function ProfilePageContent() {
         <Sidebar user={user} activePage="profile" onLogout={handleLogout} />
 
         {/* Main Content */}
-        <main className="flex-1 p-8 bg-primary-500/30 min-h-[calc(100vh-48px)]">
+        <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 bg-primary-500/30 min-h-[calc(100vh-48px)]">
           <div className="max-w-4xl mx-auto">
             {/* Header */}
             <div className="flex items-center justify-between mb-6">

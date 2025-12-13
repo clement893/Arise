@@ -308,7 +308,7 @@ export default function WellnessTestPage() {
       <div className="min-h-screen bg-[#f0f5f5] flex">
         <Sidebar user={user} activePage="assessments" onLogout={handleLogout} />
         
-        <main className="flex-1 p-8 overflow-auto">
+        <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
           <div className="max-w-3xl mx-auto">
             <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
               {/* Header */}
@@ -447,11 +447,11 @@ export default function WellnessTestPage() {
       <div className="min-h-screen bg-[#f0f5f5] flex">
         <Sidebar user={user} activePage="assessments" onLogout={handleLogout} />
         
-        <main className="flex-1 p-8 overflow-auto">
+        <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
           <div className="max-w-3xl mx-auto">
             {/* Progress Bar */}
-            <div className="mb-6">
-              <div className="flex justify-between text-sm text-gray-600 mb-2">
+            <div className="mb-4 sm:mb-6">
+              <div className="flex justify-between text-xs sm:text-sm text-gray-600 mb-2">
                 <span>Question {currentQuestion + 1} of {wellnessQuestions.length}</span>
                 <span>{Math.round(progress)}% Complete</span>
               </div>
@@ -463,11 +463,11 @@ export default function WellnessTestPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
+            <div className="bg-white rounded-xl p-4 sm:p-6 md:p-8 shadow-sm border border-gray-100">
               {/* Category Badge */}
-              <div className="flex items-center gap-2 mb-6">
+              <div className="flex items-center gap-2 mb-4 sm:mb-6">
                 <span 
-                  className="px-3 py-1 rounded-full text-sm font-medium text-white"
+                  className="px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium text-white"
                   style={{ backgroundColor: currentCategory?.color }}
                 >
                   {currentCategory?.icon} {currentCategory?.name}
@@ -475,28 +475,28 @@ export default function WellnessTestPage() {
               </div>
 
               {/* Question */}
-              <h2 className="text-xl font-semibold text-gray-900 mb-8">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-6 sm:mb-8">
                 {currentQ.text}
               </h2>
 
               {/* Answer Options */}
-              <div className="grid grid-cols-5 gap-3 mb-8">
+              <div className="grid grid-cols-5 gap-2 sm:gap-3 mb-6 sm:mb-8">
                 {answerOptions.map((option) => (
                   <button
                     key={option.value}
                     onClick={() => handleAnswer(option.value)}
-                    className={`flex flex-col items-center p-4 rounded-xl border-2 transition-all ${
+                    className={`flex flex-col items-center p-2 sm:p-4 rounded-lg sm:rounded-xl border-2 transition-all ${
                       answers[currentQ.id] === option.value
                         ? 'border-primary-500 bg-[#e8f4f4]'
                         : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                     }`}
                   >
-                    <span className={`text-2xl font-bold mb-1 ${
+                    <span className={`text-xl sm:text-2xl font-bold mb-1 ${
                       answers[currentQ.id] === option.value ? 'text-primary-500' : 'text-gray-400'
                     }`}>
                       {option.value}
                     </span>
-                    <span className={`text-xs text-center ${
+                    <span className={`text-[10px] sm:text-xs text-center ${
                       answers[currentQ.id] === option.value ? 'text-primary-500 font-medium' : 'text-gray-500'
                     }`}>
                       {option.shortLabel}
@@ -506,37 +506,39 @@ export default function WellnessTestPage() {
               </div>
 
               {/* Scale Labels */}
-              <div className="flex justify-between text-xs text-gray-500 mb-8 px-2">
-                <span>Strongly Disagree</span>
-                <span>Strongly Agree</span>
+              <div className="flex justify-between text-[10px] sm:text-xs text-gray-500 mb-6 sm:mb-8 px-1 sm:px-2">
+                <span className="hidden sm:inline">Strongly Disagree</span>
+                <span className="sm:hidden">SD</span>
+                <span className="hidden sm:inline">Strongly Agree</span>
+                <span className="sm:hidden">SA</span>
               </div>
 
               {/* Navigation */}
-              <div className="flex justify-between">
+              <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-0">
                 <button
                   onClick={handleBack}
                   disabled={currentQuestion === 0}
-                  className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors ${
+                  className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium transition-colors w-full sm:w-auto ${
                     currentQuestion === 0
                       ? 'text-gray-400 cursor-not-allowed'
                       : 'text-gray-600 hover:bg-gray-100'
                   }`}
                 >
-                  <ArrowLeft className="w-5 h-5" />
+                  <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                   Back
                 </button>
 
                 <button
                   onClick={handleNext}
                   disabled={!answers[currentQ.id]}
-                  className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors ${
+                  className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-medium transition-colors w-full sm:w-auto ${
                     !answers[currentQ.id]
                       ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                       : 'bg-primary-500 text-white hover:bg-primary-600'
                   }`}
                 >
                   {currentQuestion === wellnessQuestions.length - 1 ? 'Complete' : 'Next'}
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
             </div>
@@ -554,7 +556,7 @@ export default function WellnessTestPage() {
     <div className="min-h-screen bg-[#f0f5f5] flex">
       <Sidebar user={user} activePage="assessments" onLogout={handleLogout} />
       
-      <main className="flex-1 p-8 overflow-auto">
+      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
         <div className="max-w-3xl mx-auto">
           {/* Congratulations Banner */}
           <div className="bg-neutral-800 rounded-xl p-8 text-center mb-6">

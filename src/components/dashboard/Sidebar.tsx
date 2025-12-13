@@ -13,6 +13,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
   ClipboardList, 
@@ -23,7 +24,9 @@ import {
   Settings, 
   User, 
   Shield, 
-  LucideIcon 
+  LucideIcon,
+  Menu,
+  X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/Badge';
@@ -208,6 +211,7 @@ const Logo = () => (
  */
 export default function Sidebar({ user, activePage, onLogout }: SidebarProps) {
   const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   // Derive display values from user object
   const displayName = user.firstName || 'User';
@@ -225,12 +229,111 @@ export default function Sidebar({ user, activePage, onLogout }: SidebarProps) {
     return pathname === itemHref;
   };
 
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
+
+  const sidebarContent = (
+    <>
+      {/* Logo */}
+      <div className="p-6 flex justify-center">
+        <Link href="/" aria-label="Go to homepage">
+          <Logo />
+        </Link>
+      </div>
+
+      {/* User Profile Section */}
+      <UserProfile 
+        displayName={displayName}
+        fullName={fullName}
+        plan={user.plan}
+        isAdmin={userIsAdmin}
+      />
+
+      {/* Navigation Items */}
+      <nav className="flex-1 px-3" aria-label="Dashboard navigation">
+        <ul className="space-y-1" role="list">
+          {DASHBOARD_NAV_ITEMS.map((item) => (
+            <li key={item.href}>
+              <NavLink
+                href={item.href}
+                icon={item.icon}
+                label={item.label}
+                isActive={isItemActive(item.href)}
+              />
+            </li>
+          ))}
+          
+          {/* Admin Link - Only visible for admin users */}
+          {userIsAdmin && (
+            <li className="mt-4 pt-4 border-t border-white/20">
+              <NavLink
+                href="/admin"
+                icon={Shield}
+                label="Admin Panel"
+                isActive={false}
+                variant="admin"
+              />
+            </li>
+          )}
+        </ul>
+      </nav>
+
+      {/* Logout Button */}
+      <div className="p-4">
+        <Button
+          variant="secondary"
+          onClick={onLogout}
+          leftIcon={<LogOut className="w-5 h-5" />}
+          fullWidth
+          aria-label="Log out of your account"
+        >
+          Logout
+        </Button>
+      </div>
+    </>
+  );
+
   return (
-    <aside 
-      className="w-[240px] min-h-screen bg-primary-500 flex flex-col"
-      role="navigation"
-      aria-label="Main navigation"
-    >
+    <>
+      {/* Mobile Menu Button */}
+      <button
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-primary-500 text-white rounded-lg shadow-lg hover:bg-primary-600 transition-colors"
+        aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+      >
+        {isMobileMenuOpen ? (
+          <X className="w-6 h-6" />
+        ) : (
+          <Menu className="w-6 h-6" />
+        )}
+      </button>
+
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/50 z-40"
+          onClick={() => setIsMobileMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Sidebar - Desktop: Fixed, Mobile: Slide-in */}
+      <aside 
+        className={cn(
+          "w-[240px] min-h-screen bg-primary-500 flex flex-col",
+          "fixed lg:static top-0 left-0 z-40",
+          "transform transition-transform duration-300 ease-in-out",
+          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        )}
+        role="navigation"
+        aria-label="Main navigation"
+      >
+        {sidebarContent}
+      </aside>
+    </>
+  );
       {/* Logo */}
       <div className="p-6 flex justify-center">
         <Link href="/" aria-label="Go to homepage">

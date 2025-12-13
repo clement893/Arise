@@ -16,23 +16,23 @@ export default function Hero() {
         }} />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 md:py-24 lg:py-32">
         <div className="max-w-3xl">
           {/* Badge */}
-          <div className="inline-block mb-6">
+          <div className="inline-block mb-4 sm:mb-6">
             <Badge variant="secondary" size="sm">
               SaaS-Based Platform
             </Badge>
           </div>
 
           {/* Main heading */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4 sm:mb-6">
             Empowering<br />
             authentic <span className="text-secondary-500">leaders</span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-lg md:text-xl text-white mb-8 max-w-2xl">
+          <p className="text-base sm:text-lg md:text-xl text-white mb-6 sm:mb-8 max-w-2xl">
             A holistic approach to leadership assessment and development
           </p>
 

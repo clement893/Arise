@@ -79,7 +79,7 @@ export function TableHead({ children, className = '', ...props }: TableHeadProps
   return (
     <th
       className={`
-        px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider
+        px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider
         ${className}
       `}
       {...props}
@@ -91,7 +91,7 @@ export function TableHead({ children, className = '', ...props }: TableHeadProps
 
 export function TableCell({ children, className = '', ...props }: TableCellProps) {
   return (
-    <td className={`px-6 py-4 whitespace-nowrap ${className}`} {...props}>
+    <td className={`px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap ${className}`} {...props}>
       {children}
     </td>
   );

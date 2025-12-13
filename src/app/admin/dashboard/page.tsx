@@ -293,7 +293,7 @@ export default function AdminDashboard() {
 
   if (isLoading) {
     return (
-      <div className="p-8 flex justify-center items-center min-h-screen">
+      <div className="p-4 sm:p-6 lg:p-8 flex justify-center items-center min-h-screen">
         <LoadingInline message="Loading admin data..." />
       </div>
     );
@@ -302,14 +302,14 @@ export default function AdminDashboard() {
   console.log('Rendering admin dashboard:', { stats, usersCount: users.length, filteredCount: filteredUsers.length });
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-6 lg:p-8">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Welcome Admin</h1>
-          <p className="text-gray-500">Manage users, view analytics, and configure platform settings</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Welcome Admin</h1>
+          <p className="text-sm sm:text-base text-gray-500">Manage users, view analytics, and configure platform settings</p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4">
           <Button
             variant="secondary"
             leftIcon={<Download className="w-4 h-4" />}
@@ -344,7 +344,7 @@ export default function AdminDashboard() {
       )}
 
       {/* Stats Cards - Using StatCard component */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <StatCard
           title="Total Users"
           value={stats.totalUsers}
@@ -384,25 +384,26 @@ export default function AdminDashboard() {
 
       {/* User Management Table */}
       <Card className="mt-6" padding="none">
-        <div className="p-6 border-b border-gray-100">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">User Management</h2>
-            <div className="flex items-center gap-4">
+        <div className="p-4 sm:p-6 border-b border-gray-100">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900">User Management</h2>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4">
               <Input
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 leftIcon={<Search className="w-4 h-4" />}
                 fullWidth={false}
-                className="w-64"
+                className="w-full sm:w-64"
               />
-              <Button variant="outline" leftIcon={<Filter className="w-4 h-4" />}>
+              <Button variant="outline" leftIcon={<Filter className="w-4 h-4" />} className="w-full sm:w-auto">
                 Filters
               </Button>
             </div>
           </div>
         </div>
 
+        <div className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -513,6 +514,7 @@ export default function AdminDashboard() {
             ))}
           </TableBody>
         </Table>
+        </div>
       </Card>
 
       {/* Delete Confirmation Modal */}

@@ -190,7 +190,7 @@ export default function TKIDetailedResultsPage() {
     return (
       <div className="min-h-screen bg-[#f0f5f5] flex">
         <Sidebar user={user || { id: 0, email: '' }} onLogout={handleLogout} />
-        <main className="flex-1 p-8 overflow-auto flex items-center justify-center">
+        <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto flex items-center justify-center">
           <Card className="p-8 max-w-md">
             <h2 className="text-xl font-bold text-gray-900 mb-4">No TKI Results Found</h2>
             <p className="text-gray-600 mb-6">You haven't completed the TKI assessment yet.</p>
@@ -213,10 +213,10 @@ export default function TKIDetailedResultsPage() {
     <div className="min-h-screen bg-[#f0f5f5] flex">
       <Sidebar user={user} onLogout={handleLogout} />
 
-      <main className="flex-1 p-8 overflow-auto">
+      <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
+          <div className="flex items-center gap-3 sm:gap-4">
             <Button 
               variant="ghost"
               size="sm"
@@ -226,15 +226,16 @@ export default function TKIDetailedResultsPage() {
               Back to Results
             </Button>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">TKI Conflict Style - Detailed Results</h1>
-              <p className="text-gray-600">Thomas-Kilmann Conflict Mode Instrument</p>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">TKI Conflict Style - Detailed Results</h1>
+              <p className="text-sm sm:text-base text-gray-600">Thomas-Kilmann Conflict Mode Instrument</p>
             </div>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <Button 
               variant="outline" 
               leftIcon={<Share2 className="w-4 h-4" />}
               onClick={handleShare}
+              className="w-full sm:w-auto"
             >
               Share
             </Button>
@@ -242,6 +243,7 @@ export default function TKIDetailedResultsPage() {
               variant="secondary" 
               leftIcon={<Download className="w-4 h-4" />}
               onClick={handleDownloadPDF}
+              className="w-full sm:w-auto"
             >
               Download PDF
             </Button>
@@ -249,18 +251,18 @@ export default function TKIDetailedResultsPage() {
         </div>
 
         {/* Dominant Style Card */}
-        <Card className="mb-6 p-6">
-          <div className="flex items-start gap-6">
+        <Card className="mb-4 sm:mb-6 p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
             <div 
-              className="w-24 h-24 rounded-xl flex items-center justify-center text-white text-2xl font-bold"
+              className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl flex items-center justify-center text-white text-xl sm:text-2xl font-bold flex-shrink-0"
               style={{ backgroundColor: modeDescriptions[dominantMode].color }}
             >
               {dominantMode.charAt(0)}
             </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <h2 className="text-2xl font-bold text-gray-900">Your Dominant Style: {dominantMode}</h2>
-                <span className="px-3 py-1 bg-primary-500 text-white text-sm rounded-full font-medium">
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Your Dominant Style: {dominantMode}</h2>
+                <span className="px-2 sm:px-3 py-1 bg-primary-500 text-white text-xs sm:text-sm rounded-full font-medium self-start sm:self-auto">
                   {scores[dominantMode]}/12
                 </span>
               </div>
@@ -279,7 +281,7 @@ export default function TKIDetailedResultsPage() {
 
         {/* All Scores */}
         <Card className="mb-6 p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Your Conflict Style Scores</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Your Conflict Style Scores</h2>
           <div className="space-y-4">
             {sortedModes.map(([mode, score]) => {
               const percentage = (score / maxScore) * 100;
@@ -349,7 +351,7 @@ export default function TKIDetailedResultsPage() {
 
         {/* Recommendations */}
         <Card className="p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Recommendations</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">Recommendations</h2>
           <div className="space-y-4">
             <div className="p-4 bg-blue-50 rounded-lg">
               <h3 className="font-semibold text-blue-900 mb-2">Develop Flexibility</h3>
