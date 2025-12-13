@@ -84,15 +84,21 @@ function ProfilePageContent() {
   });
 
   useEffect(() => {
+    let isMounted = true;
+    
     const loadUserData = async () => {
       const userData = localStorage.getItem('arise_user');
       if (!userData) {
-        router.push('/login');
+        if (isMounted) {
+          router.push('/login');
+        }
         return;
       }
 
       const parsedUser = JSON.parse(userData);
-      setUser(parsedUser);
+      if (isMounted) {
+        setUser(parsedUser);
+      }
 
       // Essayer de charger les données depuis l'API
       try {
@@ -106,62 +112,74 @@ function ProfilePageContent() {
         if (response.ok) {
           const data = await response.json();
           const apiUser = data.user;
-          setUser(apiUser);
-          setProfileData({
-            firstName: apiUser.firstName || '',
-            lastName: apiUser.lastName || '',
-            email: apiUser.email || '',
-            password: '••••••••',
-            timezone: apiUser.timezone || 'America/New_York',
-            gender: apiUser.gender || '',
-            age: apiUser.age?.toString() || '',
-            highestDegree: apiUser.highestDegree || '',
-            mainGoal: apiUser.mainGoal || '',
-            hasCoach: apiUser.hasCoach === true ? 'Yes' : apiUser.hasCoach === false ? 'No' : '',
-            organizationName: apiUser.company || '',
-            employeeCount: apiUser.employeeCount || '',
-          });
+          if (isMounted) {
+            setUser(apiUser);
+            setProfileData({
+              firstName: apiUser.firstName || '',
+              lastName: apiUser.lastName || '',
+              email: apiUser.email || '',
+              password: '••••••••',
+              timezone: apiUser.timezone || 'America/New_York',
+              gender: apiUser.gender || '',
+              age: apiUser.age?.toString() || '',
+              highestDegree: apiUser.highestDegree || '',
+              mainGoal: apiUser.mainGoal || '',
+              hasCoach: apiUser.hasCoach === true ? 'Yes' : apiUser.hasCoach === false ? 'No' : '',
+              organizationName: apiUser.company || '',
+              employeeCount: apiUser.employeeCount || '',
+            });
+          }
           // Mettre à jour localStorage avec les données fraîches
           localStorage.setItem('arise_user', JSON.stringify(apiUser));
         } else {
           // Utiliser les données du localStorage si l'API échoue
+          if (isMounted) {
+            setProfileData({
+              firstName: parsedUser.firstName || '',
+              lastName: parsedUser.lastName || '',
+              email: parsedUser.email || '',
+              password: '••••••••',
+              timezone: parsedUser.timezone || 'America/New_York',
+              gender: parsedUser.gender || '',
+              age: parsedUser.age?.toString() || '',
+              highestDegree: parsedUser.highestDegree || '',
+              mainGoal: parsedUser.mainGoal || '',
+              hasCoach: parsedUser.hasCoach === true ? 'Yes' : parsedUser.hasCoach === false ? 'No' : '',
+              organizationName: parsedUser.company || '',
+              employeeCount: parsedUser.employeeCount || '',
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load profile from API:', error);
+        if (isMounted) {
           setProfileData({
             firstName: parsedUser.firstName || '',
             lastName: parsedUser.lastName || '',
             email: parsedUser.email || '',
             password: '••••••••',
             timezone: parsedUser.timezone || 'America/New_York',
-            gender: parsedUser.gender || '',
-            age: parsedUser.age?.toString() || '',
-            highestDegree: parsedUser.highestDegree || '',
-            mainGoal: parsedUser.mainGoal || '',
-            hasCoach: parsedUser.hasCoach === true ? 'Yes' : parsedUser.hasCoach === false ? 'No' : '',
+            gender: '',
+            age: '',
+            highestDegree: '',
+            mainGoal: '',
+            hasCoach: '',
             organizationName: parsedUser.company || '',
-            employeeCount: parsedUser.employeeCount || '',
+            employeeCount: '',
           });
         }
-      } catch (error) {
-        console.error('Failed to load profile from API:', error);
-        setProfileData({
-          firstName: parsedUser.firstName || '',
-          lastName: parsedUser.lastName || '',
-          email: parsedUser.email || '',
-          password: '••••••••',
-          timezone: parsedUser.timezone || 'America/New_York',
-          gender: '',
-          age: '',
-          highestDegree: '',
-          mainGoal: '',
-          hasCoach: '',
-          organizationName: parsedUser.company || '',
-          employeeCount: '',
-        });
       }
 
-      setIsLoading(false);
+      if (isMounted) {
+        setIsLoading(false);
+      }
     };
 
     loadUserData();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [router]);
 
   const handleInputChange = (field: keyof ProfileData, value: string) => {

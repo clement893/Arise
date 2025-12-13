@@ -25,6 +25,8 @@ export default function ResultsPage() {
   const [generatingPDF, setGeneratingPDF] = useState(false);
 
   const fetchAssessments = useCallback(async (userId: number) => {
+    // Prevent multiple simultaneous calls
+    if (loading) return;
     try {
       console.log('Fetching assessments for user:', userId);
       
@@ -78,12 +80,14 @@ export default function ResultsPage() {
       }
     };
 
+    // Only run on mount, not on every router change
     loadData();
 
     return () => {
       isMounted = false;
     };
-  }, [fetchAssessments, router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleDownloadReport = async () => {
     if (!user || !assessmentResults) return;

@@ -59,12 +59,18 @@ export default function SettingsPage() {
   });
 
   useEffect(() => {
+    let isMounted = true;
+    
     const loadData = async () => {
       const userData = localStorage.getItem('arise_user');
       if (userData) {
-        setUser(JSON.parse(userData));
+        if (isMounted) {
+          setUser(JSON.parse(userData));
+        }
       } else {
-        router.push('/login');
+        if (isMounted) {
+          router.push('/login');
+        }
         return;
       }
       
@@ -73,28 +79,36 @@ export default function SettingsPage() {
         const response = await fetch('/api/settings');
         if (response.ok) {
           const data = await response.json();
-          setSettings(data.settings);
-          
-          // Apply dark mode if enabled
-          if (data.settings.appearance.darkMode) {
-            document.documentElement.classList.add('dark');
-          } else {
-            document.documentElement.classList.remove('dark');
+          if (isMounted) {
+            setSettings(data.settings);
+            
+            // Apply dark mode if enabled
+            if (data.settings.appearance.darkMode) {
+              document.documentElement.classList.add('dark');
+            } else {
+              document.documentElement.classList.remove('dark');
+            }
           }
         }
       } catch (error) {
         console.error('Failed to load settings:', error);
         // Fall back to localStorage
         const savedSettings = localStorage.getItem('arise_settings');
-        if (savedSettings) {
+        if (savedSettings && isMounted) {
           setSettings(JSON.parse(savedSettings));
         }
       }
       
-      setIsLoading(false);
+      if (isMounted) {
+        setIsLoading(false);
+      }
     };
     
     loadData();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [router]);
 
   const handleToggle = (category: keyof Settings, setting: string) => {
