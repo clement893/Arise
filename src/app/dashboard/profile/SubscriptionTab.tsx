@@ -540,7 +540,7 @@ export default function SubscriptionTab({ user }: { user: User }) {
       <section className="bg-primary-500 rounded-xl p-8 text-white">
         <div className="flex items-center justify-between">
           <div className="max-w-lg">
-            <h2 className="text-2xl font-bold mb-2">Ready to accelerate your growth?</h2>
+            <h2 className="text-2xl font-bold text-white mb-2">Ready to accelerate your growth?</h2>
             <p className="text-white/80 mb-4">
               Connect with expert ARISE coaches who specialize in leadership development. 
               Schedule your FREE coaching session to debrief your results and build a personalized development plan.

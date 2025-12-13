@@ -214,7 +214,7 @@ export default function FeedbackPage() {
         <div className="max-w-3xl mx-auto">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-2xl font-bold">ARISE</h1>
+              <h1 className="text-2xl font-bold text-white">ARISE</h1>
               <p className="text-secondary-500 text-sm">360° Feedback</p>
             </div>
             <div className="text-right">
