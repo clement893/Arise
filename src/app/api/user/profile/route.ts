@@ -5,16 +5,16 @@ import { getCurrentUser, unauthorizedResponse } from '@/lib/auth';
 // GET - Récupérer le profil utilisateur
 export async function GET(request: NextRequest) {
   try {
-    const user = await getCurrentUser(request);
+    const currentUser = await getCurrentUser(request);
     
-    if (!user) {
+    if (!currentUser) {
       return unauthorizedResponse('Authentication required');
     }
 
-    const userId = user.id;
+    const userId = currentUser.id;
 
     const user = await prisma.user.findUnique({
-      where: { id: parseInt(userId) },
+      where: { id: userId },
       select: {
         id: true,
         email: true,
@@ -88,7 +88,7 @@ export async function PUT(request: NextRequest) {
       const existingUser = await prisma.user.findFirst({
         where: {
           email,
-          NOT: { id: parseInt(userId) },
+          NOT: { id: userId },
         },
       });
 
@@ -101,7 +101,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const updatedUser = await prisma.user.update({
-      where: { id: parseInt(userId) },
+      where: { id: userId },
       data: {
         ...(firstName !== undefined && { firstName }),
         ...(lastName !== undefined && { lastName }),
@@ -163,7 +163,7 @@ export async function DELETE(request: NextRequest) {
     const userId = user.id;
 
     await prisma.user.delete({
-      where: { id: parseInt(userId) },
+      where: { id: userId },
     });
 
     return NextResponse.json({
