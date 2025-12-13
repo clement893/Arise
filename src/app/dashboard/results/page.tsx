@@ -204,12 +204,34 @@ export default function ResultsPage() {
           <p className="text-sm text-gray-500 mb-4">A snapshot of your leadership assessment results</p>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {leaderProfile.map((item, index) => (
-              <div key={index} className={`${item.color} text-white rounded-xl p-4`}>
-                <p className="text-xs opacity-80 mb-1">{item.label}</p>
-                <p className="text-xl font-bold">{item.value}</p>
-              </div>
-            ))}
+            {leaderProfile.map((item, index) => {
+              const getClickHandler = () => {
+                if (item.label === 'TKI Dominant' && hasTKI) {
+                  return () => router.push('/dashboard/results/tki');
+                }
+                if (item.label === 'Light score' && hasWellness) {
+                  return () => router.push('/dashboard/results/wellness');
+                }
+                if (item.label === '360°' && has360) {
+                  return () => router.push('/dashboard/results/360-self');
+                }
+                return undefined;
+              };
+              
+              const clickHandler = getClickHandler();
+              const Component = clickHandler ? 'button' : 'div';
+              
+              return (
+                <Component
+                  key={index}
+                  onClick={clickHandler}
+                  className={`${item.color} text-white rounded-xl p-4 ${clickHandler ? 'cursor-pointer hover:opacity-90 transition-opacity' : ''}`}
+                >
+                  <p className="text-xs opacity-80 mb-1">{item.label}</p>
+                  <p className="text-xl font-bold">{item.value}</p>
+                </Component>
+              );
+            })}
           </div>
         </div>
 
