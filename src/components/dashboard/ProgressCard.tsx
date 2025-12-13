@@ -17,7 +17,7 @@ export default function ProgressCard({ totalProgress, items }: ProgressCardProps
       <div className="flex gap-8">
         {/* Left side - Total Progress */}
         <div className="flex-1">
-          <h3 className="text-lg font-semibold mb-2">Your Progress</h3>
+          <h3 className="text-lg font-semibold text-white mb-2">Your Progress</h3>
           <div className="text-6xl font-bold text-[#4ECDC4] mb-2">
             {totalProgress} %
           </div>
