@@ -662,7 +662,6 @@ export default function SelfAssessment360Page() {
             </button>
           </div>
         </div>
-      </main>
-    </div>
+    </main>
   );
 }

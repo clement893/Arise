@@ -605,7 +605,6 @@ export default function WellnessTestPage() {
             </button>
           </div>
         </div>
-      </main>
-    </div>
+    </main>
   );
 }
