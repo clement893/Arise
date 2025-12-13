@@ -33,6 +33,7 @@ export async function GET(request: NextRequest) {
           plan: true,
           createdAt: true,
           hasCoach: true,
+          role: true,
           roles: true,
         },
         take: 10, // Only get first 10 for preview
