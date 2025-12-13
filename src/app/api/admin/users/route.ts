@@ -125,7 +125,7 @@ export async function PUT(request: NextRequest) {
         await prisma.user.update({
           where: { id: userId },
           data: { 
-            role: 'admin', // Keep legacy field
+            role: 'admin' as const, // Keep legacy field
             roles: currentRoles
           }
         });
@@ -136,7 +136,7 @@ export async function PUT(request: NextRequest) {
         await prisma.user.update({
           where: { id: userId },
           data: { 
-            role: currentRoles[0] || 'participant', // Fallback to first role
+            role: (currentRoles[0] || 'participant') as 'admin' | 'coach' | 'participant', // Fallback to first role
             roles: currentRoles
           }
         });
@@ -149,7 +149,7 @@ export async function PUT(request: NextRequest) {
         await prisma.user.update({
           where: { id: userId },
           data: { 
-            role: currentRoles.includes('admin') ? 'admin' : 'participant',
+            role: (currentRoles.includes('admin') ? 'admin' : 'participant') as 'admin' | 'coach' | 'participant',
             roles: currentRoles
           }
         });
@@ -160,7 +160,7 @@ export async function PUT(request: NextRequest) {
         await prisma.user.update({
           where: { id: userId },
           data: { 
-            role: currentRoles[0] || 'participant',
+            role: (currentRoles[0] || 'participant') as 'admin' | 'coach' | 'participant',
             roles: currentRoles
           }
         });
@@ -173,7 +173,7 @@ export async function PUT(request: NextRequest) {
         await prisma.user.update({
           where: { id: userId },
           data: { 
-            role: currentRoles.includes('admin') ? 'admin' : 'coach',
+            role: (currentRoles.includes('admin') ? 'admin' : 'coach') as 'admin' | 'coach' | 'participant',
             roles: currentRoles,
             userType: userType || 'coach',
             plan: plan || 'coach'
@@ -186,7 +186,7 @@ export async function PUT(request: NextRequest) {
         await prisma.user.update({
           where: { id: userId },
           data: { 
-            role: currentRoles[0] || 'participant',
+            role: (currentRoles[0] || 'participant') as 'admin' | 'coach' | 'participant',
             roles: currentRoles
           }
         });
@@ -195,10 +195,13 @@ export async function PUT(request: NextRequest) {
       case 'set_roles':
         // Set roles directly from array
         if (roles && Array.isArray(roles)) {
+          const primaryRole = roles.includes('admin') 
+            ? 'admin' 
+            : (roles[0] || 'participant') as 'admin' | 'coach' | 'participant';
           await prisma.user.update({
             where: { id: userId },
             data: { 
-              role: roles.includes('admin') ? 'admin' : roles[0] || 'participant',
+              role: primaryRole,
               roles: roles,
               userType: userType || undefined,
               plan: plan || undefined
