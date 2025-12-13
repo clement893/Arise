@@ -86,9 +86,10 @@ interface NavLinkProps {
   label: string;
   isActive: boolean;
   variant?: 'default' | 'admin';
+  onNavigate?: () => void;
 }
 
-const NavLink = ({ href, icon: Icon, label, isActive, variant = 'default' }: NavLinkProps) => {
+const NavLink = ({ href, icon: Icon, label, isActive, variant = 'default', onNavigate }: NavLinkProps) => {
   // Base classes for all nav links
   const baseClasses = 'flex items-center gap-3 px-4 py-3 rounded-lg transition-colors';
   
@@ -103,8 +104,10 @@ const NavLink = ({ href, icon: Icon, label, isActive, variant = 'default' }: Nav
   return (
     <Link 
       href={href} 
+      prefetch={true}
       className={cn(baseClasses, variantClasses[variant])}
       aria-current={isActive ? 'page' : undefined}
+      onClick={onNavigate}
     >
       <Icon className="w-5 h-5" aria-hidden="true" />
       <span className="text-sm">{label}</span>
@@ -238,7 +241,12 @@ export default function Sidebar({ user, activePage, onLogout }: SidebarProps) {
     <>
       {/* Logo */}
       <div className="p-6 flex justify-center">
-        <Link href="/" aria-label="Go to homepage">
+        <Link 
+          href="/" 
+          aria-label="Go to homepage"
+          prefetch={true}
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
           <Logo />
         </Link>
       </div>
@@ -261,6 +269,7 @@ export default function Sidebar({ user, activePage, onLogout }: SidebarProps) {
                 icon={item.icon}
                 label={item.label}
                 isActive={isItemActive(item.href)}
+                onNavigate={() => setIsMobileMenuOpen(false)}
               />
             </li>
           ))}
@@ -274,6 +283,7 @@ export default function Sidebar({ user, activePage, onLogout }: SidebarProps) {
                 label="Admin Panel"
                 isActive={false}
                 variant="admin"
+                onNavigate={() => setIsMobileMenuOpen(false)}
               />
             </li>
           )}

@@ -41,7 +41,11 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
     <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-screen fixed left-0 top-0">
       {/* Logo */}
       <div className="p-6 border-b border-gray-200">
-        <Link href="/admin/dashboard" className="flex items-center gap-2">
+        <Link 
+          href="/admin/dashboard" 
+          className="flex items-center gap-2"
+          prefetch={true}
+        >
           <span className="text-2xl font-bold text-[#0D5C5C]">ARISE</span>
         </Link>
       </div>
@@ -89,6 +93,7 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
               <li key={item.href}>
                 <Link
                   href={item.href}
+                  prefetch={true}
                   className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                     isActive
                       ? 'bg-[#0D5C5C] text-white'
