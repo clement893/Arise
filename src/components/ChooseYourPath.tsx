@@ -27,7 +27,7 @@ export default function ChooseYourPath() {
         "Client progress analytics"
       ],
       cta: "Discover",
-      href: "/coach",
+      href: "/signup/choose-plan?type=coach",
       featured: false
     },
     {
@@ -41,7 +41,7 @@ export default function ChooseYourPath() {
         "Dedicated support"
       ],
       cta: "Discover",
-      href: "/business",
+      href: "/signup/choose-plan?type=business",
       featured: false
     }
   ];

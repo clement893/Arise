@@ -129,7 +129,7 @@ export default function LoginPage() {
                 onChange={(e) => setRememberMe(e.target.checked)}
                 darkMode
               />
-              <Link href="/forgot-password" className="text-sm text-white/80 hover:text-secondary-500 transition-colors">
+              <Link href="/signup" className="text-sm text-white/80 hover:text-secondary-500 transition-colors">
                 Forgot password?
               </Link>
             </div>

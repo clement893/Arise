@@ -241,7 +241,10 @@ export default function ResultsPage() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-900">Your development goals</h2>
               {developmentGoals.length > 0 && (
-                <button className="text-primary-500 text-sm font-medium hover:underline">
+                <button 
+                  onClick={() => router.push('/dashboard/development')}
+                  className="text-primary-500 text-sm font-medium hover:underline"
+                >
                   View all
                 </button>
               )}

@@ -173,6 +173,10 @@ export default function DashboardPage() {
               status={getAssessmentStatus('mbti')}
               badge="External link"
               badgeColor="bg-gray-100 text-gray-600"
+              onAction={() => {
+                // MBTI is external, could link to external site or show coming soon
+                window.open('https://www.16personalities.com/', '_blank');
+              }}
             />
             <EvaluationCard
               icon={<MessageSquare className="w-6 h-6" />}

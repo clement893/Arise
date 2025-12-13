@@ -6,6 +6,7 @@ import Sidebar from '@/components/dashboard/Sidebar';
 import { Button, Card, CardContent, LoadingPage } from '@/components/ui';
 import { ArrowLeft, Download, Share2 } from 'lucide-react';
 import { authenticatedFetch } from '@/lib/token-refresh';
+import { generateLeadershipReport } from '@/lib/generateReport';
 
 interface User {
   id: number;
@@ -139,6 +140,48 @@ export default function TKIDetailedResultsPage() {
     router.push('/');
   };
 
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'My TKI Conflict Style Results',
+          text: `My dominant conflict style is ${dominantMode}. Check out my ARISE leadership assessment results!`,
+          url: window.location.href,
+        });
+      } catch (err) {
+        // User cancelled or error occurred
+        if ((err as Error).name !== 'AbortError') {
+          console.error('Error sharing:', err);
+        }
+      }
+    } else {
+      // Fallback: copy to clipboard
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        alert('Link copied to clipboard!');
+      } catch (err) {
+        console.error('Failed to copy link:', err);
+        alert('Please copy this link manually: ' + window.location.href);
+      }
+    }
+  };
+
+  const handleDownloadPDF = () => {
+    if (!user || !tkiResult) return;
+    
+    generateLeadershipReport(
+      { firstName: user.firstName || '', lastName: user.lastName || '', email: user.email },
+      {
+        tki: {
+          dominantResult: dominantMode,
+          overallScore: Math.round((maxScore / 12) * 100),
+          scores: scores,
+          completedAt: tkiResult.completedAt,
+        }
+      }
+    );
+  };
+
   if (loading) {
     return <LoadingPage />;
   }
@@ -188,10 +231,18 @@ export default function TKIDetailedResultsPage() {
             </div>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" leftIcon={<Share2 className="w-4 h-4" />}>
+            <Button 
+              variant="outline" 
+              leftIcon={<Share2 className="w-4 h-4" />}
+              onClick={handleShare}
+            >
               Share
             </Button>
-            <Button variant="secondary" leftIcon={<Download className="w-4 h-4" />}>
+            <Button 
+              variant="secondary" 
+              leftIcon={<Download className="w-4 h-4" />}
+              onClick={handleDownloadPDF}
+            >
               Download PDF
             </Button>
           </div>

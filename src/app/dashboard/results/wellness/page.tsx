@@ -6,6 +6,7 @@ import Sidebar from '@/components/dashboard/Sidebar';
 import { Button, Card, LoadingPage } from '@/components/ui';
 import { ArrowLeft, Download, Share2, TrendingUp, TrendingDown } from 'lucide-react';
 import { authenticatedFetch } from '@/lib/token-refresh';
+import { generateLeadershipReport } from '@/lib/generateReport';
 
 interface User {
   id: number;
@@ -88,6 +89,46 @@ export default function WellnessDetailedResultsPage() {
     router.push('/');
   };
 
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'My Wellness Assessment Results',
+          text: `My Light Score is ${overallScore}%. Check out my ARISE wellness assessment results!`,
+          url: window.location.href,
+        });
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError') {
+          console.error('Error sharing:', err);
+        }
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        alert('Link copied to clipboard!');
+      } catch (err) {
+        console.error('Failed to copy link:', err);
+        alert('Please copy this link manually: ' + window.location.href);
+      }
+    }
+  };
+
+  const handleDownloadPDF = () => {
+    if (!user || !wellnessResult) return;
+    
+    generateLeadershipReport(
+      { firstName: user.firstName || '', lastName: user.lastName || '', email: user.email },
+      {
+        wellness: {
+          dominantResult: overallLevel.level,
+          overallScore: overallScore,
+          scores: scores,
+          completedAt: wellnessResult.completedAt,
+        }
+      }
+    );
+  };
+
   if (loading) {
     return <LoadingPage />;
   }
@@ -147,10 +188,18 @@ export default function WellnessDetailedResultsPage() {
             </div>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" leftIcon={<Share2 className="w-4 h-4" />}>
+            <Button 
+              variant="outline" 
+              leftIcon={<Share2 className="w-4 h-4" />}
+              onClick={handleShare}
+            >
               Share
             </Button>
-            <Button variant="secondary" leftIcon={<Download className="w-4 h-4" />}>
+            <Button 
+              variant="secondary" 
+              leftIcon={<Download className="w-4 h-4" />}
+              onClick={handleDownloadPDF}
+            >
               Download PDF
             </Button>
           </div>
