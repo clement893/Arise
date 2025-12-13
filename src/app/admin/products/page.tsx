@@ -236,17 +236,35 @@ export default function ProductsPage() {
                   return;
                 }
                 try {
+                  setIsSaving(true);
+                  setError('');
                   const response = await fetch('/api/admin/products/seed', {
                     method: 'POST',
                   });
-                  if (!response.ok) throw new Error('Failed to seed products');
                   const data = await response.json();
-                  alert(`Products seeded successfully!\n${data.results.map((r: any) => `${r.action}: ${r.product}`).join('\n')}`);
+                  
+                  if (!response.ok) {
+                    throw new Error(data.error || data.details || 'Failed to seed products');
+                  }
+                  
+                  const resultsMessage = data.results.map((r: any) => {
+                    if (r.action === 'error') {
+                      return `${r.action}: ${r.product} - ${r.error}`;
+                    }
+                    return `${r.action}: ${r.product}`;
+                  }).join('\n');
+                  
+                  alert(`${data.message}\n\n${resultsMessage}`);
                   fetchProducts();
                 } catch (err) {
-                  alert('Failed to seed products');
+                  const errorMessage = err instanceof Error ? err.message : 'Failed to seed products';
+                  setError(errorMessage);
+                  alert(`Error: ${errorMessage}`);
+                } finally {
+                  setIsSaving(false);
                 }
               }}
+              isLoading={isSaving}
             >
               Seed Default Products
             </Button>

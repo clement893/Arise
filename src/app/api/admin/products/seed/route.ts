@@ -104,6 +104,23 @@ export async function POST(request: NextRequest) {
       return unauthorizedResponse('Admin access required');
     }
 
+    // Check if Product table exists by trying to count
+    try {
+      await prisma.product.count();
+    } catch (tableError: any) {
+      // Table doesn't exist - migration not applied
+      if (tableError?.code === 'P2021' || tableError?.message?.includes('does not exist')) {
+        return NextResponse.json(
+          { 
+            error: 'Product table does not exist. Please run the database migration first.',
+            details: 'The Product table needs to be created in the database. Run: npx prisma migrate deploy or npx prisma db push'
+          },
+          { status: 500 }
+        );
+      }
+      throw tableError;
+    }
+
     const results = [];
 
     for (const product of products) {
@@ -127,18 +144,25 @@ export async function POST(request: NextRequest) {
         }
       } catch (error) {
         console.error(`Error processing product ${product.name}:`, error);
-        results.push({ action: 'error', product: product.name, error: error instanceof Error ? error.message : 'Unknown error' });
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        results.push({ action: 'error', product: product.name, error: errorMessage });
       }
     }
 
+    const hasErrors = results.some(r => r.action === 'error');
+    
     return NextResponse.json({
-      message: 'Products seeded successfully',
+      message: hasErrors ? 'Products seeded with some errors' : 'Products seeded successfully',
       results,
     });
   } catch (error) {
     console.error('Seed products error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: 'Failed to seed products' },
+      { 
+        error: 'Failed to seed products',
+        details: errorMessage
+      },
       { status: 500 }
     );
   }
