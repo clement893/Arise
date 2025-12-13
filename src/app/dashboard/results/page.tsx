@@ -2,7 +2,7 @@
 
 import { Button, Card, CardContent, Badge, Spinner, LoadingPage } from '@/components/ui';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/dashboard/Sidebar';
 import { Share2, MessageCircle, ChevronRight, Download, FileText, AlertCircle } from 'lucide-react';
@@ -24,31 +24,7 @@ export default function ResultsPage() {
   const [assessmentResults, setAssessmentResults] = useState<any>(null);
   const [generatingPDF, setGeneratingPDF] = useState(false);
 
-  useEffect(() => {
-    const loadData = async () => {
-      const storedUser = localStorage.getItem('arise_user');
-      if (storedUser) {
-        try {
-          const userData = JSON.parse(storedUser);
-          setUser(userData);
-          await fetchAssessments(userData.id);
-        } catch (error) {
-          console.error('Error loading user data:', error);
-          router.push('/signup');
-          return;
-        }
-      } else {
-        router.push('/signup');
-        return;
-      }
-      setLoading(false);
-    };
-
-    loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const fetchAssessments = async (userId: number) => {
+  const fetchAssessments = useCallback(async (userId: number) => {
     try {
       console.log('Fetching assessments for user:', userId);
       
@@ -70,7 +46,44 @@ export default function ResultsPage() {
       console.error('Failed to fetch assessments:', error);
       setAssessmentResults(null);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    
+    const loadData = async () => {
+      const storedUser = localStorage.getItem('arise_user');
+      if (storedUser) {
+        try {
+          const userData = JSON.parse(storedUser);
+          if (isMounted) {
+            setUser(userData);
+            await fetchAssessments(userData.id);
+          }
+        } catch (error) {
+          console.error('Error loading user data:', error);
+          if (isMounted) {
+            router.push('/signup');
+          }
+          return;
+        }
+      } else {
+        if (isMounted) {
+          router.push('/signup');
+        }
+        return;
+      }
+      if (isMounted) {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [fetchAssessments, router]);
 
   const handleDownloadReport = async () => {
     if (!user || !assessmentResults) return;
@@ -112,10 +125,6 @@ export default function ResultsPage() {
     return null;
   }
 
-  // Debug: Log assessment results
-  useEffect(() => {
-    console.log('Assessment results state:', assessmentResults);
-  }, [assessmentResults]);
 
   // Check if user has completed any assessments
   const hasMBTI = assessmentResults?.mbti?.dominantResult;
