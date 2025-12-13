@@ -73,6 +73,23 @@ const DASHBOARD_NAV_ITEMS: NavItem[] = [
   { href: '/dashboard/profile', label: 'Profile', icon: User },
 ];
 
+/**
+ * Coach navigation items
+ */
+const COACH_NAV_ITEMS: NavItem[] = [
+  { href: '/coach/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/coach/participants', label: 'Participants', icon: Users },
+];
+
+/**
+ * Admin navigation items
+ */
+const ADMIN_NAV_ITEMS: NavItem[] = [
+  { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin/users', label: 'Users', icon: Users },
+  { href: '/admin/products', label: 'Products', icon: ClipboardList },
+];
+
 // =============================================================================
 // SUB-COMPONENTS
 // =============================================================================
@@ -300,6 +317,18 @@ export default function Sidebar({ user, activePage, onLogout }: SidebarProps) {
   const displayName = user.firstName || 'User';
   const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'User';
   const userIsAdmin = checkIsAdmin(user.role || '');
+  
+  // Determine current space and navigation items
+  const currentPath = pathname || '';
+  const isCoachSpace = currentPath.startsWith('/coach');
+  const isAdminSpace = currentPath.startsWith('/admin');
+  
+  // Select navigation items based on current space
+  const navItems = isAdminSpace 
+    ? ADMIN_NAV_ITEMS 
+    : isCoachSpace 
+    ? COACH_NAV_ITEMS 
+    : DASHBOARD_NAV_ITEMS;
 
   /**
    * Determine if a nav item is active
@@ -307,14 +336,17 @@ export default function Sidebar({ user, activePage, onLogout }: SidebarProps) {
    */
   const isItemActive = (itemHref: string): boolean => {
     if (activePage) {
-      // Map activePage to expected href patterns
+      // Map activePage to expected href patterns for different spaces
       const activePageMap: Record<string, string> = {
-        'dashboard': '/dashboard',
+        'dashboard': isAdminSpace ? '/admin/dashboard' : isCoachSpace ? '/coach/dashboard' : '/dashboard',
+        'participants': '/coach/participants',
         'assessments': '/dashboard/assessments',
         'results': '/dashboard/results',
         'development': '/dashboard/development',
         'settings': '/dashboard/settings',
         'profile': '/dashboard/profile',
+        'users': '/admin/users',
+        'products': '/admin/products',
       };
       
       const expectedHref = activePageMap[activePage];
@@ -328,7 +360,7 @@ export default function Sidebar({ user, activePage, onLogout }: SidebarProps) {
       }
       return false;
     }
-    return pathname === itemHref;
+    return pathname === itemHref || pathname?.startsWith(itemHref + '/') ?? false;
   };
 
   // Close mobile menu when route changes
@@ -400,7 +432,7 @@ export default function Sidebar({ user, activePage, onLogout }: SidebarProps) {
         {/* Navigation Items - Scrollable */}
         <nav className="flex-1 px-3 overflow-y-auto min-h-0" aria-label="Dashboard navigation">
           <ul className="space-y-1" role="list">
-            {DASHBOARD_NAV_ITEMS.map((item) => (
+            {navItems.map((item) => (
               <li key={item.href}>
                 <NavLink
                   href={item.href}
@@ -411,20 +443,6 @@ export default function Sidebar({ user, activePage, onLogout }: SidebarProps) {
                 />
               </li>
             ))}
-            
-            {/* Admin Link - Only visible for admin users */}
-            {userIsAdmin && (
-              <li className="mt-4 pt-4 border-t border-white/20">
-                <NavLink
-                  href="/admin"
-                  icon={Shield}
-                  label="Admin Panel"
-                  isActive={false}
-                  variant="admin"
-                  onNavigate={() => setIsMobileMenuOpen(false)}
-                />
-              </li>
-            )}
           </ul>
         </nav>
 
