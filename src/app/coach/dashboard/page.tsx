@@ -139,26 +139,26 @@ export default function CoachDashboard() {
           <StatCard
             title="Total Participants"
             value={stats.totalParticipants}
-            icon={Users}
-            trend={null}
+            icon={<Users className="w-6 h-6" />}
+            variant="blue"
           />
           <StatCard
             title="With Coach"
             value={stats.participantsWithCoach}
-            icon={UserCheck}
-            trend={null}
+            icon={<UserCheck className="w-6 h-6" />}
+            variant="green"
           />
           <StatCard
             title="Completed Assessments"
             value={stats.completedAssessments}
-            icon={ClipboardCheck}
-            trend={null}
+            icon={<ClipboardCheck className="w-6 h-6" />}
+            variant="purple"
           />
           <StatCard
             title="Average Score"
             value={`${stats.averageScore}%`}
-            icon={TrendingUp}
-            trend={null}
+            icon={<TrendingUp className="w-6 h-6" />}
+            variant="teal"
           />
         </div>
 
