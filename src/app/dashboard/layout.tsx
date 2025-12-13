@@ -41,11 +41,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               const parsedStoredUser = JSON.parse(storedUser);
               const updatedUser = {
                 ...data.user,
-                // Always preserve role from localStorage to maintain admin access
-                role: parsedStoredUser.role || data.user.role,
+                // Use role from API (database) if available, otherwise fallback to localStorage
+                // This ensures role is always synced with database on refresh
+                role: data.user.role || parsedStoredUser.role,
               };
               setUser(updatedUser);
-              // Update localStorage with fresh data but preserve role
+              // Update localStorage with fresh data including role from database
               localStorage.setItem('arise_user', JSON.stringify(updatedUser));
             }
           } catch (error) {
