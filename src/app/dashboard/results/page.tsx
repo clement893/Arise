@@ -128,11 +128,19 @@ export default function ResultsPage() {
   // Check if user has completed any assessments
   // Check for dominantResult/overallScore first, then completedAt if available
   // This handles cases where completedAt might not be set but assessment is completed
+  const tkiData = assessmentResults?.tki;
   const hasMBTI = assessmentResults?.mbti?.dominantResult;
-  const hasTKI = assessmentResults?.tki?.dominantResult;
+  // Check if TKI exists and has dominantResult, or if it exists with any data (fallback)
+  const hasTKI = tkiData?.dominantResult || (tkiData && (tkiData.scores || tkiData.answers) ? 'Completed' : null);
   const has360 = assessmentResults?.self_360?.dominantResult;
   const hasWellness = assessmentResults?.wellness?.overallScore !== undefined;
   const hasAnyAssessment = hasMBTI || hasTKI || has360 || hasWellness;
+
+  // Debug logging
+  console.log('Results page - assessmentResults:', assessmentResults);
+  console.log('Results page - tkiData:', tkiData);
+  console.log('Results page - hasTKI:', hasTKI);
+  console.log('Results page - TKI dominantResult:', tkiData?.dominantResult);
 
   // Dynamic leader profile based on assessment results
   // Display dominantResult if available, otherwise show "Not completed"
