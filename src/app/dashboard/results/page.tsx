@@ -135,11 +135,28 @@ export default function ResultsPage() {
   const hasAnyAssessment = hasMBTI || hasTKI || has360 || hasWellness;
 
   // Dynamic leader profile based on assessment results
+  // Display dominantResult if available, otherwise show "Not completed"
   const leaderProfile = [
-    { label: 'MBTI', value: hasMBTI ? (typeof hasMBTI === 'string' ? hasMBTI : 'Completed') : 'Not completed', color: 'bg-neutral-800' },
-    { label: 'TKI Dominant', value: hasTKI ? (typeof hasTKI === 'string' ? hasTKI : 'Completed') : 'Not completed', color: 'bg-neutral-800' },
-    { label: '360°', value: has360 ? (typeof has360 === 'string' ? has360 : 'Completed') : 'Not completed', color: 'bg-primary-500' },
-    { label: 'Light score', value: hasWellness ? `${assessmentResults.wellness.overallScore}%` : 'Not completed', color: 'bg-secondary-500' },
+    { 
+      label: 'MBTI', 
+      value: hasMBTI ? String(hasMBTI) : 'Not completed', 
+      color: 'bg-neutral-800' 
+    },
+    { 
+      label: 'TKI Dominant', 
+      value: hasTKI ? String(hasTKI) : 'Not completed', 
+      color: 'bg-neutral-800' 
+    },
+    { 
+      label: '360°', 
+      value: has360 ? String(has360) : 'Not completed', 
+      color: 'bg-primary-500' 
+    },
+    { 
+      label: 'Light score', 
+      value: hasWellness ? `${assessmentResults.wellness.overallScore}%` : 'Not completed', 
+      color: 'bg-secondary-500' 
+    },
   ];
 
   // Development goals - only show if user has completed assessments
