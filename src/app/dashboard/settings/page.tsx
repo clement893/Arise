@@ -287,113 +287,142 @@ export default function SettingsPage() {
           <Card className="p-6 sm:p-8">
             {/* Notifications */}
             <section className="mb-6 sm:mb-8">
-              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Notifications</h2>
+              <div className="mb-4 pb-3 border-b border-gray-100">
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-1">Notifications</h2>
+                <p className="text-sm text-gray-500">Manage how and when you receive updates from ARISE</p>
+              </div>
                 
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-medium text-gray-900">Email notifications</h3>
-                      <p className="text-sm text-gray-500">Receive updates about your assessments</p>
-                    </div>
+              <div className="space-y-5">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 mb-1">Email Notifications</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">Receive email updates about your assessment progress, results, and important platform updates</p>
+                  </div>
+                  <div className="flex-shrink-0 pt-1">
                     <Toggle
                       enabled={settings.notifications.emailNotifications}
                       onChange={() => handleToggle('notifications', 'emailNotifications')}
                     />
                   </div>
+                </div>
                   
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-medium text-gray-900">Weekly progress report</h3>
-                      <p className="text-sm text-gray-500">Get a summary of your development</p>
-                    </div>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 mb-1">Weekly Progress Report</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">Get a weekly summary email with your development progress and insights</p>
+                  </div>
+                  <div className="flex-shrink-0 pt-1">
                     <Toggle
                       enabled={settings.notifications.weeklyProgressReport}
                       onChange={() => handleToggle('notifications', 'weeklyProgressReport')}
                     />
                   </div>
                 </div>
-              </section>
+              </div>
+            </section>
 
             {/* Appearance */}
             <section className="mb-6 sm:mb-8">
-              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Appearance</h2>
+              <div className="mb-4 pb-3 border-b border-gray-100">
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-1">Appearance</h2>
+                <p className="text-sm text-gray-500">Customize the look and feel of your ARISE experience</p>
+              </div>
                 
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-medium text-gray-900">Dark Mode</h3>
-                      <p className="text-sm text-gray-500">Enable dark theme across the platform</p>
-                    </div>
+              <div className="space-y-5">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 mb-1">Dark Mode</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">Switch to a darker color scheme for reduced eye strain, especially in low-light environments</p>
+                  </div>
+                  <div className="flex-shrink-0 pt-1">
                     <Toggle
                       enabled={settings.appearance.darkMode}
                       onChange={() => handleToggle('appearance', 'darkMode')}
                     />
                   </div>
+                </div>
                   
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-medium text-gray-900">Language</h3>
-                      <p className="text-sm text-gray-500">Choose your preferred language</p>
-                      <p className="text-xs text-amber-600 mt-1">Coming soon - Currently English only</p>
-                    </div>
-                    <div className="relative">
-                      <select
-                        value={settings.appearance.language}
-                        onChange={(e) => handleLanguageChange(e.target.value)}
-                        disabled
-                        className="appearance-none bg-gray-100 border border-gray-300 rounded-lg px-4 py-2 pr-10 text-gray-500 cursor-not-allowed"
-                      >
-                        <option value="English">English</option>
-                        <option value="French">French</option>
-                        <option value="Spanish">Spanish</option>
-                        <option value="German">German</option>
-                      </select>
-                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                    </div>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 mb-1">Language</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed mb-2">Choose your preferred language for the interface</p>
+                    <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-amber-100 text-amber-800">
+                      Coming soon
+                    </span>
+                  </div>
+                  <div className="relative flex-shrink-0">
+                    <select
+                      value={settings.appearance.language}
+                      onChange={(e) => handleLanguageChange(e.target.value)}
+                      disabled
+                      className="appearance-none bg-gray-100 border border-gray-300 rounded-lg px-4 py-2 pr-10 text-gray-500 cursor-not-allowed min-w-[140px]"
+                    >
+                      <option value="English">English</option>
+                      <option value="French">French</option>
+                      <option value="Spanish">Spanish</option>
+                      <option value="German">German</option>
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                   </div>
                 </div>
-              </section>
+              </div>
+            </section>
 
             {/* Privacy */}
             <section className="mb-6 sm:mb-8">
-              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Privacy</h2>
+              <div className="mb-4 pb-3 border-b border-gray-100">
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-1">Privacy & Data</h2>
+                <p className="text-sm text-gray-500">Control how your data is used to enhance your experience</p>
+              </div>
                 
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-medium text-gray-900">Data Sharing</h3>
-                      <p className="text-sm text-gray-500">Share anonymous data to improve platform features</p>
-                    </div>
+              <div className="space-y-5">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 mb-1">Anonymous Data Sharing</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">Help us improve ARISE by sharing anonymized usage data. Your personal information remains private</p>
+                  </div>
+                  <div className="flex-shrink-0 pt-1">
                     <Toggle
                       enabled={settings.privacy.dataSharing}
                       onChange={() => handleToggle('privacy', 'dataSharing')}
                     />
                   </div>
+                </div>
                   
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-medium text-gray-900">Analytics Tracking</h3>
-                      <p className="text-sm text-gray-500">Allow us to track usage for better experience</p>
-                    </div>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 mb-1">Analytics Tracking</h3>
+                    <p className="text-sm text-gray-600 leading-relaxed">Allow us to track your interactions to personalize your experience and improve platform features</p>
+                  </div>
+                  <div className="flex-shrink-0 pt-1">
                     <Toggle
                       enabled={settings.privacy.analyticsTracking}
                       onChange={() => handleToggle('privacy', 'analyticsTracking')}
                     />
                   </div>
                 </div>
-              </section>
+              </div>
+            </section>
 
             {/* Security */}
             <section className="mb-6 sm:mb-8">
-              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4">Security</h2>
+              <div className="mb-4 pb-3 border-b border-gray-100">
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-1">Security</h2>
+                <p className="text-sm text-gray-500">Protect your account with additional security measures</p>
+              </div>
                 
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-medium text-gray-900">Two-Factor Authentication</h3>
-                      <p className="text-sm text-gray-500">Add an extra layer of security to your account</p>
-                      <p className="text-xs text-amber-600 mt-1">Coming soon</p>
+              <div className="space-y-5">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-semibold text-gray-900">Two-Factor Authentication</h3>
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-amber-100 text-amber-800">
+                        Coming soon
+                      </span>
                     </div>
+                    <p className="text-sm text-gray-600 leading-relaxed">Add an extra layer of security by requiring a verification code in addition to your password when signing in</p>
+                  </div>
+                  <div className="flex-shrink-0 pt-1">
                     <Toggle
                       enabled={settings.security.twoFactorAuth}
                       onChange={() => {}}
@@ -401,20 +430,25 @@ export default function SettingsPage() {
                     />
                   </div>
                 </div>
-              </section>
+              </div>
+            </section>
 
             {/* Danger Zone */}
-            <section className="pt-6 border-t border-gray-200">
-              <h2 className="text-lg sm:text-xl font-semibold text-red-600 mb-4">Danger Zone</h2>
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4 sm:p-6 border border-red-200 rounded-lg bg-red-50">
-                <div>
-                  <h3 className="font-medium text-gray-900 mb-1">Delete Account</h3>
-                  <p className="text-sm text-gray-600">Permanently delete your account and all data</p>
+            <section className="pt-6 border-t-2 border-red-200">
+              <div className="mb-4 pb-3 border-b border-red-100">
+                <h2 className="text-lg sm:text-xl font-semibold text-red-600 mb-1">Danger Zone</h2>
+                <p className="text-sm text-red-600/70">Irreversible and destructive actions</p>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 sm:p-6 border-2 border-red-200 rounded-lg bg-red-50/50">
+                <div className="flex-1">
+                  <h3 className="font-semibold text-gray-900 mb-1.5">Delete Account</h3>
+                  <p className="text-sm text-gray-700 leading-relaxed mb-2">This will permanently delete your account, all assessment results, evaluator feedback, and subscription. This action cannot be undone.</p>
+                  <p className="text-xs text-red-600 font-medium">⚠️ Warning: This action is permanent</p>
                 </div>
                 <button
                   onClick={handleDeleteAccount}
                   disabled={isDeleting}
-                  className="px-4 sm:px-6 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 w-full sm:w-auto"
+                  className="px-5 sm:px-6 py-2.5 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 w-full sm:w-auto shadow-sm hover:shadow-md"
                 >
                   {isDeleting ? (
                     <>
