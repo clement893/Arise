@@ -16,12 +16,14 @@ interface User {
 
 export default function ResultsPage() {
   const router = useRouter();
+  const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [showCoachingModal, setShowCoachingModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [assessmentResults, setAssessmentResults] = useState<any>(null);
   const [generatingPDF, setGeneratingPDF] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const fetchAssessments = useCallback(async (userId: number) => {
     // Prevent multiple simultaneous calls
@@ -82,14 +84,13 @@ export default function ResultsPage() {
       }
     };
 
-    // Only run on mount, not on every router change
+    // Run on mount and when pathname changes (to refresh data when navigating back)
     loadData();
 
     return () => {
       isMounted = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchAssessments, pathname, refreshKey]);
 
   const handleDownloadReport = async () => {
     if (!user || !assessmentResults) return;
@@ -127,53 +128,58 @@ export default function ResultsPage() {
 
 
   // Check if user has completed any assessments
-  // Check for dominantResult/overallScore first, then completedAt if available
-  // This handles cases where completedAt might not be set but assessment is completed
-  const tkiData = assessmentResults?.tki;
-  const hasMBTI = assessmentResults?.mbti?.dominantResult;
-  // Check if TKI exists - use dominantResult if available, otherwise check if data exists
-  const tkiDominantResult = tkiData?.dominantResult;
-  const hasTKI = !!tkiDominantResult || !!(tkiData && (tkiData.scores || tkiData.answers));
-  const has360 = assessmentResults?.self_360?.dominantResult;
-  const hasWellness = assessmentResults?.wellness?.overallScore !== undefined;
-  const hasAnyAssessment = hasMBTI || hasTKI || has360 || hasWellness;
+  // Use useMemo to recalculate when assessmentResults changes - ensures leader profile is truly dynamic
+  const { tkiData, hasMBTI, tkiDominantResult, hasTKI, has360, hasWellness, hasAnyAssessment, leaderProfile } = useMemo(() => {
+    const tki = assessmentResults?.tki;
+    const mbti = assessmentResults?.mbti?.dominantResult;
+    const tkiDominant = tki?.dominantResult;
+    const tkiCompleted = !!tkiDominant || !!(tki && (tki.scores || tki.answers));
+    const threeSixty = assessmentResults?.self_360?.dominantResult;
+    const wellness = assessmentResults?.wellness?.overallScore !== undefined;
+    const anyCompleted = mbti || tkiCompleted || threeSixty || wellness;
 
-  // Debug logging - log every render to see if data changes
-  console.log('Results page render - assessmentResults:', assessmentResults);
-  console.log('Results page render - tkiData:', tkiData);
-  console.log('Results page render - tkiDominantResult:', tkiDominantResult);
-  console.log('Results page render - hasTKI:', hasTKI);
-  console.log('Results page render - leaderProfile will be:', {
-    MBTI: hasMBTI ? String(hasMBTI) : 'Not completed',
-    TKI: tkiDominantResult ? String(tkiDominantResult) : (hasTKI ? 'Completed' : 'Not completed'),
-    '360°': has360 ? String(has360) : 'Not completed',
-    Wellness: hasWellness ? `${assessmentResults.wellness.overallScore}%` : 'Not completed',
-  });
+    // Debug logging - log every calculation to see if data changes
+    console.log('Results page useMemo - assessmentResults:', assessmentResults);
+    console.log('Results page useMemo - tki:', tki);
+    console.log('Results page useMemo - tkiDominant:', tkiDominant);
+    console.log('Results page useMemo - tkiCompleted:', tkiCompleted);
 
-  // Dynamic leader profile based on assessment results
-  // Display dominantResult if available, otherwise show "Not completed"
-  const leaderProfile = [
-    { 
-      label: 'MBTI', 
-      value: hasMBTI ? String(hasMBTI) : 'Not completed', 
-      color: 'bg-neutral-800' 
-    },
-    { 
-      label: 'TKI Dominant', 
-      value: tkiDominantResult ? String(tkiDominantResult) : (hasTKI ? 'Completed' : 'Not completed'), 
-      color: 'bg-neutral-800' 
-    },
-    { 
-      label: '360°', 
-      value: has360 ? String(has360) : 'Not completed', 
-      color: 'bg-primary-500' 
-    },
-    { 
-      label: 'Light score', 
-      value: hasWellness ? `${assessmentResults.wellness.overallScore}%` : 'Not completed', 
-      color: 'bg-secondary-500' 
-    },
-  ];
+    const profile = [
+      { 
+        label: 'MBTI', 
+        value: mbti ? String(mbti) : 'Not completed', 
+        color: 'bg-neutral-800' 
+      },
+      { 
+        label: 'TKI Dominant', 
+        value: tkiDominant ? String(tkiDominant) : (tkiCompleted ? 'Completed' : 'Not completed'), 
+        color: 'bg-neutral-800' 
+      },
+      { 
+        label: '360°', 
+        value: threeSixty ? String(threeSixty) : 'Not completed', 
+        color: 'bg-primary-500' 
+      },
+      { 
+        label: 'Light score', 
+        value: wellness ? `${assessmentResults.wellness.overallScore}%` : 'Not completed', 
+        color: 'bg-secondary-500' 
+      },
+    ];
+
+    console.log('Results page useMemo - leaderProfile:', profile);
+
+    return {
+      tkiData: tki,
+      hasMBTI: mbti,
+      tkiDominantResult: tkiDominant,
+      hasTKI: tkiCompleted,
+      has360: threeSixty,
+      hasWellness: wellness,
+      hasAnyAssessment: anyCompleted,
+      leaderProfile: profile,
+    };
+  }, [assessmentResults]);
 
   // Development goals - only show if user has completed assessments
   const developmentGoals = hasAnyAssessment ? [
