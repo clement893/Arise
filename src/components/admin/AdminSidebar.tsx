@@ -54,31 +54,29 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
           </div>
           <div>
             <p className="text-sm font-medium text-gray-900">{user.firstName} {user.lastName}</p>
-            <p className="text-xs text-gray-500">Admin</p>
+            <p className="text-xs text-gray-500">Admin Profile</p>
           </div>
         </div>
         
         {/* Switch Profile Button */}
-        {(user.userType === 'coach' || user.userType === 'individual') && (
-          <button
-            onClick={() => {
-              router.push('/dashboard');
-            }}
-            className="w-full flex items-center gap-2 px-3 py-2 bg-primary-500/10 hover:bg-primary-500/20 rounded-lg transition-colors text-sm text-primary-700 font-medium"
-          >
-            {user.userType === 'coach' ? (
-              <>
-                <Users className="w-4 h-4" />
-                <span>Switch to Coach Profile</span>
-              </>
-            ) : (
-              <>
-                <User className="w-4 h-4" />
-                <span>Switch to Personal Profile</span>
-              </>
-            )}
-          </button>
-        )}
+        <button
+          onClick={() => {
+            router.push('/dashboard');
+          }}
+          className="w-full flex items-center gap-2 px-3 py-2 bg-primary-500/10 hover:bg-primary-500/20 rounded-lg transition-colors text-sm text-primary-700 font-medium"
+        >
+          {user.userType === 'coach' ? (
+            <>
+              <Users className="w-4 h-4" />
+              <span>Switch to Coach Profile</span>
+            </>
+          ) : (
+            <>
+              <User className="w-4 h-4" />
+              <span>Switch to Personal Profile</span>
+            </>
+          )}
+        </button>
       </div>
 
       {/* Navigation */}
