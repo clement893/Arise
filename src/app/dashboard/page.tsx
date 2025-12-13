@@ -176,7 +176,7 @@ export default function DashboardPage() {
               badgeColor="bg-primary-500/10 text-primary-500"
               onAction={() => {
                 if (getAssessmentStatus('tki') === 'completed') {
-                  router.push('/dashboard/results');
+                  router.push('/dashboard/results/tki');
                 } else {
                   router.push('/dashboard/tki');
                 }
