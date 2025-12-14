@@ -131,7 +131,7 @@ export default function AssessmentsPage() {
         tags: [{ label: 'External link', type: 'external' }],
         actionLabel: getActionLabel('mbti', mbtiStatus),
         actionType: getActionType(mbtiStatus),
-        route: mbtiStatus === 'completed' ? '/dashboard/results' : 'https://www.16personalities.com/free-personality-test',
+        route: mbtiStatus === 'completed' ? '/dashboard/results/mbti' : 'https://www.16personalities.com/free-personality-test',
       },
       {
         id: 'tki',

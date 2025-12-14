@@ -229,8 +229,12 @@ export default function DashboardPage() {
                 badge="External link"
                 badgeColor="bg-gray-100 text-gray-600"
                 onAction={() => {
-                  // MBTI is external, could link to external site or show coming soon
-                  window.open('https://www.16personalities.com/', '_blank');
+                  const mbtiStatus = getAssessmentStatus('mbti');
+                  if (mbtiStatus === 'completed') {
+                    router.push('/dashboard/results/mbti');
+                  } else {
+                    window.open('https://www.16personalities.com/', '_blank');
+                  }
                 }}
               />
               <div className="absolute bottom-2 right-2">
