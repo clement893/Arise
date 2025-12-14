@@ -264,6 +264,27 @@ export default function ResultsPage() {
               <span className="hidden sm:inline">{generatingPDF ? 'Generating...' : 'Download PDF Report'}</span>
               <span className="sm:hidden">{generatingPDF ? 'Generating...' : 'PDF'}</span>
             </button>
+            {!hasMBTI && (
+              <>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf,application/pdf"
+                  onChange={handleMBTIUpload}
+                  className="hidden"
+                  id="mbti-upload-input-results"
+                />
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingMBTI}
+                  className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-white border border-gray-300 rounded-lg text-xs sm:text-sm font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Upload className="w-4 h-4" />
+                  <span className="hidden sm:inline">{uploadingMBTI ? 'Uploading...' : 'Upload MBTI PDF'}</span>
+                  <span className="sm:hidden">{uploadingMBTI ? 'Uploading...' : 'MBTI'}</span>
+                </button>
+              </>
+            )}
             <button
               onClick={() => setShowShareModal(true)}
               className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-white border border-gray-300 rounded-lg text-xs sm:text-sm font-medium hover:bg-gray-50 transition-colors"
