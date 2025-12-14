@@ -121,9 +121,8 @@ async function extractMBTITypeWithOCR(buffer: Buffer): Promise<string | null> {
     const pdfjsLib = await import('pdfjs-dist');
     
     // Set up pdfjs worker for Node.js environment
-    // In Node.js, we can disable the worker or use a CDN URL
+    // In Node.js, we can disable the worker (not needed for server-side rendering)
     if (pdfjsLib.GlobalWorkerOptions) {
-      // Disable worker for Node.js (not needed for server-side rendering)
       pdfjsLib.GlobalWorkerOptions.workerSrc = '';
     }
     
