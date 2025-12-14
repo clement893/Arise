@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import OpenAI from 'openai';
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,9 +27,14 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(arrayBuffer);
 
     // Parse PDF to extract MBTI type
-    // We'll use a simple text extraction approach
-    // For production, you might want to use pdf-parse or pdfjs-dist
-    const mbtiType = await extractMBTITypeFromPDF(buffer);
+    // First try basic extraction, then fallback to AI if needed
+    let mbtiType = await extractMBTITypeFromPDF(buffer);
+
+    // If basic extraction fails, try AI extraction
+    if (!mbtiType) {
+      console.log('Basic extraction failed, trying AI extraction...');
+      mbtiType = await extractMBTITypeWithAI(buffer, file.name);
+    }
 
     if (!mbtiType) {
       return NextResponse.json({ error: 'Could not extract MBTI type from PDF. Please ensure the PDF contains your MBTI personality type (e.g., ENFJ, INFP, etc.)' }, { status: 400 });
@@ -135,6 +141,149 @@ async function extractMBTITypeFromPDF(buffer: Buffer): Promise<string | null> {
     return null;
   } catch (error) {
     console.error('Error extracting MBTI type from PDF:', error);
+    return null;
+  }
+}
+
+async function extractMBTITypeWithAI(buffer: Buffer, fileName: string): Promise<string | null> {
+  try {
+    const openaiApiKey = process.env.OPENAI_API_KEY;
+    
+    if (!openaiApiKey) {
+      console.log('OpenAI API key not configured, skipping AI extraction');
+      return null;
+    }
+
+    const openai = new OpenAI({
+      apiKey: openaiApiKey,
+    });
+
+    // Convert PDF buffer to base64 for OpenAI API
+    const base64PDF = buffer.toString('base64');
+
+    // Use OpenAI Vision API to analyze the PDF
+    // Note: OpenAI Vision API supports PDF files
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o', // or 'gpt-4-turbo' which supports vision
+      messages: [
+        {
+          role: 'system',
+          content: 'You are an expert at extracting MBTI personality types from documents. Extract the MBTI personality type (one of: ENFJ, ENFP, ENTJ, ENTP, ESFJ, ESFP, ESTJ, ESTP, INFJ, INFP, INTJ, INTP, ISFJ, ISFP, ISTJ, ISTP) from the provided document. Return ONLY the 4-letter MBTI type code in uppercase, nothing else. If you cannot find a valid MBTI type, return "NOT_FOUND".'
+        },
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: 'Please extract the MBTI personality type from this PDF document. Look for phrases like "Your type is", "Personality type", "MBTI type", or any mention of a 4-letter code like ENFJ, INFP, etc. Return ONLY the 4-letter code in uppercase.'
+            },
+            {
+              type: 'image_url',
+              image_url: {
+                url: `data:application/pdf;base64,${base64PDF}`,
+              }
+            }
+          ]
+        }
+      ],
+      max_tokens: 10,
+    });
+
+    const extractedType = response.choices[0]?.message?.content?.trim().toUpperCase();
+
+    if (!extractedType || extractedType === 'NOT_FOUND') {
+      return null;
+    }
+
+    // Validate the extracted type
+    const validMBTITypes = [
+      'ENFJ', 'ENFP', 'ENTJ', 'ENTP',
+      'ESFJ', 'ESFP', 'ESTJ', 'ESTP',
+      'INFJ', 'INFP', 'INTJ', 'INTP',
+      'ISFJ', 'ISFP', 'ISTJ', 'ISTP'
+    ];
+
+    if (validMBTITypes.includes(extractedType)) {
+      console.log(`AI successfully extracted MBTI type: ${extractedType}`);
+      return extractedType;
+    }
+
+    // Try to extract from the response if it contains the type
+    for (const type of validMBTITypes) {
+      if (extractedType.includes(type)) {
+        console.log(`AI extracted MBTI type from response: ${type}`);
+        return type;
+      }
+    }
+
+    return null;
+  } catch (error: any) {
+    console.error('Error extracting MBTI type with AI:', error.message);
+    // If Vision API doesn't work, try text-based approach
+    try {
+      return await extractMBTITypeWithAIText(buffer);
+    } catch (textError) {
+      console.error('Error with AI text extraction:', textError);
+      return null;
+    }
+  }
+}
+
+async function extractMBTITypeWithAIText(buffer: Buffer): Promise<string | null> {
+  try {
+    const openaiApiKey = process.env.OPENAI_API_KEY;
+    
+    if (!openaiApiKey) {
+      return null;
+    }
+
+    const openai = new OpenAI({
+      apiKey: openaiApiKey,
+    });
+
+    // Convert PDF buffer to text (basic UTF-8 conversion)
+    const text = buffer.toString('utf-8');
+    
+    // Limit text length to avoid token limits (first 8000 characters should be enough)
+    const limitedText = text.substring(0, 8000);
+
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini', // Use cheaper model for text extraction
+      messages: [
+        {
+          role: 'system',
+          content: 'You are an expert at extracting MBTI personality types from text. Extract the MBTI personality type (one of: ENFJ, ENFP, ENTJ, ENTP, ESFJ, ESFP, ESTJ, ESTP, INFJ, INFP, INTJ, INTP, ISFJ, ISFP, ISTJ, ISTP) from the provided text. Return ONLY the 4-letter MBTI type code in uppercase, nothing else. If you cannot find a valid MBTI type, return "NOT_FOUND".'
+        },
+        {
+          role: 'user',
+          content: `Please extract the MBTI personality type from this text:\n\n${limitedText}\n\nLook for phrases like "Your type is", "Personality type", "MBTI type", or any mention of a 4-letter code like ENFJ, INFP, etc. Return ONLY the 4-letter code in uppercase.`
+        }
+      ],
+      max_tokens: 10,
+    });
+
+    const extractedType = response.choices[0]?.message?.content?.trim().toUpperCase();
+
+    if (!extractedType || extractedType === 'NOT_FOUND') {
+      return null;
+    }
+
+    // Validate the extracted type
+    const validMBTITypes = [
+      'ENFJ', 'ENFP', 'ENTJ', 'ENTP',
+      'ESFJ', 'ESFP', 'ESTJ', 'ESTP',
+      'INFJ', 'INFP', 'INTJ', 'INTP',
+      'ISFJ', 'ISFP', 'ISTJ', 'ISTP'
+    ];
+
+    if (validMBTITypes.includes(extractedType)) {
+      console.log(`AI text extraction successfully extracted MBTI type: ${extractedType}`);
+      return extractedType;
+    }
+
+    return null;
+  } catch (error: any) {
+    console.error('Error extracting MBTI type with AI text:', error.message);
     return null;
   }
 }
