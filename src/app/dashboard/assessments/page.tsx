@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Brain, Users, MessageSquare, Heart, Info, ExternalLink } from 'lucide-react';
+import { Brain, Users, MessageSquare, Heart, Info, ExternalLink, Upload } from 'lucide-react';
 import { Button, Badge, Card, LoadingPage } from '@/components/ui';
 
 interface User {
@@ -38,6 +38,8 @@ export default function AssessmentsPage() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [assessmentResults, setAssessmentResults] = useState<AssessmentResult | null>(null);
+  const [uploadingMBTI, setUploadingMBTI] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -207,6 +209,51 @@ export default function AssessmentsPage() {
     }
   };
 
+  const handleMBTIUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf' && !file.name.endsWith('.pdf')) {
+      alert('Please upload a PDF file');
+      return;
+    }
+
+    setUploadingMBTI(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const accessToken = localStorage.getItem('arise_access_token');
+      const response = await fetch('/api/assessments/mbti-upload', {
+        method: 'POST',
+        headers: {
+          ...(accessToken ? { 'Authorization': `Bearer ${accessToken}` } : {}),
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(`Successfully imported MBTI type: ${data.mbtiType}`);
+        // Refresh assessment results
+        if (user) {
+          await fetchAssessmentResults(user.id);
+        }
+      } else {
+        alert(data.error || 'Failed to upload MBTI PDF');
+      }
+    } catch (error) {
+      console.error('Error uploading MBTI PDF:', error);
+      alert('Failed to upload MBTI PDF. Please try again.');
+    } finally {
+      setUploadingMBTI(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
   const getActionButton = (assessment: Assessment) => {
     const handleClick = () => handleAssessmentAction(assessment);
 
@@ -280,8 +327,30 @@ export default function AssessmentsPage() {
                     </div>
 
                     {/* Action Button */}
-                    <div>
+                    <div className="flex flex-col gap-2 items-end">
                       {getActionButton(assessment)}
+                      {assessment.id === 'mbti' && (
+                        <>
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept=".pdf,application/pdf"
+                            onChange={handleMBTIUpload}
+                            className="hidden"
+                            id="mbti-upload-input"
+                          />
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={uploadingMBTI}
+                            className="flex items-center gap-2"
+                          >
+                            <Upload className="w-4 h-4" />
+                            {uploadingMBTI ? 'Uploading...' : 'Upload PDF'}
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </div>
                 </Card>

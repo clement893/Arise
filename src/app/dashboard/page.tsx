@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import FeedbackBanner from '@/components/dashboard/FeedbackBanner';
 import ProgressCard from '@/components/dashboard/ProgressCard';
 import EvaluationCard from '@/components/dashboard/EvaluationCard';
 import CoachingCTA from '@/components/dashboard/CoachingCTA';
-import { Brain, Users, MessageSquare, Heart } from 'lucide-react';
-import { LoadingPage } from '@/components/ui';
+import { Brain, Users, MessageSquare, Heart, Upload } from 'lucide-react';
+import { LoadingPage, Button } from '@/components/ui';
 
 interface User {
   id: number;
@@ -48,6 +48,8 @@ export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [assessmentSummary, setAssessmentSummary] = useState<AssessmentSummary | null>(null);
+  const [uploadingMBTI, setUploadingMBTI] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('arise_user');
@@ -77,6 +79,51 @@ export default function DashboardPage() {
       }
     } catch (error) {
       console.error('Failed to fetch assessments:', error);
+    }
+  };
+
+  const handleMBTIUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf' && !file.name.endsWith('.pdf')) {
+      alert('Please upload a PDF file');
+      return;
+    }
+
+    setUploadingMBTI(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const accessToken = localStorage.getItem('arise_access_token');
+      const response = await fetch('/api/assessments/mbti-upload', {
+        method: 'POST',
+        headers: {
+          ...(accessToken ? { 'Authorization': `Bearer ${accessToken}` } : {}),
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(`Successfully imported MBTI type: ${data.mbtiType}`);
+        // Refresh assessment results
+        if (user) {
+          await fetchAssessments(user.id);
+        }
+      } else {
+        alert(data.error || 'Failed to upload MBTI PDF');
+      }
+    } catch (error) {
+      console.error('Error uploading MBTI PDF:', error);
+      alert('Failed to upload MBTI PDF. Please try again.');
+    } finally {
+      setUploadingMBTI(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -162,18 +209,40 @@ export default function DashboardPage() {
         <div className="mb-6 sm:mb-8">
           <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">Your evaluations</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <EvaluationCard
-              icon={<Brain className="w-6 h-6" />}
-              title="MBTI Personality"
-              description="Understanding your natural preferences"
-              status={getAssessmentStatus('mbti')}
-              badge="External link"
-              badgeColor="bg-gray-100 text-gray-600"
-              onAction={() => {
-                // MBTI is external, could link to external site or show coming soon
-                window.open('https://www.16personalities.com/', '_blank');
-              }}
-            />
+            <div className="relative">
+              <EvaluationCard
+                icon={<Brain className="w-6 h-6" />}
+                title="MBTI Personality"
+                description="Understanding your natural preferences"
+                status={getAssessmentStatus('mbti')}
+                badge="External link"
+                badgeColor="bg-gray-100 text-gray-600"
+                onAction={() => {
+                  // MBTI is external, could link to external site or show coming soon
+                  window.open('https://www.16personalities.com/', '_blank');
+                }}
+              />
+              <div className="absolute bottom-2 right-2">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf,application/pdf"
+                  onChange={handleMBTIUpload}
+                  className="hidden"
+                  id="mbti-upload-input-dashboard"
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingMBTI}
+                  className="text-xs px-2 py-1 h-auto"
+                >
+                  <Upload className="w-3 h-3 mr-1" />
+                  {uploadingMBTI ? 'Uploading...' : 'Upload PDF'}
+                </Button>
+              </div>
+            </div>
             <EvaluationCard
               icon={<MessageSquare className="w-6 h-6" />}
               title="TKI Conflict Style"

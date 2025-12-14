@@ -2,10 +2,11 @@
 
 import { Button, Card, CardContent, Badge, Spinner, LoadingPage } from '@/components/ui';
 
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { Share2, MessageCircle, ChevronRight, Download, FileText, AlertCircle } from 'lucide-react';
+import { Share2, MessageCircle, ChevronRight, Download, FileText, AlertCircle, Upload } from 'lucide-react';
 import { generateLeadershipReport } from '@/lib/generateReport';
+import { Button } from '@/components/ui';
 
 interface User {
   id: number;
@@ -24,6 +25,8 @@ export default function ResultsPage() {
   const [assessmentResults, setAssessmentResults] = useState<any>(null);
   const [generatingPDF, setGeneratingPDF] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [uploadingMBTI, setUploadingMBTI] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchAssessments = useCallback(async (userId: number) => {
     // Prevent multiple simultaneous calls
@@ -166,6 +169,48 @@ export default function ResultsPage() {
       console.error('Failed to generate report:', error);
     } finally {
       setGeneratingPDF(false);
+    }
+  };
+
+  const handleMBTIUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf' && !file.name.endsWith('.pdf')) {
+      alert('Please upload a PDF file');
+      return;
+    }
+
+    setUploadingMBTI(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const { authenticatedFetch } = await import('@/lib/token-refresh');
+      const response = await authenticatedFetch('/api/assessments/mbti-upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(`Successfully imported MBTI type: ${data.mbtiType}`);
+        // Refresh assessment results
+        if (user) {
+          await fetchAssessments(user.id);
+        }
+      } else {
+        alert(data.error || 'Failed to upload MBTI PDF');
+      }
+    } catch (error) {
+      console.error('Error uploading MBTI PDF:', error);
+      alert('Failed to upload MBTI PDF. Please try again.');
+    } finally {
+      setUploadingMBTI(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 

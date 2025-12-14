@@ -64,18 +64,6 @@ export async function GET(
       );
     }
 
-    // Verify participant is not a coach/admin
-    const roles = participant.assessments ? [] : [];
-    // This is handled by the query above, but double-check
-    const isParticipant = true; // Already filtered in query
-
-    if (!isParticipant) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
-    }
-
     return NextResponse.json({
       participant,
     });
