@@ -583,13 +583,39 @@ async function extractMBTITypeWithAIText(buffer: Buffer): Promise<string | null>
       apiKey: openaiApiKey,
     });
 
-    // Convert PDF buffer to text (basic UTF-8 conversion)
-    const text = buffer.toString('utf-8');
-    console.log('Extracted text length:', text.length, 'characters');
-    console.log('First 500 characters of text:', text.substring(0, 500));
+    // Try to extract text using the same method as basic extraction
+    let text = buffer.toString('utf-8');
     
-    // Limit text length to avoid token limits (first 8000 characters should be enough)
-    const limitedText = text.substring(0, 8000);
+    // If it's a PDF, try to extract readable text
+    if (text.startsWith('%PDF')) {
+      console.log('AI extraction: PDF detected, extracting text...');
+      const textObjects = text.match(/\((.*?)\)/g) || [];
+      const extractedText = textObjects
+        .map(match => {
+          let decoded = match.replace(/[()]/g, '');
+          decoded = decoded.replace(/\\(.)/g, (_, char) => {
+            if (char === 'n') return '\n';
+            if (char === 'r') return '\r';
+            if (char === 't') return '\t';
+            return char;
+          });
+          return decoded;
+        })
+        .filter(t => t.length > 0 && /[A-Za-z0-9]/.test(t))
+        .join(' ');
+      
+      if (extractedText.length > 50) {
+        text = extractedText;
+        console.log('AI extraction: Extracted', text.length, 'characters from PDF');
+      }
+    }
+    
+    console.log('AI extraction: Text length:', text.length, 'characters');
+    console.log('AI extraction: First 1000 characters:', text.substring(0, 1000));
+    
+    // Limit text length to avoid token limits (first 15000 characters should be enough)
+    // Increased from 8000 to catch more content
+    const limitedText = text.substring(0, 15000);
 
     console.log('Calling OpenAI API for text extraction...');
     const response = await openai.chat.completions.create({
