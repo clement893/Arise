@@ -152,7 +152,7 @@ export default function AssessmentsPage() {
         actionLabel: getActionLabel('360-feedback', feedbackStatus),
         actionType: getActionType(feedbackStatus),
         hasEvaluatorNotice: feedbackStatus === 'not-started',
-        route: feedbackStatus === 'completed' ? '/dashboard/results' : '/dashboard/360-self',
+        route: feedbackStatus === 'completed' ? '/dashboard/results/360-self' : '/dashboard/360-self',
       },
       {
         id: 'wellness',
@@ -163,7 +163,7 @@ export default function AssessmentsPage() {
         tags: [{ label: 'ARISE Platform', type: 'platform' }],
         actionLabel: getActionLabel('wellness', wellnessStatus),
         actionType: getActionType(wellnessStatus),
-        route: wellnessStatus === 'completed' ? '/dashboard/wellness/results' : '/dashboard/wellness',
+        route: wellnessStatus === 'completed' ? '/dashboard/results/wellness' : '/dashboard/wellness',
       },
     ];
   };
