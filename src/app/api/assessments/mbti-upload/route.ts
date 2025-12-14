@@ -39,9 +39,13 @@ export async function POST(request: NextRequest) {
 
     if (!mbtiType) {
       const openaiKey = process.env.OPENAI_API_KEY ? 'configured' : 'not configured';
-      console.error('Failed to extract MBTI type. OpenAI API key:', openaiKey);
+      console.error('Failed to extract MBTI type after all attempts. OpenAI API key:', openaiKey);
+      console.error('File size:', buffer.length, 'bytes');
+      console.error('File name:', file.name);
+      
       return NextResponse.json({ 
-        error: 'Could not extract MBTI type from PDF. Please ensure the PDF contains your MBTI personality type (e.g., ENFJ, INFP, etc.). If your PDF is a scanned image or has complex formatting, AI extraction may be required (OpenAI API key: ' + openaiKey + ').' 
+        error: 'Could not extract MBTI type from PDF. Please ensure the PDF contains your MBTI personality type (e.g., ENFJ, INFP, etc.). If your PDF is a scanned image or has complex formatting, AI extraction may be required (OpenAI API key: ' + openaiKey + ').',
+        details: 'The PDF was processed but no MBTI type was found. Please check that your PDF contains the MBTI result clearly visible in the text.'
       }, { status: 400 });
     }
 
@@ -87,8 +91,22 @@ export async function POST(request: NextRequest) {
     });
   } catch (error: any) {
     console.error('Error uploading MBTI PDF:', error);
+    console.error('Error stack:', error.stack);
+    console.error('Error name:', error.name);
+    
+    // Provide more helpful error messages
+    let errorMessage = 'Failed to process PDF';
+    if (error.message) {
+      errorMessage = error.message;
+    } else if (error.response) {
+      errorMessage = `API error: ${error.response.status} - ${error.response.statusText}`;
+    }
+    
     return NextResponse.json(
-      { error: error.message || 'Failed to process PDF' },
+      { 
+        error: errorMessage,
+        details: 'An error occurred while processing your PDF. Please ensure the file is a valid PDF and try again.'
+      },
       { status: 500 }
     );
   }
@@ -318,9 +336,12 @@ Return ONLY the 4-letter code in uppercase. If you cannot find it, return "NOT_F
       }
 
       if (runStatus.status !== 'completed') {
-        console.log('Assistants API run did not complete, status:', runStatus.status);
+        console.error('Assistants API run did not complete, status:', runStatus.status);
         if (runStatus.status === 'failed') {
-          console.log('Run failed with error:', runStatus.last_error);
+          console.error('Run failed with error:', JSON.stringify(runStatus.last_error, null, 2));
+        }
+        if (runStatus.status === 'requires_action') {
+          console.error('Run requires action:', JSON.stringify(runStatus.required_action, null, 2));
         }
         // Clean up
         try {
@@ -335,6 +356,8 @@ Return ONLY the 4-letter code in uppercase. If you cannot find it, return "NOT_F
         }
         return null;
       }
+      
+      console.log('Assistants API run completed successfully');
 
       // Get the response
       const messages = await openai.beta.threads.messages.list(thread.id);
@@ -386,7 +409,7 @@ Return ONLY the 4-letter code in uppercase. If you cannot find it, return "NOT_F
         }
       }
 
-      console.log('OpenAI Assistants API response:', extractedType);
+      console.log('OpenAI Assistants API extracted type:', extractedType);
 
       // Clean up resources
       try {
@@ -402,9 +425,15 @@ Return ONLY the 4-letter code in uppercase. If you cannot find it, return "NOT_F
       }
 
       if (!extractedType || extractedType === 'NOT_FOUND') {
-        console.log('OpenAI Chat Completions API did not find MBTI type');
+        console.log('OpenAI Assistants API did not find MBTI type in the document');
+        console.log('This could mean:');
+        console.log('1. The PDF is a scanned image (requires OCR)');
+        console.log('2. The PDF does not contain the MBTI type');
+        console.log('3. The MBTI type is in a format not recognized');
         return null;
       }
+      
+      console.log('Successfully extracted MBTI type via Assistants API:', extractedType);
 
       // Validate the extracted type
       const validMBTITypes = [
