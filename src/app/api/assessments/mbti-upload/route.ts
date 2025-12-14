@@ -286,10 +286,7 @@ async function extractMBTITypeWithAI(buffer: Buffer, fileName: string): Promise<
       await openai.files.del(file.id);
       await openai.beta.assistants.del(assistant.id);
 
-      const response = { choices: [{ message: { content: extractedType } }] };
-
-      const extractedType = response.choices[0]?.message?.content?.trim().toUpperCase();
-      console.log('OpenAI Chat Completions API response:', extractedType);
+      console.log('OpenAI Assistants API response:', extractedType);
 
       // Clean up file
       try {
