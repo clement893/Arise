@@ -476,21 +476,43 @@ export default function ResultsPage() {
               
               {hasMBTI ? (
                 <>
-                  <div className="space-y-3">
-                    {mbtiData?.scores && Object.entries(mbtiData.scores).map(([key, value]: [string, any]) => (
-                      <div key={key} className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600 capitalize">{key}</span>
-                        <div className="flex items-center gap-2">
-                          <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-                            <div className="h-full bg-primary-500 rounded-full" style={{ width: `${value}%` }} />
-                          </div>
-                          <span className="text-sm font-medium">{value}%</span>
+                  <div className="space-y-4">
+                    {/* Display MBTI Type */}
+                    <div className="bg-primary-50 rounded-lg p-4 border border-primary-200">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-gray-600 mb-1">Your MBTI Personality Type</p>
+                          <p className="text-2xl font-bold text-primary-700">{hasMBTI}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xs text-gray-500">Completed</p>
+                          <p className="text-xs text-gray-500">
+                            {mbtiData?.completedAt ? new Date(mbtiData.completedAt).toLocaleDateString() : 'Recently'}
+                          </p>
                         </div>
                       </div>
-                    ))}
+                    </div>
+                    
+                    {/* Display scores if available */}
+                    {mbtiData?.scores && Object.keys(mbtiData.scores).length > 0 && (
+                      <div className="space-y-3">
+                        <p className="text-sm font-medium text-gray-700">Detailed Breakdown</p>
+                        {Object.entries(mbtiData.scores).map(([key, value]: [string, any]) => (
+                          <div key={key} className="flex items-center justify-between">
+                            <span className="text-sm text-gray-600 capitalize">{key}</span>
+                            <div className="flex items-center gap-2">
+                              <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div className="h-full bg-primary-500 rounded-full" style={{ width: `${value}%` }} />
+                              </div>
+                              <span className="text-sm font-medium">{value}%</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   <button 
-                    onClick={() => router.push('/dashboard/results/tki')}
+                    onClick={() => router.push('/dashboard/results/mbti')}
                     className="mt-4 text-primary-500 text-sm font-medium hover:underline flex items-center gap-1"
                   >
                     View full report <ChevronRight className="w-4 h-4" />
