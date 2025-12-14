@@ -246,7 +246,25 @@ async function extractMBTITypeWithAI(buffer: Buffer, fileName: string): Promise<
       // Create assistant with file_search capability
       const assistant = await openai.beta.assistants.create({
         name: 'MBTI Extractor',
-        instructions: 'You are an expert at extracting MBTI personality types from documents. Extract the MBTI personality type (one of: ENFJ, ENFP, ENTJ, ENTP, ESFJ, ESFP, ESTJ, ESTP, INFJ, INFP, INTJ, INTP, ISFJ, ISFP, ISTJ, ISTP) from the provided document. Return ONLY the 4-letter MBTI type code in uppercase, nothing else. If you cannot find a valid MBTI type, return "NOT_FOUND".',
+        instructions: `You are an expert at extracting MBTI personality types from documents. Your task is to find the MBTI personality type in the provided PDF document.
+
+The MBTI type is always a 4-letter code consisting of:
+- First letter: E (Extraversion) or I (Introversion)
+- Second letter: N (Intuition) or S (Sensing)
+- Third letter: F (Feeling) or T (Thinking)
+- Fourth letter: J (Judging) or P (Perceiving)
+
+Valid MBTI types are: ENFJ, ENFP, ENTJ, ENTP, ESFJ, ESFP, ESTJ, ESTP, INFJ, INFP, INTJ, INTP, ISFJ, ISFP, ISTJ, ISTP
+
+Look for:
+- "Your type is [TYPE]"
+- "Personality type: [TYPE]"
+- "MBTI type: [TYPE]"
+- "Your MBTI: [TYPE]"
+- Any 4-letter code matching the pattern above
+- Results sections, summary sections, or conclusion sections
+
+IMPORTANT: Return ONLY the 4-letter MBTI type code in uppercase (e.g., "ENFJ" or "INFP"). Do not include any explanation, punctuation, or additional text. If you cannot find a valid MBTI type after thoroughly searching the document, return exactly "NOT_FOUND".`,
         model: 'gpt-4o-mini',
         tools: [{ type: 'file_search' }],
         tool_resources: {
@@ -261,7 +279,18 @@ async function extractMBTITypeWithAI(buffer: Buffer, fileName: string): Promise<
         messages: [
           {
             role: 'user',
-            content: 'Please extract the MBTI personality type from this PDF document. Look for phrases like "Your type is", "Personality type", "MBTI type", or any mention of a 4-letter code like ENFJ, INFP, etc. Return ONLY the 4-letter code in uppercase.',
+            content: `I need you to extract the MBTI personality type from this PDF document. 
+
+Please search through the entire document carefully. Look for:
+- Results sections
+- Summary sections
+- Any mention of "MBTI", "personality type", "your type", or similar phrases
+- Any 4-letter code that matches the MBTI pattern (E/I, N/S, F/T, J/P)
+
+The MBTI type will be one of these 16 types:
+ENFJ, ENFP, ENTJ, ENTP, ESFJ, ESFP, ESTJ, ESTP, INFJ, INFP, INTJ, INTP, ISFJ, ISFP, ISTJ, ISTP
+
+Return ONLY the 4-letter code in uppercase. If you cannot find it, return "NOT_FOUND".`,
             attachments: [
               {
                 file_id: file.id,
@@ -309,13 +338,51 @@ async function extractMBTITypeWithAI(buffer: Buffer, fileName: string): Promise<
 
       // Get the response
       const messages = await openai.beta.threads.messages.list(thread.id);
-      const lastMessage = messages.data[0];
+      console.log('Total messages in thread:', messages.data.length);
+      
       let extractedType = null;
       
-      if (lastMessage.content && lastMessage.content.length > 0) {
-        const content = lastMessage.content[0];
-        if (content.type === 'text') {
-          extractedType = content.text.value.trim().toUpperCase();
+      // Check all assistant messages (they come first in the list)
+      for (const message of messages.data) {
+        if (message.role === 'assistant' && message.content && message.content.length > 0) {
+          for (const contentItem of message.content) {
+            if (contentItem.type === 'text') {
+              const textValue = contentItem.text.value.trim();
+              console.log('Assistant message content:', textValue);
+              
+              // Extract MBTI type from the response
+              const upperText = textValue.toUpperCase();
+              
+              // First, try to find exact match
+              const validMBTITypes = [
+                'ENFJ', 'ENFP', 'ENTJ', 'ENTP',
+                'ESFJ', 'ESFP', 'ESTJ', 'ESTP',
+                'INFJ', 'INFP', 'INTJ', 'INTP',
+                'ISFJ', 'ISFP', 'ISTJ', 'ISTP'
+              ];
+              
+              for (const type of validMBTITypes) {
+                if (upperText.includes(type)) {
+                  extractedType = type;
+                  console.log('Found MBTI type in response:', extractedType);
+                  break;
+                }
+              }
+              
+              // If not found, use the text as-is (might be just the type)
+              if (!extractedType && upperText.length === 4) {
+                // Check if it matches MBTI pattern
+                const mbtiPattern = /^[EI][NS][FT][JP]$/;
+                if (mbtiPattern.test(upperText)) {
+                  extractedType = upperText;
+                  console.log('Found MBTI type pattern match:', extractedType);
+                }
+              }
+              
+              if (extractedType) break;
+            }
+          }
+          if (extractedType) break;
         }
       }
 
