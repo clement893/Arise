@@ -1,4 +1,4 @@
-declare module 'pdfjs-dist/legacy/build/pdf.mjs' {
+declare module 'pdfjs-dist' {
   export const GlobalWorkerOptions: {
     workerSrc: string;
   };
@@ -26,10 +26,5 @@ declare module 'pdfjs-dist/legacy/build/pdf.mjs' {
     width: number;
     height: number;
   }
-}
-
-declare module 'pdfjs-dist/legacy/build/pdf.worker.mjs' {
-  const worker: string;
-  export default worker;
 }
 

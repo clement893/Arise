@@ -30,6 +30,7 @@
     "next": "16.0.7",
     "openai": "^4.67.0",
     "pdf-parse": "^1.1.1",
+    "pdfjs-dist": "^4.0.379",
     "tesseract.js": "^5.0.4",
     "canvas": "^2.11.2",
     "react": "19.2.0",
