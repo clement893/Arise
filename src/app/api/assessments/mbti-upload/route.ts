@@ -219,31 +219,74 @@ async function extractMBTITypeWithAI(buffer: Buffer, fileName: string): Promise<
         return null;
       }
 
-      // Use Chat Completions API with file_id
-      // According to OpenAI docs, PDFs can be used with file_id in messages
-      const response = await openai.chat.completions.create({
+      // Use Assistants API with file_search to extract MBTI type
+      // This is the correct way to process PDFs with OpenAI
+      const assistant = await openai.beta.assistants.create({
+        name: 'MBTI Extractor',
+        instructions: 'You are an expert at extracting MBTI personality types from documents. Extract the MBTI personality type (one of: ENFJ, ENFP, ENTJ, ENTP, ESFJ, ESFP, ESTJ, ESTP, INFJ, INFP, INTJ, INTP, ISFJ, ISFP, ISTJ, ISTP) from the provided document. Return ONLY the 4-letter MBTI type code in uppercase, nothing else. If you cannot find a valid MBTI type, return "NOT_FOUND".',
         model: 'gpt-4o-mini',
+        tools: [{ type: 'file_search' }],
+      });
+
+      const thread = await openai.beta.threads.create({
         messages: [
           {
-            role: 'system',
-            content: 'You are an expert at extracting MBTI personality types from documents. Extract the MBTI personality type (one of: ENFJ, ENFP, ENTJ, ENTP, ESFJ, ESFP, ESTJ, ESTP, INFJ, INFP, INTJ, INTP, ISFJ, ISFP, ISTJ, ISTP) from the provided document. Return ONLY the 4-letter MBTI type code in uppercase, nothing else. If you cannot find a valid MBTI type, return "NOT_FOUND".'
-          },
-          {
             role: 'user',
-            content: [
+            content: 'Please extract the MBTI personality type from this PDF document. Look for phrases like "Your type is", "Personality type", "MBTI type", or any mention of a 4-letter code like ENFJ, INFP, etc. Return ONLY the 4-letter code in uppercase.',
+            attachments: [
               {
-                type: 'text',
-                text: 'Please extract the MBTI personality type from this PDF document. Look for phrases like "Your type is", "Personality type", "MBTI type", or any mention of a 4-letter code like ENFJ, INFP, etc. Return ONLY the 4-letter code in uppercase.',
-              },
-              {
-                type: 'file',
                 file_id: file.id,
-              }
+                tools: [{ type: 'file_search' }],
+              },
             ],
-          }
+          },
         ],
-        max_tokens: 10,
       });
+
+      const run = await openai.beta.threads.runs.create(thread.id, {
+        assistant_id: assistant.id,
+      });
+
+      // Wait for completion
+      let runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
+      let attempts = 0;
+      while (runStatus.status !== 'completed' && runStatus.status !== 'failed' && attempts < 30) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
+        attempts++;
+        if (attempts % 5 === 0) {
+          console.log(`Waiting for assistant run... attempt ${attempts}/30, status: ${runStatus.status}`);
+        }
+      }
+
+      if (runStatus.status !== 'completed') {
+        console.log('Assistants API run did not complete, status:', runStatus.status);
+        if (runStatus.status === 'failed') {
+          console.log('Run failed with error:', runStatus.last_error);
+        }
+        // Clean up
+        await openai.files.del(file.id);
+        await openai.beta.assistants.del(assistant.id);
+        return null;
+      }
+
+      // Get the response
+      const messages = await openai.beta.threads.messages.list(thread.id);
+      const lastMessage = messages.data[0];
+      let extractedType = null;
+      
+      if (lastMessage.content && lastMessage.content.length > 0) {
+        const content = lastMessage.content[0];
+        if (content.type === 'text') {
+          extractedType = content.text.value.trim().toUpperCase();
+        }
+      }
+
+      // Clean up resources
+      await openai.files.del(file.id);
+      await openai.beta.assistants.del(assistant.id);
+
+      const response = { choices: [{ message: { content: extractedType } }] };
 
       const extractedType = response.choices[0]?.message?.content?.trim().toUpperCase();
       console.log('OpenAI Chat Completions API response:', extractedType);
