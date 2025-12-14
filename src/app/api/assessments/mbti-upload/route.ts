@@ -125,21 +125,74 @@ async function extractMBTITypeFromPDF(buffer: Buffer): Promise<string | null> {
       
       // Check if this looks like raw PDF binary data (starts with %PDF)
       if (text.startsWith('%PDF')) {
-        // Try to extract readable text from PDF structure
-        // Look for text objects in PDF format: (text) or [text] or /Text
-        // This is a simplified extraction - for better results, use a PDF parser library
-        const textMatches = text.match(/\((.*?)\)/g) || [];
-        const bracketMatches = text.match(/\[(.*?)\]/g) || [];
-        const readableText = [...textMatches, ...bracketMatches]
-          .map(match => match.replace(/[()\[\]]/g, ''))
-          .filter(t => t.length > 0 && /[A-Za-z]/.test(t))
+        console.log('PDF detected, extracting text from PDF structure...');
+        
+        // Try multiple extraction methods for PDFs
+        let extractedTexts: string[] = [];
+        
+        // Method 1: Extract text from PDF text objects (text)
+        const textObjects = text.match(/\((.*?)\)/g) || [];
+        const textFromObjects = textObjects
+          .map(match => {
+            // Remove parentheses and decode PDF escape sequences
+            let decoded = match.replace(/[()]/g, '');
+            // Decode PDF escape sequences like \n, \r, etc.
+            decoded = decoded.replace(/\\(.)/g, (_, char) => {
+              if (char === 'n') return '\n';
+              if (char === 'r') return '\r';
+              if (char === 't') return '\t';
+              return char;
+            });
+            return decoded;
+          })
+          .filter(t => t.length > 0 && /[A-Za-z0-9]/.test(t))
           .join(' ');
         
-        if (readableText.length > 50) {
-          text = readableText;
-          console.log('Basic extraction: extracted readable text length:', text.length);
+        if (textFromObjects.length > 50) {
+          extractedTexts.push(textFromObjects);
+          console.log('Method 1: Extracted', textFromObjects.length, 'characters from text objects');
+        }
+        
+        // Method 2: Extract text from bracket arrays [text]
+        const bracketArrays = text.match(/\[(.*?)\]/g) || [];
+        const textFromBrackets = bracketArrays
+          .map(match => match.replace(/[\[\]]/g, ''))
+          .filter(t => t.length > 0 && /[A-Za-z0-9]/.test(t))
+          .join(' ');
+        
+        if (textFromBrackets.length > 50) {
+          extractedTexts.push(textFromBrackets);
+          console.log('Method 2: Extracted', textFromBrackets.length, 'characters from bracket arrays');
+        }
+        
+        // Method 3: Look for readable text sequences (consecutive letters/numbers)
+        // This catches text that might be encoded differently
+        const readableSequences = text.match(/[A-Za-z]{3,}/g) || [];
+        const textFromSequences = readableSequences
+          .filter(seq => seq.length >= 3)
+          .join(' ');
+        
+        if (textFromSequences.length > 100) {
+          extractedTexts.push(textFromSequences);
+          console.log('Method 3: Extracted', textFromSequences.length, 'characters from readable sequences');
+        }
+        
+        // Combine all extracted texts
+        if (extractedTexts.length > 0) {
+          // Combine and deduplicate
+          const combinedText = extractedTexts.join(' ');
+          // Remove excessive whitespace
+          text = combinedText.replace(/\s+/g, ' ').trim();
+          
+          if (text.length > 50) {
+            console.log('Basic extraction: Combined extracted text length:', text.length);
+            console.log('First 500 characters:', text.substring(0, 500));
+          } else {
+            console.log('Basic extraction: PDF appears to be binary or scanned, readable text too short');
+            return null;
+          }
         } else {
-          console.log('Basic extraction: PDF appears to be binary or scanned, readable text too short');
+          console.log('Basic extraction: Could not extract readable text from PDF');
           return null;
         }
       }
@@ -162,23 +215,30 @@ async function extractMBTITypeFromPDF(buffer: Buffer): Promise<string | null> {
     ];
 
     // Look for MBTI type patterns in the PDF text
-    // Common patterns: 
+    // Common patterns from 16personalities.com and other sources:
     // - "ISFP-T", "ISFP-A" (with suffix)
     // - "Adventurer (ISFP-T)"
     // - "ISFP (Adventurer)"
     // - "Your type is ENFJ"
     // - "Personality type: ENFJ"
+    // - "ISFP-T - Adventurer"
     const mbtiPatterns = [
-      // Pattern for "ISFP-T" or "ISFP-A" (with optional suffix)
-      /\b([EI][NS][FT][JP])[- ]?[TA]?\b/i,
-      // Pattern with context: "Adventurer (ISFP-T)" or "ISFP (Adventurer)"
-      /(?:\(|\()\s*([EI][NS][FT][JP])[- ]?[TA]?\s*(?:\)|\))/i,
-      // Pattern with type label: "Your type is ISFP-T"
-      /(?:type|personality|mbti)[\s:]*([EI][NS][FT][JP])[- ]?[TA]?/i,
+      // Pattern for "Adventurer (ISFP-T)" - most common in 16personalities
+      /(?:Adventurer|Architect|Advocate|Commander|Debater|Entertainer|Entrepreneur|Executive|Logician|Mediator|Protagonist|Virtuoso|Campaigner|Consul|Defender|Logistician)\s*\(([EI][NS][FT][JP])[- ]?[TA]?\)/i,
+      // Pattern: "ISFP-T" or "ISFP-A" (with optional suffix, standalone)
+      /\b([EI][NS][FT][JP])[- ]?[TA]\b/i,
+      // Pattern: "ISFP (Adventurer)" - reversed format
+      /\b([EI][NS][FT][JP])[- ]?[TA]?\s*\([^)]+\)/i,
+      // Pattern with parentheses: "(ISFP-T)" or "(ISFP)"
+      /\(([EI][NS][FT][JP])[- ]?[TA]?\)/i,
+      // Pattern with type label: "Your type is ISFP-T" or "Personality type: ISFP"
+      /(?:type|personality|mbti|your\s+type|personality\s+type)[\s:]*([EI][NS][FT][JP])[- ]?[TA]?/i,
       // Pattern: "Your type is ENFJ" or "Personality type: ENFJ"
-      /(?:you are|your type is|personality type|your personality)[\s:]*([EI][NS][FT][JP])[- ]?[TA]?/i,
+      /(?:you\s+are|your\s+type\s+is|personality\s+type|your\s+personality)[\s:]*([EI][NS][FT][JP])[- ]?[TA]?/i,
       // Pattern: "result: ISFP" or "outcome: ENFJ"
       /(?:result|outcome)[\s:]*([EI][NS][FT][JP])[- ]?[TA]?/i,
+      // Pattern: "ISFP-T - Adventurer" format
+      /\b([EI][NS][FT][JP])[- ]?[TA]?\s*[-–]\s*[A-Za-z]+/i,
     ];
 
     // First, try to find exact matches with context (more reliable)
