@@ -291,16 +291,20 @@ async function extractMBTITypeWithAI(buffer: Buffer, fileName: string): Promise<
 
       console.log('OpenAI Assistants API returned invalid MBTI type:', extractedType);
       return null;
-  } catch (error: any) {
-    console.error('Error extracting MBTI type with AI Assistants API:', error.message);
-    console.error('Error details:', error);
-    // Try to clean up resources if they exist
-    try {
-      if (file?.id) await openai.files.del(file.id);
-      if (assistant?.id) await openai.beta.assistants.del(assistant.id);
-    } catch (cleanupError) {
-      console.error('Error cleaning up resources:', cleanupError);
+    } catch (error: any) {
+      console.error('Error extracting MBTI type with AI Assistants API:', error.message);
+      console.error('Error details:', error);
+      // Try to clean up resources if they exist
+      try {
+        if (file?.id) await openai.files.del(file.id);
+        if (assistant?.id) await openai.beta.assistants.del(assistant.id);
+      } catch (cleanupError) {
+        console.error('Error cleaning up resources:', cleanupError);
+      }
+      return null;
     }
+  } catch (error: any) {
+    console.error('Error in extractMBTITypeWithAI:', error.message);
     return null;
   }
 }
