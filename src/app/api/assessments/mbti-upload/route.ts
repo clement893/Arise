@@ -154,6 +154,13 @@ async function extractMBTITypeWithAI(buffer: Buffer, fileName: string): Promise<
       return null;
     }
 
+    // Try text-based extraction first (cheaper and faster)
+    const textResult = await extractMBTITypeWithAIText(buffer);
+    if (textResult) {
+      return textResult;
+    }
+
+    // If text extraction fails, try Vision API
     const openai = new OpenAI({
       apiKey: openaiApiKey,
     });
@@ -164,7 +171,7 @@ async function extractMBTITypeWithAI(buffer: Buffer, fileName: string): Promise<
     // Use OpenAI Vision API to analyze the PDF
     // Note: OpenAI Vision API supports PDF files
     const response = await openai.chat.completions.create({
-      model: 'gpt-4o', // or 'gpt-4-turbo' which supports vision
+      model: 'gpt-4o', // Supports vision and PDFs
       messages: [
         {
           role: 'system',
@@ -204,7 +211,7 @@ async function extractMBTITypeWithAI(buffer: Buffer, fileName: string): Promise<
     ];
 
     if (validMBTITypes.includes(extractedType)) {
-      console.log(`AI successfully extracted MBTI type: ${extractedType}`);
+      console.log(`AI Vision API successfully extracted MBTI type: ${extractedType}`);
       return extractedType;
     }
 
@@ -218,14 +225,8 @@ async function extractMBTITypeWithAI(buffer: Buffer, fileName: string): Promise<
 
     return null;
   } catch (error: any) {
-    console.error('Error extracting MBTI type with AI:', error.message);
-    // If Vision API doesn't work, try text-based approach
-    try {
-      return await extractMBTITypeWithAIText(buffer);
-    } catch (textError) {
-      console.error('Error with AI text extraction:', textError);
-      return null;
-    }
+    console.error('Error extracting MBTI type with AI Vision:', error.message);
+    return null;
   }
 }
 
