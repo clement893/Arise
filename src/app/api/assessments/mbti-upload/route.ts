@@ -117,9 +117,21 @@ async function extractMBTITypeWithOCR(buffer: Buffer): Promise<string | null> {
   try {
     console.log('Attempting OCR extraction with tesseract.js...');
     
-    // Set up pdfjs worker
-    const pdfjsWorker = await import('pdfjs-dist/legacy/build/pdf.worker.mjs');
-    pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker.default;
+    // Dynamically import pdfjs-dist to avoid build-time issues
+    const pdfjsLib = await import('pdfjs-dist');
+    
+    // Set up pdfjs worker (use CDN or local worker)
+    // For Node.js, we can use the built-in worker or skip it
+    if (typeof pdfjsLib.GlobalWorkerOptions !== 'undefined') {
+      // Try to set worker source - may not be needed in Node.js environment
+      try {
+        const workerUrl = await import('pdfjs-dist/build/pdf.worker.mjs?url');
+        pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl.default;
+      } catch (e) {
+        // Worker setup may fail in Node.js, continue without it
+        console.log('Worker setup skipped (Node.js environment)');
+      }
+    }
     
     // Load the PDF document
     const loadingTask = pdfjsLib.getDocument({ data: buffer });
