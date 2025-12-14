@@ -180,41 +180,76 @@ async function extractMBTITypeWithAI(buffer: Buffer, fileName: string): Promise<
     
     console.log('Text-based AI extraction failed, trying Vision API...');
 
-    // If text extraction fails, try Vision API
+    // If text extraction fails, try using OpenAI Files API or improved text extraction
+    // Note: OpenAI Vision API doesn't support PDFs directly, so we'll use Files API
     const openai = new OpenAI({
       apiKey: openaiApiKey,
     });
 
-    // Convert PDF buffer to base64 for OpenAI API
-    const base64PDF = buffer.toString('base64');
+    // Try using OpenAI Files API to extract text from PDF
+    // First, upload the file
+    console.log('Uploading PDF to OpenAI Files API...');
+    const file = await openai.files.create({
+      file: new File([buffer], 'mbti-result.pdf', { type: 'application/pdf' }),
+      purpose: 'assistants',
+    });
 
-    // Use OpenAI Vision API to analyze the PDF
-    // Note: OpenAI Vision API supports PDF files
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o', // Supports vision and PDFs
+    console.log('File uploaded, ID:', file.id);
+
+    // Use Assistants API with file search to extract MBTI type
+    const assistant = await openai.beta.assistants.create({
+      name: 'MBTI Extractor',
+      instructions: 'You are an expert at extracting MBTI personality types from documents. Extract the MBTI personality type (one of: ENFJ, ENFP, ENTJ, ENTP, ESFJ, ESFP, ESTJ, ESTP, INFJ, INFP, INTJ, INTP, ISFJ, ISFP, ISTJ, ISTP) from the provided document. Return ONLY the 4-letter MBTI type code in uppercase, nothing else. If you cannot find a valid MBTI type, return "NOT_FOUND".',
+      model: 'gpt-4o-mini',
+      tools: [{ type: 'file_search' }],
+    });
+
+    const thread = await openai.beta.threads.create({
       messages: [
         {
-          role: 'system',
-          content: 'You are an expert at extracting MBTI personality types from documents. Extract the MBTI personality type (one of: ENFJ, ENFP, ENTJ, ENTP, ESFJ, ESFP, ESTJ, ESTP, INFJ, INFP, INTJ, INTP, ISFJ, ISFP, ISTJ, ISTP) from the provided document. Return ONLY the 4-letter MBTI type code in uppercase, nothing else. If you cannot find a valid MBTI type, return "NOT_FOUND".'
-        },
-        {
           role: 'user',
-          content: [
+          content: 'Please extract the MBTI personality type from this PDF document. Look for phrases like "Your type is", "Personality type", "MBTI type", or any mention of a 4-letter code like ENFJ, INFP, etc. Return ONLY the 4-letter code in uppercase.',
+          attachments: [
             {
-              type: 'text',
-              text: 'Please extract the MBTI personality type from this PDF document. Look for phrases like "Your type is", "Personality type", "MBTI type", or any mention of a 4-letter code like ENFJ, INFP, etc. Return ONLY the 4-letter code in uppercase.'
+              file_id: file.id,
+              tools: [{ type: 'file_search' }],
             },
-            {
-              type: 'image_url',
-              image_url: {
-                url: `data:application/pdf;base64,${base64PDF}`,
-              }
-            }
-          ]
-        }
+          ],
+        },
       ],
-      max_tokens: 10,
     });
+
+    const run = await openai.beta.threads.runs.create(thread.id, {
+      assistant_id: assistant.id,
+    });
+
+    // Wait for completion
+    let runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
+    let attempts = 0;
+    while (runStatus.status !== 'completed' && attempts < 30) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      runStatus = await openai.beta.threads.runs.retrieve(thread.id, run.id);
+      attempts++;
+    }
+
+    if (runStatus.status !== 'completed') {
+      console.log('OpenAI Assistants API run did not complete, status:', runStatus.status);
+      // Clean up
+      await openai.files.del(file.id);
+      return null;
+    }
+
+    // Get the response
+    const messages = await openai.beta.threads.messages.list(thread.id);
+    const lastMessage = messages.data[0];
+    const extractedType = lastMessage.content[0]?.type === 'text' 
+      ? lastMessage.content[0].text.value.trim().toUpperCase()
+      : null;
+
+    // Clean up
+    await openai.files.del(file.id);
+
+    console.log('OpenAI Assistants API response:', extractedType);
 
     const extractedType = response.choices[0]?.message?.content?.trim().toUpperCase();
 
