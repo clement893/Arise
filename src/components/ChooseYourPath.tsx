@@ -47,7 +47,7 @@ export default function ChooseYourPath() {
   ];
 
   return (
-    <section className="bg-white py-16 md:py-24 border-[3px] border-dotted border-[#0d5a5a]">
+    <section className="bg-white py-16 md:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <div className="text-center mb-16">
@@ -70,25 +70,25 @@ export default function ChooseYourPath() {
               className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow"
             >
               {/* Tag */}
-              <span className="inline-block px-3 py-1 text-xs font-semibold text-[#D4A84B] bg-[#D4A84B]/10 rounded-full uppercase tracking-wider">
+              <span className="inline-block px-3 py-1 text-xs font-semibold text-[#c9a961] bg-[#c9a961]/10 rounded-full uppercase tracking-wider">
                 {path.tag}
               </span>
               
               {/* Title */}
-              <h3 className="mt-4 text-2xl font-bold text-[#2D2D2D] tracking-wide">
+              <h3 className="mt-4 text-2xl font-bold text-[#333333] tracking-wide">
                 {path.title}
               </h3>
               
               {/* Description */}
-              <p className="mt-4 text-[#2D2D2D]/60 text-sm leading-relaxed min-h-[48px]">
+              <p className="mt-4 text-[#333333] text-sm leading-relaxed min-h-[48px]">
                 {path.description}
               </p>
               
               {/* Features */}
               <ul className="mt-6 space-y-3">
                 {path.features.map((feature, i) => (
-                  <li key={i} className="flex items-center text-sm text-[#2D2D2D]/80">
-                    <svg className="w-4 h-4 text-[#0D5C5C] mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <li key={i} className="flex items-center text-sm text-[#333333]">
+                    <svg className="w-4 h-4 text-[#0d5a5a] mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                     {feature}

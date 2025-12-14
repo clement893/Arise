@@ -18,7 +18,7 @@ export default function Testimonials() {
   ];
 
   return (
-    <section className="bg-white py-16 md:py-24 border-[3px] border-dotted border-[#0d5a5a]">
+    <section className="bg-white py-16 md:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <h2 className="text-3xl md:text-4xl font-bold text-[#333333] mb-12">
