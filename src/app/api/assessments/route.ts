@@ -49,7 +49,9 @@ export async function GET(request: NextRequest) {
 
     console.log('GET /api/assessments - User:', userId, 'Found assessments:', assessments.length);
     console.log('GET /api/assessments - TKI assessment:', assessments.find(a => a.assessmentType === 'tki'));
+    console.log('GET /api/assessments - MBTI assessment:', assessments.find(a => a.assessmentType === 'mbti'));
     console.log('GET /api/assessments - Summary TKI:', summary.tki);
+    console.log('GET /api/assessments - Summary MBTI:', summary.mbti);
     return NextResponse.json({ assessments, summary });
   } catch (error) {
     console.error('Get assessments error:', error);
