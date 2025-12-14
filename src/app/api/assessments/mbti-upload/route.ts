@@ -194,8 +194,9 @@ async function extractMBTITypeWithAI(buffer: Buffer, fileName: string): Promise<
       // Try using OpenAI Files API to extract text from PDF
       // First, upload the file
       console.log('Uploading PDF to OpenAI Files API...');
-      // Convert Buffer to Blob for File constructor
-      const blob = new Blob([buffer], { type: 'application/pdf' });
+      // Convert Buffer to Uint8Array for Blob/File constructor compatibility
+      const uint8Array = new Uint8Array(buffer);
+      const blob = new Blob([uint8Array], { type: 'application/pdf' });
       file = await openai.files.create({
         file: new File([blob], 'mbti-result.pdf', { type: 'application/pdf' }),
         purpose: 'assistants',
