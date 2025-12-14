@@ -178,23 +178,48 @@ async function extractMBTITypeWithAI(buffer: Buffer, fileName: string): Promise<
       return textResult;
     }
     
-    console.log('Text-based AI extraction failed, trying base64 PDF with Chat Completions...');
+    console.log('Text-based AI extraction failed, trying Files API with Chat Completions...');
 
-    // If text extraction fails, try using base64 encoding with Chat Completions
-    // This is simpler and works directly with vision-capable models
+    // If text extraction fails, try using OpenAI Files API with Chat Completions
+    // Upload PDF file and use file_id in Chat Completions
     const openai = new OpenAI({
       apiKey: openaiApiKey,
     });
 
+    let file: any = null;
+
     try {
-      // Convert PDF buffer to base64
-      const base64PDF = buffer.toString('base64');
-      const dataUrl = `data:application/pdf;base64,${base64PDF}`;
+      // Upload the PDF file to OpenAI Files API
+      console.log('Uploading PDF to OpenAI Files API...');
+      const uint8Array = new Uint8Array(buffer);
+      const blob = new Blob([uint8Array], { type: 'application/pdf' });
+      file = await openai.files.create({
+        file: new File([blob], 'mbti-result.pdf', { type: 'application/pdf' }),
+        purpose: 'assistants',
+      });
 
-      console.log('Using base64 PDF with Chat Completions API...');
+      console.log('File uploaded, ID:', file.id);
 
-      // Use Chat Completions API with base64 PDF
-      // GPT-4o and GPT-4o-mini support PDFs via base64
+      // Wait for file to be processed
+      let fileStatus = await openai.files.retrieve(file.id);
+      let waitAttempts = 0;
+      while (fileStatus.status === 'processing' && waitAttempts < 20) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        fileStatus = await openai.files.retrieve(file.id);
+        waitAttempts++;
+        console.log(`Waiting for file processing... attempt ${waitAttempts}/20`);
+      }
+
+      console.log('File status:', fileStatus.status);
+
+      if (fileStatus.status !== 'processed') {
+        console.log('File processing failed or timed out');
+        await openai.files.del(file.id);
+        return null;
+      }
+
+      // Use Chat Completions API with file_id
+      // According to OpenAI docs, PDFs can be used with file_id in messages
       const response = await openai.chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [
@@ -210,10 +235,8 @@ async function extractMBTITypeWithAI(buffer: Buffer, fileName: string): Promise<
                 text: 'Please extract the MBTI personality type from this PDF document. Look for phrases like "Your type is", "Personality type", "MBTI type", or any mention of a 4-letter code like ENFJ, INFP, etc. Return ONLY the 4-letter code in uppercase.',
               },
               {
-                type: 'image_url',
-                image_url: {
-                  url: dataUrl,
-                }
+                type: 'file',
+                file_id: file.id,
               }
             ],
           }
@@ -223,6 +246,13 @@ async function extractMBTITypeWithAI(buffer: Buffer, fileName: string): Promise<
 
       const extractedType = response.choices[0]?.message?.content?.trim().toUpperCase();
       console.log('OpenAI Chat Completions API response:', extractedType);
+
+      // Clean up file
+      try {
+        await openai.files.del(file.id);
+      } catch (cleanupError) {
+        console.error('Error cleaning up file:', cleanupError);
+      }
 
       if (!extractedType || extractedType === 'NOT_FOUND') {
         console.log('OpenAI Chat Completions API did not find MBTI type');
@@ -255,6 +285,12 @@ async function extractMBTITypeWithAI(buffer: Buffer, fileName: string): Promise<
     } catch (error: any) {
       console.error('Error extracting MBTI type with AI Chat Completions API:', error.message);
       console.error('Error details:', error);
+      // Try to clean up file if it exists
+      try {
+        if (file?.id) await openai.files.del(file.id);
+      } catch (cleanupError) {
+        console.error('Error cleaning up file:', cleanupError);
+      }
       return null;
     }
   } catch (error: any) {
