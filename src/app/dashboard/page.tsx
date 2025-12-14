@@ -105,7 +105,16 @@ export default function DashboardPage() {
         body: formData,
       });
 
-      const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        console.error('Error parsing response JSON:', jsonError);
+        const text = await response.text();
+        console.error('Response text:', text);
+        alert(`Failed to upload MBTI PDF. Server returned status ${response.status}. Please try again.`);
+        return;
+      }
 
       if (response.ok) {
         alert(`Successfully imported MBTI type: ${data.mbtiType}`);
@@ -114,13 +123,16 @@ export default function DashboardPage() {
           await fetchAssessments(user.id);
         }
       } else {
-        const errorMsg = data.error || 'Failed to upload MBTI PDF';
+        console.error('Upload failed with status:', response.status);
+        console.error('Error response:', data);
+        const errorMsg = data.error || `Failed to upload MBTI PDF (Status: ${response.status})`;
         const detailsMsg = data.details ? `\n\n${data.details}` : '';
         alert(`${errorMsg}${detailsMsg}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error uploading MBTI PDF:', error);
-      alert('Failed to upload MBTI PDF. Please check your connection and try again.');
+      console.error('Error details:', error.message, error.stack);
+      alert(`Failed to upload MBTI PDF: ${error.message || 'Please check your connection and try again.'}`);
     } finally {
       setUploadingMBTI(false);
       if (fileInputRef.current) {
