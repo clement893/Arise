@@ -117,6 +117,19 @@ async function extractMBTITypeWithOCR(buffer: Buffer): Promise<string | null> {
   try {
     console.log('Attempting OCR extraction with tesseract.js...');
     
+    // Polyfill for Promise.withResolvers if not available (Node.js < 22)
+    if (typeof Promise.withResolvers === 'undefined') {
+      (Promise as any).withResolvers = function<T>() {
+        let resolve: (value: T | PromiseLike<T>) => void;
+        let reject: (reason?: any) => void;
+        const promise = new Promise<T>((res, rej) => {
+          resolve = res;
+          reject = rej;
+        });
+        return { promise, resolve: resolve!, reject: reject! };
+      };
+    }
+    
     // Dynamically import pdfjs-dist to avoid build-time issues
     const pdfjsLib = await import('pdfjs-dist');
     
@@ -131,7 +144,8 @@ async function extractMBTITypeWithOCR(buffer: Buffer): Promise<string | null> {
     const pdf = await loadingTask.promise;
     console.log('PDF loaded for OCR, number of pages:', pdf.numPages);
     
-    // Initialize Tesseract worker
+    // Initialize Tesseract worker with legacy build for Node.js compatibility
+    const { createWorker } = await import('tesseract.js');
     const worker = await createWorker('eng');
     await worker.setParameters({
       tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-() ',
