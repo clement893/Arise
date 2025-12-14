@@ -108,6 +108,8 @@ export default function ResultsPage() {
 
     // Debug logging - log every calculation to see if data changes
     console.log('Results page useMemo - assessmentResults:', assessmentResults);
+    console.log('Results page useMemo - mbti object:', assessmentResults?.mbti);
+    console.log('Results page useMemo - mbti dominantResult:', mbti);
     console.log('Results page useMemo - tki:', tki);
     console.log('Results page useMemo - tkiDominant:', tkiDominant);
     console.log('Results page useMemo - tkiCompleted:', tkiCompleted);
