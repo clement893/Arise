@@ -102,6 +102,11 @@ async function extractMBTITypeFromPDF(buffer: Buffer): Promise<string | null> {
     
     try {
       text = buffer.toString('utf-8');
+      console.log('Basic extraction: extracted text length:', text.length);
+      if (text.length < 100) {
+        console.log('Basic extraction: text is very short, PDF might be binary or scanned');
+        console.log('First 200 chars:', text.substring(0, 200));
+      }
     } catch (e) {
       console.error('Error converting PDF buffer to text:', e);
       return null;
@@ -129,6 +134,7 @@ async function extractMBTITypeFromPDF(buffer: Buffer): Promise<string | null> {
       if (matches && matches[1]) {
         const foundType = matches[1].toUpperCase();
         if (validMBTITypes.includes(foundType)) {
+          console.log('Basic extraction: found MBTI type with pattern:', foundType);
           return foundType;
         }
       }
@@ -139,10 +145,12 @@ async function extractMBTITypeFromPDF(buffer: Buffer): Promise<string | null> {
     for (const type of validMBTITypes) {
       const regex = new RegExp(`\\b${type}\\b`, 'i');
       if (regex.test(text)) {
+        console.log('Basic extraction: found MBTI type without context:', type);
         return type;
       }
     }
 
+    console.log('Basic extraction: no MBTI type found in PDF text');
     return null;
   } catch (error) {
     console.error('Error extracting MBTI type from PDF:', error);
