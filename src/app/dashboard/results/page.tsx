@@ -474,8 +474,8 @@ export default function ResultsPage() {
                   <h3 className="font-semibold text-gray-900">MBTI Personality</h3>
                   <p className="text-sm text-gray-500">Your personality type breakdown</p>
                 </div>
-                {hasMBTI && (
-                  <span className="px-2 py-1 bg-primary-500 text-white text-xs rounded font-medium">{hasMBTI}</span>
+                {hasMBTI && mbtiData && (
+                  <span className="px-2 py-1 bg-primary-500 text-white text-xs rounded font-medium">{mbtiData.dominantResult || hasMBTI}</span>
                 )}
               </div>
               
