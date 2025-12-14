@@ -40,15 +40,22 @@ export default function AssessmentsPage() {
   const [assessmentResults, setAssessmentResults] = useState<AssessmentResult | null>(null);
 
   useEffect(() => {
-    const userData = localStorage.getItem('arise_user');
-    if (userData) {
-      const parsedUser = JSON.parse(userData);
-      setUser(parsedUser);
-      fetchAssessmentResults(parsedUser.id);
-    } else {
-      router.push('/login');
-    }
-    setIsLoading(false);
+    const loadData = async () => {
+      const userData = localStorage.getItem('arise_user');
+      if (userData) {
+        try {
+          const parsedUser = JSON.parse(userData);
+          setUser(parsedUser);
+          await fetchAssessmentResults(parsedUser.id);
+        } catch (error) {
+          console.error('Error loading user data:', error);
+        }
+      } else {
+        router.push('/login');
+      }
+      setIsLoading(false);
+    };
+    loadData();
   }, [router]);
 
   const fetchAssessmentResults = async (userId: number) => {
@@ -133,7 +140,7 @@ export default function AssessmentsPage() {
         tags: [{ label: 'ARISE Platform', type: 'platform' }],
         actionLabel: getActionLabel('tki', tkiStatus),
         actionType: getActionType(tkiStatus),
-        route: tkiStatus === 'completed' ? '/dashboard/results' : '/dashboard/tki',
+        route: tkiStatus === 'completed' ? '/dashboard/results/tki' : '/dashboard/tki',
       },
       {
         id: '360-feedback',
