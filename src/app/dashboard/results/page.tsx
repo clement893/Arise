@@ -263,6 +263,9 @@ export default function ResultsPage() {
 
   // MBTI data - only if completed
   const mbtiData = assessmentResults?.mbti || null;
+  console.log('Results page - mbtiData:', mbtiData);
+  console.log('Results page - hasMBTI:', hasMBTI);
+  console.log('Results page - assessmentResults?.mbti:', assessmentResults?.mbti);
 
   return (
     <main className="flex-1 lg:ml-0 p-4 sm:p-6 lg:p-8 overflow-auto">
