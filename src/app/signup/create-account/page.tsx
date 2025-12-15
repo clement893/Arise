@@ -47,9 +47,12 @@ export default function CreateAccount() {
 
   const handleContinue = () => {
     if (validateForm()) {
-      // Store in localStorage temporarily (will be sent to API in profile step)
+      // Store email only (password should never be stored in localStorage for security)
+      // Password will be passed directly to API in profile step via component state
       localStorage.setItem('signupEmail', formData.email);
-      localStorage.setItem('signupPassword', formData.password);
+      // Store password temporarily in sessionStorage (cleared after use) instead of localStorage
+      // This is still not ideal but better than localStorage for sensitive data
+      sessionStorage.setItem('signupPassword', formData.password);
       router.push('/signup/review');
     }
   };

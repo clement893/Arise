@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { prisma } from '@/lib/prisma';
-import { cookies } from 'next/headers';
-import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+import { extractTokenFromHeader } from '@/lib/jwt';
+import { verifyAccessToken } from '@/lib/jwt';
 
 function getStripe() {
   if (!process.env.STRIPE_SECRET_KEY) {
@@ -15,27 +13,23 @@ function getStripe() {
   });
 }
 
-// Helper to get user from token
-async function getUserFromToken() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get('auth_token')?.value;
+// Helper to get user from Authorization header (consistent with middleware)
+function getUserFromRequest(request: NextRequest): number | null {
+  const authHeader = request.headers.get('authorization');
+  const token = extractTokenFromHeader(authHeader);
   
   if (!token) {
     return null;
   }
   
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
-    return decoded.userId;
-  } catch {
-    return null;
-  }
+  const payload = verifyAccessToken(token);
+  return payload?.userId || null;
 }
 
 // GET - Get subscription info and payment history
 export async function GET(request: NextRequest) {
   try {
-    const userId = await getUserFromToken();
+    const userId = getUserFromRequest(request);
     
     if (!userId) {
       return NextResponse.json(
@@ -75,8 +69,7 @@ export async function GET(request: NextRequest) {
         if (user.stripeSubscriptionId) {
           try {
             // Use subscription to get next billing info
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const sub: any = await stripe.subscriptions.retrieve(user.stripeSubscriptionId);
+            const sub = await stripe.subscriptions.retrieve(user.stripeSubscriptionId);
             if (sub && sub.current_period_end) {
               upcomingInvoice = {
                 amount_due: sub.items?.data?.[0]?.price?.unit_amount || 0,
@@ -150,7 +143,7 @@ export async function GET(request: NextRequest) {
 // POST - Create customer portal session for managing subscription
 export async function POST(request: NextRequest) {
   try {
-    const userId = await getUserFromToken();
+    const userId = getUserFromRequest(request);
     
     if (!userId) {
       return NextResponse.json(
@@ -192,7 +185,7 @@ export async function POST(request: NextRequest) {
 // DELETE - Cancel subscription
 export async function DELETE(request: NextRequest) {
   try {
-    const userId = await getUserFromToken();
+    const userId = getUserFromRequest(request);
     
     if (!userId) {
       return NextResponse.json(

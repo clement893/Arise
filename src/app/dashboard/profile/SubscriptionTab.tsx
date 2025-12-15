@@ -120,21 +120,27 @@ export default function SubscriptionTab({ user }: { user: User }) {
   const loadData = async () => {
     setIsLoading(true);
     try {
+      // Use authenticatedFetch to include Authorization header
+      const { authenticatedFetch } = await import('@/lib/token-refresh');
+      
       // Load subscription data
-      const subResponse = await fetch('/api/subscription');
+      const subResponse = await authenticatedFetch('/api/subscription');
       if (subResponse.ok) {
         const data = await subResponse.json();
         setSubscriptionData(data);
+      } else if (subResponse.status === 401) {
+        setMessage({ type: 'error', text: 'Please log in to view your subscription' });
       }
 
       // Load coaching packages
-      const coachResponse = await fetch('/api/subscription/coaching');
+      const coachResponse = await authenticatedFetch('/api/subscription/coaching');
       if (coachResponse.ok) {
         const data = await coachResponse.json();
         setCoachingPackages(data.packages);
       }
     } catch (error) {
       console.error('Failed to load subscription data:', error);
+      setMessage({ type: 'error', text: 'Failed to load subscription data. Please try again.' });
     }
     setIsLoading(false);
   };
@@ -144,9 +150,9 @@ export default function SubscriptionTab({ user }: { user: User }) {
     setMessage(null);
 
     try {
-      const response = await fetch('/api/stripe/checkout', {
+      const { authenticatedFetch } = await import('@/lib/token-refresh');
+      const response = await authenticatedFetch('/api/stripe/checkout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           planId,
           userId: user.id,
@@ -174,9 +180,9 @@ export default function SubscriptionTab({ user }: { user: User }) {
     setMessage(null);
 
     try {
-      const response = await fetch('/api/subscription/coaching', {
+      const { authenticatedFetch } = await import('@/lib/token-refresh');
+      const response = await authenticatedFetch('/api/subscription/coaching', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ packageId }),
       });
 
@@ -200,7 +206,8 @@ export default function SubscriptionTab({ user }: { user: User }) {
     setMessage(null);
 
     try {
-      const response = await fetch('/api/subscription', {
+      const { authenticatedFetch } = await import('@/lib/token-refresh');
+      const response = await authenticatedFetch('/api/subscription', {
         method: 'POST',
       });
 
@@ -224,7 +231,8 @@ export default function SubscriptionTab({ user }: { user: User }) {
     setMessage(null);
 
     try {
-      const response = await fetch('/api/subscription', {
+      const { authenticatedFetch } = await import('@/lib/token-refresh');
+      const response = await authenticatedFetch('/api/subscription', {
         method: 'DELETE',
       });
 

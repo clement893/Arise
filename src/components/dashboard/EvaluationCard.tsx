@@ -44,7 +44,8 @@ export default function EvaluationCard({
         return (
           <button
             onClick={onAction}
-            className="w-full py-2 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+            className="w-full py-2 border border-gray-300 text-gray-700 rounded-lg text-xs sm:text-sm font-medium hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+            aria-label={`View results for ${title}`}
           >
             View Results
           </button>
@@ -53,7 +54,8 @@ export default function EvaluationCard({
         return (
           <button
             onClick={onAction}
-            className="w-full py-2 bg-[#0D5C5C] text-white rounded-lg text-sm font-medium hover:bg-[#0a4a4a] transition-colors"
+            className="w-full py-2 bg-primary-500 text-white rounded-lg text-xs sm:text-sm font-medium hover:bg-primary-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+            aria-label={`Continue ${title}`}
           >
             Continue
           </button>
@@ -62,7 +64,8 @@ export default function EvaluationCard({
         return (
           <button
             onClick={onAction}
-            className="w-full py-2 bg-[#D4A84B] text-[#0D5C5C] rounded-lg text-sm font-medium hover:bg-[#c49a42] transition-colors"
+            className="w-full py-2 bg-secondary-500 text-primary-500 rounded-lg text-xs sm:text-sm font-medium hover:bg-secondary-600 transition-colors focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2"
+            aria-label={`Start ${title}`}
           >
             Start
           </button>
@@ -71,24 +74,24 @@ export default function EvaluationCard({
   };
 
   return (
-    <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex flex-col h-full">
+    <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100 flex flex-col h-full">
       {/* Header with icon and badge */}
       <div className="flex items-start justify-between mb-3">
-        <div className="w-12 h-12 bg-[#e8f4f4] rounded-lg flex items-center justify-center text-[#0D5C5C]">
+        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary-50 rounded-lg flex items-center justify-center text-primary-500 flex-shrink-0" aria-hidden="true">
           {icon}
         </div>
         {badge && (
-          <span className={`px-2 py-1 text-xs rounded-full ${badgeColor}`}>
+          <span className={`px-2 py-1 text-xs rounded-full ${badgeColor}`} aria-label={`Badge: ${badge}`}>
             {badge}
           </span>
         )}
       </div>
 
       {/* Title */}
-      <h4 className="font-semibold text-gray-900 mb-1">{title}</h4>
+      <h4 className="font-semibold text-gray-900 mb-1 text-sm sm:text-base">{title}</h4>
 
       {/* Description */}
-      <p className="text-sm text-gray-500 mb-3 flex-1">{description}</p>
+      <p className="text-xs sm:text-sm text-gray-500 mb-3 flex-1">{description}</p>
 
       {/* Status Badge */}
       <div className="mb-3">{getStatusBadge()}</div>

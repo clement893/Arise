@@ -680,3 +680,119 @@ The ARISE Human Capital Team
     text,
   });
 }
+
+/**
+ * Send password reset email
+ */
+export async function sendPasswordResetEmail(
+  email: string,
+  name: string,
+  resetUrl: string
+): Promise<SendGridResponse> {
+  const subject = 'Reset your ARISE password';
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f5f5;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f0f5f5;">
+    <tr>
+      <td style="padding: 40px 20px;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+          
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #0D5C5C 0%, #0a4a4a 100%); padding: 40px; text-align: center;">
+              <h1 style="margin: 0; color: #D4A84B; font-size: 32px; font-weight: 700;">ARISE</h1>
+            </td>
+          </tr>
+          
+          <!-- Content -->
+          <tr>
+            <td style="padding: 40px;">
+              <h2 style="margin: 0 0 20px; color: #2D2D2D; font-size: 24px; font-weight: 600;">Reset Your Password</h2>
+              
+              <p style="margin: 0 0 20px; color: #4a5568; font-size: 16px; line-height: 1.6;">
+                Hi ${name},
+              </p>
+              
+              <p style="margin: 0 0 20px; color: #4a5568; font-size: 16px; line-height: 1.6;">
+                We received a request to reset your password for your ARISE account. Click the button below to create a new password:
+              </p>
+              
+              <!-- CTA Button -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 30px 0;">
+                <tr>
+                  <td style="text-align: center;">
+                    <a href="${resetUrl}" 
+                       style="display: inline-block; padding: 16px 40px; background-color: #0D5C5C; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 16px; border-radius: 8px;">
+                      Reset Password
+                    </a>
+                  </td>
+                </tr>
+              </table>
+              
+              <p style="margin: 20px 0 0; color: #718096; font-size: 14px; line-height: 1.6;">
+                Or copy and paste this link into your browser:
+              </p>
+              <p style="margin: 10px 0 0; color: #0D5C5C; font-size: 14px; word-break: break-all;">
+                ${resetUrl}
+              </p>
+              
+              <p style="margin: 30px 0 0; color: #718096; font-size: 14px; line-height: 1.6;">
+                This link will expire in 1 hour for security reasons.
+              </p>
+              
+              <p style="margin: 20px 0 0; color: #718096; font-size: 14px; line-height: 1.6;">
+                If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged.
+              </p>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #2D2D2D; padding: 30px 40px; text-align: center;">
+              <p style="margin: 0 0 10px; color: #D4A84B; font-size: 16px; font-weight: 600;">ARISE Human Capital</p>
+              <p style="margin: 0; color: #9ca3af; font-size: 12px;">Empowering Authentic Leaders</p>
+              <p style="margin: 20px 0 0; color: #6b7280; font-size: 11px;">
+                © ${new Date().getFullYear()} ARISE Human Capital. All rights reserved.
+              </p>
+            </td>
+          </tr>
+          
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `;
+
+  const text = `
+Reset Your Password
+
+Hi ${name},
+
+We received a request to reset your password for your ARISE account. Click the link below to create a new password:
+
+${resetUrl}
+
+This link will expire in 1 hour for security reasons.
+
+If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged.
+
+Best regards,
+The ARISE Human Capital Team
+  `;
+
+  return sendEmail({
+    to: { email, name },
+    subject,
+    html,
+    text,
+  });
+}

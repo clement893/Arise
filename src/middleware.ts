@@ -56,9 +56,17 @@ export async function middleware(request: NextRequest) {
     });
 
     // Extract user info from payload (jose returns payload as JWTPayload)
-    const userId = (payload as any).userId;
-    const email = (payload as any).email;
-    const role = (payload as any).role;
+    interface JWTPayload {
+      userId?: number;
+      email?: string;
+      role?: string;
+      [key: string]: unknown;
+    }
+    
+    const jwtPayload = payload as JWTPayload;
+    const userId = jwtPayload.userId;
+    const email = jwtPayload.email;
+    const role = jwtPayload.role;
 
     if (!userId || !email || !role) {
       console.log('Middleware: Token payload missing required fields');

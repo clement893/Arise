@@ -1,137 +1,209 @@
-import { NextResponse } from 'next/server';
-
 /**
- * Custom error classes for better error handling
+ * Standardized Error Handling System
+ * Provides consistent error types and handling across the application
  */
 
+/**
+ * Custom error classes for different error types
+ */
 export class AppError extends Error {
   constructor(
     message: string,
+    public code: string,
     public statusCode: number = 500,
-    public code?: string,
     public details?: unknown
   ) {
     super(message);
-    this.name = this.constructor.name;
-    Error.captureStackTrace(this, this.constructor);
-  }
-}
-
-export class ValidationError extends AppError {
-  constructor(message: string, details?: unknown) {
-    super(message, 400, 'VALIDATION_ERROR', details);
+    this.name = 'AppError';
+    Object.setPrototypeOf(this, AppError.prototype);
   }
 }
 
 export class AuthenticationError extends AppError {
-  constructor(message: string = 'Authentication required') {
-    super(message, 401, 'AUTHENTICATION_ERROR');
+  constructor(message: string = 'Authentication required', details?: unknown) {
+    super(message, 'AUTHENTICATION_ERROR', 401, details);
+    this.name = 'AuthenticationError';
+    Object.setPrototypeOf(this, AuthenticationError.prototype);
   }
 }
 
 export class AuthorizationError extends AppError {
-  constructor(message: string = 'Insufficient permissions') {
-    super(message, 403, 'AUTHORIZATION_ERROR');
+  constructor(message: string = 'Insufficient permissions', details?: unknown) {
+    super(message, 'AUTHORIZATION_ERROR', 403, details);
+    this.name = 'AuthorizationError';
+    Object.setPrototypeOf(this, AuthorizationError.prototype);
+  }
+}
+
+export class ValidationError extends AppError {
+  constructor(message: string = 'Validation failed', details?: unknown) {
+    super(message, 'VALIDATION_ERROR', 400, details);
+    this.name = 'ValidationError';
+    Object.setPrototypeOf(this, ValidationError.prototype);
   }
 }
 
 export class NotFoundError extends AppError {
-  constructor(message: string = 'Resource not found') {
-    super(message, 404, 'NOT_FOUND');
+  constructor(message: string = 'Resource not found', details?: unknown) {
+    super(message, 'NOT_FOUND_ERROR', 404, details);
+    this.name = 'NotFoundError';
+    Object.setPrototypeOf(this, NotFoundError.prototype);
   }
 }
 
 export class ConflictError extends AppError {
-  constructor(message: string = 'Resource conflict') {
-    super(message, 409, 'CONFLICT');
+  constructor(message: string = 'Resource conflict', details?: unknown) {
+    super(message, 'CONFLICT_ERROR', 409, details);
+    this.name = 'ConflictError';
+    Object.setPrototypeOf(this, ConflictError.prototype);
   }
 }
 
 export class RateLimitError extends AppError {
-  constructor(message: string = 'Rate limit exceeded', resetTime?: number) {
-    super(message, 429, 'RATE_LIMIT_EXCEEDED', { resetTime });
+  constructor(message: string = 'Too many requests', details?: unknown) {
+    super(message, 'RATE_LIMIT_ERROR', 429, details);
+    this.name = 'RateLimitError';
+    Object.setPrototypeOf(this, RateLimitError.prototype);
   }
 }
 
 /**
- * Handle errors and return appropriate response
- * Prevents information leakage by sanitizing error messages in production
+ * Error response format
  */
-export function handleError(error: unknown): NextResponse {
-  // Log error for debugging (in production, send to error tracking service)
-  console.error('Error:', error);
+export interface ErrorResponse {
+  error: string;
+  code: string;
+  statusCode: number;
+  details?: unknown;
+  timestamp?: string;
+}
 
-  // Handle known error types
+/**
+ * Convert an error to a standardized error response
+ */
+export function formatErrorResponse(error: unknown): ErrorResponse {
   if (error instanceof AppError) {
-    const isDevelopment = process.env.NODE_ENV === 'development';
-    
-    return NextResponse.json(
-      {
-        error: error.message,
-        code: error.code,
-        // Only include details in development
-        ...(isDevelopment && error.details ? { details: error.details } : {}),
-      },
-      { status: error.statusCode }
-    );
+    return {
+      error: error.message,
+      code: error.code,
+      statusCode: error.statusCode,
+      details: error.details,
+      timestamp: new Date().toISOString(),
+    };
   }
 
-  // Handle Prisma errors
-  if (error && typeof error === 'object' && 'code' in error) {
-    const prismaError = error as { code: string; message: string };
-    
-    switch (prismaError.code) {
-      case 'P2002':
-        return NextResponse.json(
-          { error: 'A record with this value already exists', code: 'UNIQUE_CONSTRAINT' },
-          { status: 409 }
-        );
-      case 'P2025':
-        return NextResponse.json(
-          { error: 'Record not found', code: 'NOT_FOUND' },
-          { status: 404 }
-        );
-      case 'P2003':
-        return NextResponse.json(
-          { error: 'Invalid reference', code: 'FOREIGN_KEY_CONSTRAINT' },
-          { status: 400 }
-        );
-      default:
-        // Don't expose Prisma error details in production
-        return NextResponse.json(
-          { 
-            error: 'Database error occurred',
-            code: 'DATABASE_ERROR',
-            ...(process.env.NODE_ENV === 'development' ? { details: prismaError.message } : {}),
-          },
-          { status: 500 }
-        );
+  if (error instanceof Error) {
+    return {
+      error: error.message || 'An unexpected error occurred',
+      code: 'INTERNAL_ERROR',
+      statusCode: 500,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  return {
+    error: 'An unexpected error occurred',
+    code: 'UNKNOWN_ERROR',
+    statusCode: 500,
+    timestamp: new Date().toISOString(),
+  };
+}
+
+/**
+ * Handle errors in API routes
+ * Returns a NextResponse with the error formatted consistently
+ */
+export function handleApiError(error: unknown): Response {
+  const errorResponse = formatErrorResponse(error);
+  
+  // Log error for debugging (in production, use proper logging service)
+  if (process.env.NODE_ENV === 'development') {
+    console.error('API Error:', errorResponse);
+    if (error instanceof Error && error.stack) {
+      console.error('Stack trace:', error.stack);
     }
   }
 
-  // Handle unknown errors
-  const isDevelopment = process.env.NODE_ENV === 'development';
+  return new Response(
+    JSON.stringify(errorResponse),
+    {
+      status: errorResponse.statusCode,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+}
+
+import { NextResponse } from 'next/server';
+
+/**
+ * Handle errors in Next.js API routes
+ * Returns a NextResponse with the error formatted consistently
+ * This is an alias for handleApiError but returns NextResponse for Next.js compatibility
+ */
+
+export function handleError(error: unknown): NextResponse {
+  const errorResponse = formatErrorResponse(error);
+  
+  // Log error for debugging (in production, use proper logging service)
+  if (process.env.NODE_ENV === 'development') {
+    console.error('API Error:', errorResponse);
+    if (error instanceof Error && error.stack) {
+      console.error('Stack trace:', error.stack);
+    }
+  }
+
   return NextResponse.json(
     {
-      error: 'An unexpected error occurred',
-      code: 'INTERNAL_ERROR',
-      ...(isDevelopment && error instanceof Error ? { details: error.message } : {}),
+      error: errorResponse.error,
+      code: errorResponse.code,
+      ...(errorResponse.details && { details: errorResponse.details }),
     },
-    { status: 500 }
+    { status: errorResponse.statusCode }
   );
 }
 
 /**
- * Wrap async route handlers to catch errors
+ * Handle errors in client-side code
+ * Returns a user-friendly error message
  */
-export function asyncHandler(
-  handler: (request: Request, context?: any) => Promise<NextResponse>
-) {
-  return async (request: Request, context?: any) => {
-    try {
-      return await handler(request, context);
-    } catch (error) {
-      return handleError(error);
-    }
-  };
+export function handleClientError(error: unknown): string {
+  if (error instanceof AppError) {
+    return error.message;
+  }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return 'An unexpected error occurred. Please try again.';
+}
+
+/**
+ * Check if error is a network error
+ */
+export function isNetworkError(error: unknown): boolean {
+  if (error instanceof Error) {
+    return (
+      error.message.includes('fetch') ||
+      error.message.includes('network') ||
+      error.message.includes('Failed to fetch')
+    );
+  }
+  return false;
+}
+
+/**
+ * Check if error is an authentication error
+ */
+export function isAuthenticationError(error: unknown): boolean {
+  return error instanceof AuthenticationError;
+}
+
+/**
+ * Check if error is a validation error
+ */
+export function isValidationError(error: unknown): boolean {
+  return error instanceof ValidationError;
 }

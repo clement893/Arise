@@ -15,7 +15,7 @@ declare module 'pdfjs-dist' {
   export interface PDFPage {
     getViewport(params: { scale: number }): Viewport;
     render(params: {
-      canvasContext: any;
+      canvasContext: CanvasRenderingContext2D;
       viewport: Viewport;
     }): {
       promise: Promise<void>;

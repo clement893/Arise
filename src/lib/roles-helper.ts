@@ -9,7 +9,7 @@
  */
 const rolesCache = new Map<string, string[]>();
 
-export function parseRoles(roles: any, fallbackRole?: string): string[] {
+export function parseRoles(roles: unknown, fallbackRole?: string): string[] {
   if (!roles) {
     return fallbackRole ? [fallbackRole] : [];
   }
@@ -47,7 +47,7 @@ export function parseRoles(roles: any, fallbackRole?: string): string[] {
 /**
  * Check if user has a specific role
  */
-export function hasRole(roles: any, role: string, fallbackRole?: string): boolean {
+export function hasRole(roles: unknown, role: string, fallbackRole?: string): boolean {
   const parsedRoles = parseRoles(roles, fallbackRole);
   return parsedRoles.includes(role);
 }
@@ -55,7 +55,7 @@ export function hasRole(roles: any, role: string, fallbackRole?: string): boolea
 /**
  * Check if user is participant (not admin or coach)
  */
-export function isParticipant(roles: any, fallbackRole?: string): boolean {
+export function isParticipant(roles: unknown, fallbackRole?: string): boolean {
   const parsedRoles = parseRoles(roles, fallbackRole);
   return parsedRoles.includes('participant') && 
          !parsedRoles.includes('admin') && 

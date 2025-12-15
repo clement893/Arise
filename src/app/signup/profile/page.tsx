@@ -48,12 +48,19 @@ export default function CompleteProfile() {
     setError('');
 
     try {
-      // Get all signup data from localStorage
+      // Get all signup data from localStorage and sessionStorage
       const email = localStorage.getItem('signupEmail') || '';
-      const password = localStorage.getItem('signupPassword') || '';
+      // Get password from sessionStorage (more secure than localStorage)
+      const password = sessionStorage.getItem('signupPassword') || '';
       const userType = localStorage.getItem('signupUserType') || 'individual';
       const plan = localStorage.getItem('signupPlan') || 'starter';
       const billingCycle = localStorage.getItem('signupBillingCycle') || 'monthly';
+      
+      if (!password) {
+        setError('Password is required. Please go back and re-enter your password.');
+        setIsLoading(false);
+        return;
+      }
 
       // Create user via API
       const response = await fetch('/api/auth/signup', {
@@ -82,9 +89,9 @@ export default function CompleteProfile() {
         throw new Error(data.error || 'Failed to create account');
       }
 
-      // Clear localStorage
+      // Clear localStorage and sessionStorage
       localStorage.removeItem('signupEmail');
-      localStorage.removeItem('signupPassword');
+      sessionStorage.removeItem('signupPassword'); // Clear from sessionStorage
       localStorage.removeItem('signupUserType');
       localStorage.removeItem('signupPlan');
       localStorage.removeItem('signupBillingCycle');

@@ -41,6 +41,10 @@ model User {
   isActive      Boolean      @default(true)
   emailVerified Boolean      @default(false)
   
+  // Password reset
+  resetToken         String?
+  resetTokenExpiry   DateTime?
+  
   // User Settings
   settingsEmailNotifications    Boolean  @default(true)
   settingsWeeklyReport          Boolean  @default(true)
