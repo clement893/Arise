@@ -12,6 +12,9 @@ import Link from 'next/link';
 import { ArrowRight, Lock, CheckCircle, AlertCircle } from 'lucide-react';
 import { Button, PasswordInput } from '@/components/ui';
 
+// Force dynamic rendering to avoid pre-rendering issues with useSearchParams
+export const dynamic = 'force-dynamic';
+
 function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
