@@ -69,12 +69,19 @@ export async function GET(request: NextRequest) {
         if (user.stripeSubscriptionId) {
           try {
             // Use subscription to get next billing info
-            const sub: Stripe.Subscription = await stripe.subscriptions.retrieve(user.stripeSubscriptionId);
-            if (sub && sub.current_period_end) {
+            const sub = await stripe.subscriptions.retrieve(user.stripeSubscriptionId);
+            // Access properties safely using type assertion
+            // Stripe.Subscription has current_period_end but TypeScript may not recognize it in some versions
+            const subscription = sub as unknown as {
+              current_period_end?: number;
+              items?: { data?: Array<{ price?: { unit_amount?: number } }> };
+              currency?: string;
+            };
+            if (subscription && subscription.current_period_end) {
               upcomingInvoice = {
-                amount_due: sub.items?.data?.[0]?.price?.unit_amount || 0,
-                currency: sub.currency || 'usd',
-                next_payment_attempt: sub.current_period_end,
+                amount_due: subscription.items?.data?.[0]?.price?.unit_amount || 0,
+                currency: subscription.currency || 'usd',
+                next_payment_attempt: subscription.current_period_end,
               } as unknown as Stripe.UpcomingInvoice;
             }
           } catch {
