@@ -154,12 +154,21 @@ export function handleError(error: unknown): NextResponse {
     }
   }
 
+  const responseBody: {
+    error: string;
+    code: string;
+    details?: unknown;
+  } = {
+    error: errorResponse.error,
+    code: errorResponse.code,
+  };
+
+  if (errorResponse.details !== undefined) {
+    responseBody.details = errorResponse.details;
+  }
+
   return NextResponse.json(
-    {
-      error: errorResponse.error,
-      code: errorResponse.code,
-      ...(errorResponse.details && { details: errorResponse.details }),
-    },
+    responseBody,
     { status: errorResponse.statusCode }
   );
 }
